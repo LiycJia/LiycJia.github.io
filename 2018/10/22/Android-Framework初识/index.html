@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Archives | 吃着火锅唱着歌</title>
+  <title>Android Framework初识 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
-<meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
-<meta property="og:type" content="website">
-<meta property="og:title" content="吃着火锅唱着歌">
-<meta property="og:url" content="http://www.programan.top/archives/index.html">
+  <meta name="description" content="Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。 Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。 服务端（部分） ActivityManagerService（AMS）：管理Activity； WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口； KeyQ">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Framework初识">
+<meta property="og:url" content="http://www.programan.top/2018/10/22/Android-Framework初识/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。 Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。 服务端（部分） ActivityManagerService（AMS）：管理Activity； WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口； KeyQ">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-10-23T03:34:08.297Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="吃着火锅唱着歌">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:title" content="Android Framework初识">
+<meta name="twitter:description" content="Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。 Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。 服务端（部分） ActivityManagerService（AMS）：管理Activity； WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口； KeyQ">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -154,36 +155,61 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Android-Framework初识" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/22/Android-Framework初识/" class="archive-article-date">
-  	<time datetime="2018-10-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-22</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/22/Android-Framework初识/">Android Framework初识</a>
+    <h1 class="article-title" itemprop="name">
+      Android Framework初识
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/10/22/Android-Framework初识/" class="archive-article-date">
+  	<time datetime="2018-10-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。</p>
+<p>Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。</p>
+<h5 id="服务端（部分）"><a href="#服务端（部分）" class="headerlink" title="服务端（部分）"></a>服务端（部分）</h5><ul>
+<li>ActivityManagerService（AMS）：管理Activity；</li>
+<li>WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口；</li>
+<li>KeyQ 类:：WMS的内部类，一旦创建就会启动一个新的线程，线程不断接受和读取用户的 UI 操作消息，并把消息存进消息队列 QueueEvent；</li>
+<li>InputDispatcherThread：一旦创建启动一个新的线程，不断地从消息队列 QueueEvent 中读取消息并过滤，并将消息发送到当前活动的客户端中。</li>
+</ul>
+<h5 id="客户端（部分）"><a href="#客户端（部分）" class="headerlink" title="客户端（部分）"></a>客户端（部分）</h5><ul>
+<li>ActivityThread：主线程类，即UI线程类，程序入口为 ActivityThread 的 main 函数入口。它根据AMS的要求调度和执行 activites 和其他操作；</li>
+<li>ViewRoot：负责客户端跟 WMS 交互，。内部有 W 类，W类继承于 Binder。当 WMS 与客户端进行通信时调用该类。内部有 ViewRootHandler 类继承于 Handler，所以能在 W 类接收到 Wms 的消息后把消息传递到 UI 线程中。同时，界面绘制的起点也在其中 - performTraversals；</li>
+<li>W 类：ViewRoot 助手，ViewRoot 内部类，主要帮助 ViewRoot 实现把 Wms 的 IPC 调用转换成本地的一个异步调用；</li>
+<li>Activity 类</li>
+<li>PhoneWindow：继承于 Window 类，里面会放一个 DecorView，提供了一组统一窗口操作的 API；</li>
+<li>Window：提供一些通用的窗口操作 API；</li>
+<li>DecorView：这是我们所能看到的 View 的所有，它集成自 FrameLayout，我们写的布局 view 就是放在它里面的；</li>
+<li>ApplicationThread：继承于 Binder，当 AMS 想调用客户端方法时调用；</li>
+<li>Instrumentionn：负责直接与 Ams 对话，所有想调用 Ams 的操作都集中在这里，负责单向调用 Ams；</li>
+<li>WindowManager：客户端与 WindowManagerService 通信使用。</li>
+</ul>
+<h5 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h5><p>Linux 驱动与 Framework 相关的主要有两部分：SurfaceFlingger，Binder。每一个窗口都对应一个画 Surface，SF主要是把各个 Surface 显示到同一屏幕上。Binder 是提供跨进程的消息传递。</p>
+<h5 id="Android-Framework-三大核心功能"><a href="#Android-Framework-三大核心功能" class="headerlink" title="Android Framework 三大核心功能"></a>Android Framework 三大核心功能</h5><ul>
+<li>View.java：View 的工作原理，实现包括绘制view、处理触摸、按键事件等；</li>
+<li>ActivityManagerService.java：管理所有的应用程序的 Activity 等；</li>
+<li>WindowManagerService.java：为所有应用程序分配窗口，并管理这些窗口。</li>
+</ul>
+<p><a href="https://github.com/aosp-mirror" target="_blank" rel="noopener">https://github.com/aosp-mirror</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -195,111 +221,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2018/10/22/Android-Framework初识/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/19/android体系架构/" class="archive-article-date">
-  	<time datetime="2018-10-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-19</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2018/10/19/android体系架构/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">android体系架构</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/19/android体系架构/">android体系架构</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/09/29/Markdown语法/" class="archive-article-date">
-  	<time datetime="2018-09-29T09:58:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-29</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/09/29/Markdown语法/">Markdown语法</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/09/27/hello-world/" class="archive-article-date">
-  	<time datetime="2018-09-27T03:59:26.184Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-27</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/09/27/hello-world/">Hello World</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -322,8 +343,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

@@ -156,6 +156,106 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android-Framework初识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/10/22/Android-Framework初识/">Android Framework初识</a>
+    </h1>
+  
+
+        
+        <a href="/2018/10/22/Android-Framework初识/" class="archive-article-date">
+  	<time datetime="2018-10-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。</p>
+<p>Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。</p>
+<h5 id="服务端（部分）"><a href="#服务端（部分）" class="headerlink" title="服务端（部分）"></a>服务端（部分）</h5><ul>
+<li>ActivityManagerService（AMS）：管理Activity；</li>
+<li>WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口；</li>
+<li>KeyQ 类:：WMS的内部类，一旦创建就会启动一个新的线程，线程不断接受和读取用户的 UI 操作消息，并把消息存进消息队列 QueueEvent；</li>
+<li>InputDispatcherThread：一旦创建启动一个新的线程，不断地从消息队列 QueueEvent 中读取消息并过滤，并将消息发送到当前活动的客户端中。</li>
+</ul>
+<h5 id="客户端（部分）"><a href="#客户端（部分）" class="headerlink" title="客户端（部分）"></a>客户端（部分）</h5><ul>
+<li>ActivityThread：主线程类，即UI线程类，程序入口为 ActivityThread 的 main 函数入口。它根据AMS的要求调度和执行 activites 和其他操作；</li>
+<li>ViewRoot：负责客户端跟 WMS 交互，。内部有 W 类，W类继承于 Binder。当 WMS 与客户端进行通信时调用该类。内部有 ViewRootHandler 类继承于 Handler，所以能在 W 类接收到 Wms 的消息后把消息传递到 UI 线程中。同时，界面绘制的起点也在其中 - performTraversals；</li>
+<li>W 类：ViewRoot 助手，ViewRoot 内部类，主要帮助 ViewRoot 实现把 Wms 的 IPC 调用转换成本地的一个异步调用；</li>
+<li>Activity 类</li>
+<li>PhoneWindow：继承于 Window 类，里面会放一个 DecorView，提供了一组统一窗口操作的 API；</li>
+<li>Window：提供一些通用的窗口操作 API；</li>
+<li>DecorView：这是我们所能看到的 View 的所有，它集成自 FrameLayout，我们写的布局 view 就是放在它里面的；</li>
+<li>ApplicationThread：继承于 Binder，当 AMS 想调用客户端方法时调用；</li>
+<li>Instrumentionn：负责直接与 Ams 对话，所有想调用 Ams 的操作都集中在这里，负责单向调用 Ams；</li>
+<li>WindowManager：客户端与 WindowManagerService 通信使用。</li>
+</ul>
+<h5 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h5><p>Linux 驱动与 Framework 相关的主要有两部分：SurfaceFlingger，Binder。每一个窗口都对应一个画 Surface，SF主要是把各个 Surface 显示到同一屏幕上。Binder 是提供跨进程的消息传递。</p>
+<h5 id="Android-Framework-三大核心功能"><a href="#Android-Framework-三大核心功能" class="headerlink" title="Android Framework 三大核心功能"></a>Android Framework 三大核心功能</h5><ul>
+<li>View.java：View 的工作原理，实现包括绘制view、处理触摸、按键事件等；</li>
+<li>ActivityManagerService.java：管理所有的应用程序的 Activity 等；</li>
+<li>WindowManagerService.java：为所有应用程序分配窗口，并管理这些窗口。</li>
+</ul>
+<p><a href="https://github.com/aosp-mirror" target="_blank" rel="noopener">https://github.com/aosp-mirror</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/10/22/Android-Framework初识/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-android体系架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -531,6 +631,10 @@ MathJax.Hub.Queue(function() {
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+              </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">android</a>
