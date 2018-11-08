@@ -20,7 +20,7 @@
 <meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/WX2.png">
 <meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/wx3.png">
 <meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/wx4.png">
-<meta property="og:updated_time" content="2018-11-08T07:52:35.594Z">
+<meta property="og:updated_time" content="2018-11-08T08:52:56.429Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信小程序 - 从零开始">
 <meta name="twitter:description" content="微信小程序中就四种类型的文件 .json 后缀的 JSON 配置文件 .wxml 后缀的 WXML 模板文件 .wxss 后缀的 WXSS 样式文件 .js 后缀的 JS 脚本逻辑文件  在根目录下用app来命名的这四中类型的文件，就是程序入口文件。 app.json必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，你只需创建这个文件，里面写个大括号就行以后我们">
@@ -188,9 +188,9 @@
 </ol>
 <p>在根目录下用app来命名的这四中类型的文件，就是程序入口文件。</p>
 <h5 id="app-json"><a href="#app-json" class="headerlink" title="app.json"></a>app.json</h5><p>必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，<br>你只需创建这个文件，里面写个大括号就行<br>以后我们会在这里对整个小程序的全局配置。记录了页面组成，配置小程序的窗口 背景色，配置导航条样式，配置默认标题。</p>
-<h5 id="app-json-1"><a href="#app-json-1" class="headerlink" title="app.json"></a>app.json</h5><p>必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，<br>你只需创建这个文件，里面写个大括号就行<br>以后我们会在这里对整个小程序的全局配置。记录了页面组成，配置小程序的窗口 背景色，配置导航条样式，配置默认标题。</p>
+<h5 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h5><p>必须要有这个文件，没有也是会报错！但是这个文件创建一下就行 什么都不需要写<br>以后我们可以在这个文件中监听并处理小程序的生命周期函数、声明全局变量。</p>
 <h5 id="app-wxss"><a href="#app-wxss" class="headerlink" title="app.wxss"></a>app.wxss</h5><p>这个文件不是必须的。因为它只是个全局CSS样式文件</p>
-<h4 id="app-wxml"><a href="#app-wxml" class="headerlink" title="app.wxml"></a>app.wxml</h4><p>这个也不是必须的，而且这个并不是指主界面哦~因为小程序的主页面是靠在JSON文件中配置来决定的</p>
+<h5 id="app-wxml"><a href="#app-wxml" class="headerlink" title="app.wxml"></a>app.wxml</h5><p>这个也不是必须的，而且这个并不是指主界面哦~因为小程序的主页面是靠在JSON文件中配置来决定的</p>
 <p><strong>有了这两个文件你运行程序，IDE就不会报错了，也意味着这是最简单的微信小程序</strong></p>
 <p><img src="/2018/11/08/微信小程序-从零开始/WX1.png" alt="WX1"></p>
 <h4 id="MakeHammer-做个锤子"><a href="#MakeHammer-做个锤子" class="headerlink" title="MakeHammer 做个锤子"></a>MakeHammer 做个锤子</h4><h5 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h5><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）</p>
