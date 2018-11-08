@@ -156,6 +156,95 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-记一次偷看公司摄像头" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/07/记一次偷看公司摄像头/">记一次偷看公司摄像头</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/07/记一次偷看公司摄像头/" class="archive-article-date">
+  	<time datetime="2018-11-07T10:19:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h5 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h5><p>前几天听说老总在通过手机查看了公司的各个摄像头，结果是周末没人加班。好吧，其实这个不是重点，重点是看着头顶360度无死角的摄像头，我也想看一下，蠢蠢欲动。。。</p>
+<h5 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h5><ul>
+<li>jadx</li>
+<li>Charles</li>
+</ul>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>一开始想着，既然公司专用 App 上是有这个功能的，应该是根据权限区分的，先找下入口，然后再顺其自然吧。。。</p>
+<h5 id="过程（无图无数据）"><a href="#过程（无图无数据）" class="headerlink" title="过程（无图无数据）"></a>过程（无图无数据）</h5><p>担心被查，图跟数据就不贴了。记录一下大概过程吧。</p>
+<p>在查看入口的时候，抓包看到每个功能的入口是通过后台数据返回的，有用的数据只有一个 appid，而 appid 的值从 1 到 10，但是缺少 8 跟 9，当机立断，利用 Charles 抓包替换返回的数据，手动添加了 appid 8 跟 9。你还别说，真的好使。入口就显示出来了。</p>
+<p>入口有了，点击就好了，看代码里面都做了处理了。进去之后，应该是办公区的列表了。然而，没有数据。。。好吧，感觉心凉了，猜想这里应该是拿用户的 token 在服务端做的判断吧。这样的话，没办法了。想着看眼代码，干别的去吧，这一看，发现了什么。</p>
+<p>原来数据是拿 token 去请求的，但是发现这个 token 并不是登录时返回的 token，而是后来操作又去请求的一个，而请求用的参数居然只有个 appkey 跟 username。那么变数就在这个 username 上了。根据登录时返回的 username 判断，试了下老总的名字。嗯，没错，好使。</p>
+<p>接下来，就用老总名字返回的 token 一步步的去获取数据，替换数据。其中用到的就是 Charles 的请求修改功能跟 MapLocal 功能，这个就不详细说了。最后，终于看到了摄像头的画面。哎，整日活在这些摄像头下面，不自在。</p>
+<h5 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h5><ul>
+<li>获取摄像头 token 的参数太好猜了</li>
+<li>既然这样能够走通，是不是能用 xposed 去实现这个功能，就不用不断去替换数据了。</li>
+<li>会不会被查，算了，上面那条不作数了。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">偷鸡摸狗</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/07/记一次偷看公司摄像头/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Charles实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -880,11 +969,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">android</a>
+                <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
+                <a href="javascript:void(0)" class="js-tag color3">android</a>
               </li>
              
               <li class="article-tag-list-item">
