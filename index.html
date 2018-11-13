@@ -156,6 +156,105 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-数据结构与算法之美-复杂度分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/13/数据结构与算法之美-复杂度分析/">数据结构与算法之美-复杂度分析</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/13/数据结构与算法之美-复杂度分析/" class="archive-article-date">
+  	<time datetime="2018-11-13T09:08:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="一、什么是复杂度分析？"><a href="#一、什么是复杂度分析？" class="headerlink" title="一、什么是复杂度分析？"></a>一、什么是复杂度分析？</h4><p>1.数据结构和算法解决的是“如何让计算机更快时间、更省空间的解决问题”。</p>
+<p>2.因此需从执行时间和占用空间两个维度来评估数据结构和算法的性能。</p>
+<p>3.分别用时间复杂度和空间复杂度两个概念来描述性能问题，二者统称为复杂度。</p>
+<p>4.复杂度描述的是算法执行时间（或占用空间）与数据规模的增长关系。</p>
+<h4 id="二、为什么要进行复杂度分析？"><a href="#二、为什么要进行复杂度分析？" class="headerlink" title="二、为什么要进行复杂度分析？"></a>二、为什么要进行复杂度分析？</h4><p>1.和性能测试相比，复杂度分析有不依赖执行环境、成本低、效率高、易操作、指导性强的特点。</p>
+<p>2.掌握复杂度分析，将能编写出性能更优的代码，有利于降低系统开发和维护成本。</p>
+<h4 id="三、如何进行复杂度分析？"><a href="#三、如何进行复杂度分析？" class="headerlink" title="三、如何进行复杂度分析？"></a>三、如何进行复杂度分析？</h4><h5 id="1-大O表示法"><a href="#1-大O表示法" class="headerlink" title="1.大O表示法"></a>1.大O表示法</h5><ul>
+<li>来源<br>算法的执行时间与每行代码的执行次数成正比，用T(n) = O(f(n))表示，其中T(n)表示算法执行总时间，f(n)表示每行代码执行总次数，而n往往表示数据的规模。</li>
+<li>特点<br>以时间复杂度为例，由于时间复杂度描述的是算法执行时间与数据规模的增长变化趋势，所以<strong>常量阶、低阶以及系数</strong>实际上对这种增长趋势不产决定性影响，所以在做时间复杂度分析时忽略这些项。</li>
+</ul>
+<h5 id="2-复杂度分析法则"><a href="#2-复杂度分析法则" class="headerlink" title="2.复杂度分析法则"></a>2.复杂度分析法则</h5><ul>
+<li>单段代码看高频：比如循环。</li>
+<li>多段代码取最大：比如一段代码中有单循环和多重循环，那么取多重循环的复杂度</li>
+<li>嵌套代码求乘积：比如递归、多重循环等</li>
+<li>多个规模求加法：比如方法有两个参数控制两个循环的次数，那么这时就取二者复杂度相加。</li>
+</ul>
+<h4 id="四、常用的复杂度级别？"><a href="#四、常用的复杂度级别？" class="headerlink" title="四、常用的复杂度级别？"></a>四、常用的复杂度级别？</h4><ul>
+<li>多项式阶：随着数据规模的增长，算法的执行时间和空间占用，按照多项式的比例增长。包括，<br>O(1)（常数阶）、O(logn)（对数阶）、O(n)（线性阶）、O(nlogn)（线性对数阶）、O(n^2)（平方阶）、O(n^3)（立方阶）</li>
+<li>非多项式阶：随着数据规模的增长，算法的执行时间和空间占用暴增，这类算法性能极差。包括，<br>O(2^n)（指数阶）、O(n!)（阶乘阶）</li>
+</ul>
+<h4 id="五、如何掌握好复杂度分析方法？"><a href="#五、如何掌握好复杂度分析方法？" class="headerlink" title="五、如何掌握好复杂度分析方法？"></a>五、如何掌握好复杂度分析方法？</h4><p>复杂度分析关键在于多练，所谓孰能生巧。</p>
+<h4 id="六、浅析最好、最坏、平均、均摊时间复杂度"><a href="#六、浅析最好、最坏、平均、均摊时间复杂度" class="headerlink" title="六、浅析最好、最坏、平均、均摊时间复杂度"></a>六、浅析最好、最坏、平均、均摊时间复杂度</h4><h5 id="最好时间复杂度"><a href="#最好时间复杂度" class="headerlink" title="最好时间复杂度"></a>最好时间复杂度</h5><p>代码在最理想情况下执行的时间复杂度。</p>
+<h5 id="最坏时间复杂度"><a href="#最坏时间复杂度" class="headerlink" title="最坏时间复杂度"></a>最坏时间复杂度</h5><p>代码在最坏的情况下执行的时间复杂度。</p>
+<h5 id="平均时间复杂度"><a href="#平均时间复杂度" class="headerlink" title="平均时间复杂度"></a>平均时间复杂度</h5><p>全称是加权平均时间复杂度或者加权期望时间复杂度；</p>
+<p>代码所有情况及相应发生概率，计算加权平均值。</p>
+<h5 id="均摊时间复杂度"><a href="#均摊时间复杂度" class="headerlink" title="均摊时间复杂度"></a>均摊时间复杂度</h5><p>均摊时间复杂度就是一种特殊的平均时间复杂度。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">数据结构与算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/13/数据结构与算法之美-复杂度分析/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-数据结构与算法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -954,77 +1053,10 @@
 
 
   
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/27/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2018/09/27/hello-world/" class="archive-article-date">
-  	<time datetime="2018-09-27T03:59:26.184Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-27</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/09/27/hello-world/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
   
 
 
@@ -1151,11 +1183,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
