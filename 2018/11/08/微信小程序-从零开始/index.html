@@ -17,10 +17,10 @@
 <meta property="og:description" content="微信小程序中就四种类型的文件 .json 后缀的 JSON 配置文件 .wxml 后缀的 WXML 模板文件 .wxss 后缀的 WXSS 样式文件 .js 后缀的 JS 脚本逻辑文件  在根目录下用app来命名的这四中类型的文件，就是程序入口文件。 app.json必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，你只需创建这个文件，里面写个大括号就行以后我们">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/WX1.png">
-<meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/WX2.png">
+<meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/wx2.png">
 <meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/wx3.png">
 <meta property="og:image" content="http://www.programan.top/2018/11/08/微信小程序-从零开始/wx4.png">
-<meta property="og:updated_time" content="2018-11-08T08:52:56.429Z">
+<meta property="og:updated_time" content="2018-11-13T10:59:26.857Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信小程序 - 从零开始">
 <meta name="twitter:description" content="微信小程序中就四种类型的文件 .json 后缀的 JSON 配置文件 .wxml 后缀的 WXML 模板文件 .wxss 后缀的 WXSS 样式文件 .js 后缀的 JS 脚本逻辑文件  在根目录下用app来命名的这四中类型的文件，就是程序入口文件。 app.json必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，你只需创建这个文件，里面写个大括号就行以后我们">
@@ -196,7 +196,7 @@
 <h4 id="MakeHammer-做个锤子"><a href="#MakeHammer-做个锤子" class="headerlink" title="MakeHammer 做个锤子"></a>MakeHammer 做个锤子</h4><h5 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h5><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">App(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLaunch: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App launch"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序启动，或从后台进入前台显示，会触发 onShow</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App show"</span>);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序从前台进入后台，会触发 onHide</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onError: <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <p>具体API解释如下</p>
-<p><img src="/2018/11/08/微信小程序-从零开始/WX2.png" alt="WX2"></p>
+<p><img src="/2018/11/08/微信小程序-从零开始/wx2.png" alt="WX2"></p>
 <h5 id="美化ActionBar"><a href="#美化ActionBar" class="headerlink" title="美化ActionBar"></a>美化ActionBar</h5><p>json文件负责配置ActionBar颜色，我们只需要在里面添加如下代码即可</p>
 <p><img src="/2018/11/08/微信小程序-从零开始/wx3.png" alt="wx3"></p>
 <p><img src="/2018/11/08/微信小程序-从零开始/wx4.png" alt="wx4"></p>
@@ -464,10 +464,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">android</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -156,6 +156,79 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-数据结构与算法之美-数组" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/13/数据结构与算法之美-数组/">数据结构与算法之美-数组</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/13/数据结构与算法之美-数组/" class="archive-article-date">
+  	<time datetime="2018-11-13T10:55:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">数据结构与算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/13/数据结构与算法之美-数组/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-数据结构与算法之美-复杂度分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -365,7 +438,7 @@
 <h4 id="MakeHammer-做个锤子"><a href="#MakeHammer-做个锤子" class="headerlink" title="MakeHammer 做个锤子"></a>MakeHammer 做个锤子</h4><h5 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h5><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">App(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLaunch: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App launch"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序启动，或从后台进入前台显示，会触发 onShow</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App show"</span>);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序从前台进入后台，会触发 onHide</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onError: <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 <p>具体API解释如下</p>
-<p><img src="/2018/11/08/微信小程序-从零开始/WX2.png" alt="WX2"></p>
+<p><img src="/2018/11/08/微信小程序-从零开始/wx2.png" alt="WX2"></p>
 <h5 id="美化ActionBar"><a href="#美化ActionBar" class="headerlink" title="美化ActionBar"></a>美化ActionBar</h5><p>json文件负责配置ActionBar颜色，我们只需要在里面添加如下代码即可</p>
 <p><img src="/2018/11/08/微信小程序-从零开始/wx3.png" alt="wx3"></p>
 <p><img src="/2018/11/08/微信小程序-从零开始/wx4.png" alt="wx4"></p>
@@ -922,7 +995,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
       		
 		</ul>
@@ -933,97 +1006,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2018/10/19/android体系架构/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Markdown语法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/09/29/Markdown语法/">Markdown语法</a>
-    </h1>
-  
-
-        
-        <a href="/2018/09/29/Markdown语法/" class="archive-article-date">
-  	<time datetime="2018-09-29T09:58:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-Markdown简介"><a href="#1-Markdown简介" class="headerlink" title="1. Markdown简介"></a>1. Markdown简介</h2><p>但是在我们正式写下我们文章的第一个文字前，我们需要了解一下什么是Markdown：</p>
-<blockquote>
-<p>Markdown是一种可以使用普通文本编辑器编写的标记语言，通过简单的标记语法，它可以使普通文本内容具有一定的格式</p>
-</blockquote>
-<p>基于markdown的简洁性，它已经成为了目前世界上最流行的用于书写博客的语言</p>
-<h2 id="2-Markdown语法"><a href="#2-Markdown语法" class="headerlink" title="2. Markdown语法"></a>2. Markdown语法</h2><h3 id="（1）标题"><a href="#（1）标题" class="headerlink" title="（1）标题"></a>（1）标题</h3><h4 id="Markdown语法："><a href="#Markdown语法：" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 一级标题</span><br><span class="line"></span><br><span class="line">## 二级标题</span><br><span class="line"></span><br><span class="line">### 三级标题</span><br><span class="line"></span><br><span class="line">#### 四级标题</span><br><span class="line"></span><br><span class="line">##### 五级标题</span><br><span class="line"></span><br><span class="line">###### 六级标题123456</span><br></pre></td></tr></table></figure>
-<h4 id="Typora快捷键："><a href="#Typora快捷键：" class="headerlink" title="Typora快捷键："></a>Typora快捷键：</h4><p>Ctrl+1：一级标题</p>
-<p>Ctrl+2：二级标题</p>
-<p>Ctrl+3：三级标题</p>
-<p>Ctrl+4：四级标题</p>
-<p>Ctrl+5：五级标题</p>
-<p>Ctrl+6 ：六级标题</p>
-<p>Ctrl+0：段落</p>
-<h3 id="（2）粗体、斜体、删除线和下划线"><a href="#（2）粗体、斜体、删除线和下划线" class="headerlink" title="（2）粗体、斜体、删除线和下划线"></a>（2）粗体、斜体、删除线和下划线</h3><h4 id="Markdown语法：-1"><a href="#Markdown语法：-1" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><p>#### </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">*斜体*</span><br><span class="line"></span><br><span class="line">**粗体**</span><br><span class="line"></span><br><span class="line">***加粗斜体***</span><br><span class="line"></span><br><span class="line">~~删除线~~</span><br></pre></td></tr></table></figure>
-<h4 id="Typora快捷键：-1"><a href="#Typora快捷键：-1" class="headerlink" title="Typora快捷键："></a>Typora快捷键：</h4><p>Ctrl+I：斜体</p>
-<p>Ctrl+B：粗体</p>
-<p>Ctrl+U：下划线</p>
-<p>Alt+Shift+5：删除线</p>
-<h4 id="（3）超链接"><a href="#（3）超链接" class="headerlink" title="（3）超链接"></a>（3）超链接</h4><h4 id="Markdown语法：-2"><a href="#Markdown语法：-2" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[链接文字](链接地址 &quot;链接描述&quot;)</span><br><span class="line">例如：[我的博客](https://forwhfang.github.io/ &quot;我的博客&quot;)</span><br><span class="line"></span><br><span class="line">&lt;链接地址&gt;</span><br><span class="line">例如：&lt;https://forwhfang.github.io&gt;</span><br></pre></td></tr></table></figure>
-<h4 id="Typora快捷键：Ctrl-K"><a href="#Typora快捷键：Ctrl-K" class="headerlink" title="Typora快捷键：Ctrl+K"></a>Typora快捷键：Ctrl+K</h4><h4 id="（4）引用"><a href="#（4）引用" class="headerlink" title="（4）引用"></a>（4）引用</h4><h4 id="Markdown语法：-3"><a href="#Markdown语法：-3" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; 文字引用</span><br></pre></td></tr></table></figure>
-<h4 id="Typora快捷键：Ctrl-Shift-Q"><a href="#Typora快捷键：Ctrl-Shift-Q" class="headerlink" title="Typora快捷键：Ctrl+Shift+Q"></a>Typora快捷键：Ctrl+Shift+Q</h4><h3 id="（5）代码"><a href="#（5）代码" class="headerlink" title="（5）代码"></a>（5）代码</h3><h4 id="Markdown语法：（为了方便起见，这里将使用字符a代替反引号-）"><a href="#Markdown语法：（为了方便起见，这里将使用字符a代替反引号-）" class="headerlink" title="Markdown语法：（为了方便起见，这里将使用字符a代替反引号`）"></a>Markdown语法：（为了方便起见，这里将使用字符a代替反引号`）</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a单行代码a</span><br><span class="line"></span><br><span class="line">aaa</span><br><span class="line">多行代码</span><br><span class="line">多行代码</span><br><span class="line">aaa</span><br></pre></td></tr></table></figure>
-<h4 id="Typora快捷键：Ctrl-Shift"><a href="#Typora快捷键：Ctrl-Shift" class="headerlink" title="Typora快捷键：Ctrl+Shift+`"></a>Typora快捷键：Ctrl+Shift+`</h4><h3 id="（6）分割线"><a href="#（6）分割线" class="headerlink" title="（6）分割线"></a>（6）分割线</h3><h4 id="Markdown语法：-4"><a href="#Markdown语法：-4" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line"></span><br><span class="line">***</span><br></pre></td></tr></table></figure>
-<p>以上两种方法均可以表示为分割线</p>
-<h3 id="（7）列表"><a href="#（7）列表" class="headerlink" title="（7）列表"></a>（7）列表</h3><h4 id="Markdown语法：-5"><a href="#Markdown语法：-5" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">* 列表项</span><br><span class="line"></span><br><span class="line">- 列表项</span><br><span class="line"></span><br><span class="line">+ 列表项</span><br></pre></td></tr></table></figure>
-<p>以上三种方法均可以表示为列表</p>
-<h3 id="（8）表格"><a href="#（8）表格" class="headerlink" title="（8）表格"></a>（8）表格</h3><h4 id="Markdown语法：-6"><a href="#Markdown语法：-6" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">表头1|表头2</span><br><span class="line">-|-|-</span><br><span class="line">内容11|内容12</span><br><span class="line">内容21|内容22</span><br></pre></td></tr></table></figure>
-<h4 id="Typora快捷键：Ctrl-T"><a href="#Typora快捷键：Ctrl-T" class="headerlink" title="Typora快捷键：Ctrl+T"></a>Typora快捷键：Ctrl+T</h4><h3 id="（9）图片"><a href="#（9）图片" class="headerlink" title="（9）图片"></a>（9）图片</h3><h4 id="Markdown语法：-7"><a href="#Markdown语法：-7" class="headerlink" title="Markdown语法："></a>Markdown语法：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">![图片文字] (图片地址 &quot;图片描述&quot;)</span><br><span class="line">例如：![示例图片] (https://www.example.com/example.PNG &quot;示例图片&quot;)</span><br></pre></td></tr></table></figure>
-<hr>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/09/29/Markdown语法/">展开全文 >></a>
         </p>
       
 
@@ -1176,10 +1158,6 @@ MathJax.Hub.Queue(function() {
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">android</a>
               </li>
              
               <li class="article-tag-list-item">
