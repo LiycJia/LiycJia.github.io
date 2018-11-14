@@ -516,106 +516,6 @@
 
 
   
-    <article id="post-微信小程序-从零开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/08/微信小程序-从零开始/">微信小程序 - 从零开始</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/08/微信小程序-从零开始/" class="archive-article-date">
-  	<time datetime="2018-11-08T03:30:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="微信小程序中就四种类型的文件"><a href="#微信小程序中就四种类型的文件" class="headerlink" title="微信小程序中就四种类型的文件"></a>微信小程序中就四种类型的文件</h4><ol>
-<li><code>.json</code> 后缀的 <code>JSON</code> 配置文件</li>
-<li><code>.wxml</code> 后缀的 <code>WXML</code> 模板文件</li>
-<li><code>.wxss</code> 后缀的 <code>WXSS</code> 样式文件</li>
-<li><code>.js</code> 后缀的 <code>JS</code> 脚本逻辑文件</li>
-</ol>
-<p>在根目录下用app来命名的这四中类型的文件，就是程序入口文件。</p>
-<h5 id="app-json"><a href="#app-json" class="headerlink" title="app.json"></a>app.json</h5><p>必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，<br>你只需创建这个文件，里面写个大括号就行<br>以后我们会在这里对整个小程序的全局配置。记录了页面组成，配置小程序的窗口 背景色，配置导航条样式，配置默认标题。</p>
-<h5 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h5><p>必须要有这个文件，没有也是会报错！但是这个文件创建一下就行 什么都不需要写<br>以后我们可以在这个文件中监听并处理小程序的生命周期函数、声明全局变量。</p>
-<h5 id="app-wxss"><a href="#app-wxss" class="headerlink" title="app.wxss"></a>app.wxss</h5><p>这个文件不是必须的。因为它只是个全局CSS样式文件</p>
-<h5 id="app-wxml"><a href="#app-wxml" class="headerlink" title="app.wxml"></a>app.wxml</h5><p>这个也不是必须的，而且这个并不是指主界面哦~因为小程序的主页面是靠在JSON文件中配置来决定的</p>
-<p><strong>有了这两个文件你运行程序，IDE就不会报错了，也意味着这是最简单的微信小程序</strong></p>
-<p><img src="/2018/11/08/微信小程序-从零开始/WX1.png" alt="WX1"></p>
-<h4 id="MakeHammer-做个锤子"><a href="#MakeHammer-做个锤子" class="headerlink" title="MakeHammer 做个锤子"></a>MakeHammer 做个锤子</h4><h5 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h5><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">App(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLaunch: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App launch"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序启动，或从后台进入前台显示，会触发 onShow</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App show"</span>);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序从前台进入后台，会触发 onHide</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onError: <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>具体API解释如下</p>
-<p><img src="/2018/11/08/微信小程序-从零开始/wx2.png" alt="WX2"></p>
-<h5 id="美化ActionBar"><a href="#美化ActionBar" class="headerlink" title="美化ActionBar"></a>美化ActionBar</h5><p>json文件负责配置ActionBar颜色，我们只需要在里面添加如下代码即可</p>
-<p><img src="/2018/11/08/微信小程序-从零开始/wx3.png" alt="wx3"></p>
-<p><img src="/2018/11/08/微信小程序-从零开始/wx4.png" alt="wx4"></p>
-<h5 id="配置首页"><a href="#配置首页" class="headerlink" title="配置首页"></a>配置首页</h5><p>Json文件负责配置页面路径<br>所以我们在里面加入如下代码，开发工具会自动为我们简历文件夹及页面需要的文件</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"pages": [</span><br><span class="line">    <span class="string">"pages/index/index"</span></span><br><span class="line">  ]</span><br></pre></td></tr></table></figure>
-<h5 id="美化页面"><a href="#美化页面" class="headerlink" title="美化页面"></a>美化页面</h5><p>美化页面我们用到了 wxml 和 wxss文件<br>在工具为我们创建index.wxml文件里面写入以下代码</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">view</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">text</span> <span class="attr">class</span>=<span class="string">"window"</span>&gt;</span>Hello<span class="tag">&lt;/<span class="name">text</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>然后在index.wxss文件里面写入以下代码</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.window</span>&#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#4995fa</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在 index.js中有生成的代码</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Page(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面的初始数据</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  data: &#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面加载</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLoad: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面初次渲染完成</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onReady: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面显示</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面隐藏</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面卸载</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onUnload: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面相关事件处理函数--监听用户下拉动作</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面上拉触底事件的处理函数</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 用户点击右上角分享</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShareAppMessage: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">小程序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/08/微信小程序-从零开始/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
     <article id="post-记一次偷看公司摄像头" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -780,54 +680,54 @@
 
 
   
-    <article id="post-Android-Framework初识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-微信小程序-从零开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/22/Android-Framework初识/">Android Framework初识</a>
+      <a class="article-title" href="/2018/10/08/微信小程序-从零开始/">微信小程序 - 从零开始</a>
     </h1>
   
 
         
-        <a href="/2018/10/22/Android-Framework初识/" class="archive-article-date">
-  	<time datetime="2018-10-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-22</time>
+        <a href="/2018/10/08/微信小程序-从零开始/" class="archive-article-date">
+  	<time datetime="2018-10-08T03:30:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-08</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。</p>
-<p>Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。</p>
-<h5 id="服务端（部分）"><a href="#服务端（部分）" class="headerlink" title="服务端（部分）"></a>服务端（部分）</h5><ul>
-<li>ActivityManagerService（AMS）：管理Activity；</li>
-<li>WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口；</li>
-<li>KeyQ 类:：WMS的内部类，一旦创建就会启动一个新的线程，线程不断接受和读取用户的 UI 操作消息，并把消息存进消息队列 QueueEvent；</li>
-<li>InputDispatcherThread：一旦创建启动一个新的线程，不断地从消息队列 QueueEvent 中读取消息并过滤，并将消息发送到当前活动的客户端中。</li>
-</ul>
-<h5 id="客户端（部分）"><a href="#客户端（部分）" class="headerlink" title="客户端（部分）"></a>客户端（部分）</h5><ul>
-<li>ActivityThread：主线程类，即UI线程类，程序入口为 ActivityThread 的 main 函数入口。它根据AMS的要求调度和执行 activites 和其他操作；</li>
-<li>ViewRoot：负责客户端跟 WMS 交互，。内部有 W 类，W类继承于 Binder。当 WMS 与客户端进行通信时调用该类。内部有 ViewRootHandler 类继承于 Handler，所以能在 W 类接收到 Wms 的消息后把消息传递到 UI 线程中。同时，界面绘制的起点也在其中 - performTraversals；</li>
-<li>W 类：ViewRoot 助手，ViewRoot 内部类，主要帮助 ViewRoot 实现把 Wms 的 IPC 调用转换成本地的一个异步调用；</li>
-<li>Activity 类</li>
-<li>PhoneWindow：继承于 Window 类，里面会放一个 DecorView，提供了一组统一窗口操作的 API；</li>
-<li>Window：提供一些通用的窗口操作 API；</li>
-<li>DecorView：这是我们所能看到的 View 的所有，它集成自 FrameLayout，我们写的布局 view 就是放在它里面的；</li>
-<li>ApplicationThread：继承于 Binder，当 AMS 想调用客户端方法时调用；</li>
-<li>Instrumentionn：负责直接与 Ams 对话，所有想调用 Ams 的操作都集中在这里，负责单向调用 Ams；</li>
-<li>WindowManager：客户端与 WindowManagerService 通信使用。</li>
-</ul>
-<h5 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h5><p>Linux 驱动与 Framework 相关的主要有两部分：SurfaceFlingger，Binder。每一个窗口都对应一个画 Surface，SF主要是把各个 Surface 显示到同一屏幕上。Binder 是提供跨进程的消息传递。</p>
-<h5 id="Android-Framework-三大核心功能"><a href="#Android-Framework-三大核心功能" class="headerlink" title="Android Framework 三大核心功能"></a>Android Framework 三大核心功能</h5><ul>
-<li>View.java：View 的工作原理，实现包括绘制view、处理触摸、按键事件等；</li>
-<li>ActivityManagerService.java：管理所有的应用程序的 Activity 等；</li>
-<li>WindowManagerService.java：为所有应用程序分配窗口，并管理这些窗口。</li>
-</ul>
-<p><a href="https://github.com/aosp-mirror" target="_blank" rel="noopener">https://github.com/aosp-mirror</a></p>
-
+        <h4 id="微信小程序中就四种类型的文件"><a href="#微信小程序中就四种类型的文件" class="headerlink" title="微信小程序中就四种类型的文件"></a>微信小程序中就四种类型的文件</h4><ol>
+<li><code>.json</code> 后缀的 <code>JSON</code> 配置文件</li>
+<li><code>.wxml</code> 后缀的 <code>WXML</code> 模板文件</li>
+<li><code>.wxss</code> 后缀的 <code>WXSS</code> 样式文件</li>
+<li><code>.js</code> 后缀的 <code>JS</code> 脚本逻辑文件</li>
+</ol>
+<p>在根目录下用app来命名的这四中类型的文件，就是程序入口文件。</p>
+<h5 id="app-json"><a href="#app-json" class="headerlink" title="app.json"></a>app.json</h5><p>必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，<br>你只需创建这个文件，里面写个大括号就行<br>以后我们会在这里对整个小程序的全局配置。记录了页面组成，配置小程序的窗口 背景色，配置导航条样式，配置默认标题。</p>
+<h5 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h5><p>必须要有这个文件，没有也是会报错！但是这个文件创建一下就行 什么都不需要写<br>以后我们可以在这个文件中监听并处理小程序的生命周期函数、声明全局变量。</p>
+<h5 id="app-wxss"><a href="#app-wxss" class="headerlink" title="app.wxss"></a>app.wxss</h5><p>这个文件不是必须的。因为它只是个全局CSS样式文件</p>
+<h5 id="app-wxml"><a href="#app-wxml" class="headerlink" title="app.wxml"></a>app.wxml</h5><p>这个也不是必须的，而且这个并不是指主界面哦~因为小程序的主页面是靠在JSON文件中配置来决定的</p>
+<p><strong>有了这两个文件你运行程序，IDE就不会报错了，也意味着这是最简单的微信小程序</strong></p>
+<p><img src="/2018/10/08/微信小程序-从零开始/WX1.png" alt="WX1"></p>
+<h4 id="MakeHammer-做个锤子"><a href="#MakeHammer-做个锤子" class="headerlink" title="MakeHammer 做个锤子"></a>MakeHammer 做个锤子</h4><h5 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h5><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">App(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLaunch: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App launch"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序启动，或从后台进入前台显示，会触发 onShow</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App show"</span>);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序从前台进入后台，会触发 onHide</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onError: <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>具体API解释如下</p>
+<p><img src="/2018/10/08/微信小程序-从零开始/wx2.png" alt="WX2"></p>
+<h5 id="美化ActionBar"><a href="#美化ActionBar" class="headerlink" title="美化ActionBar"></a>美化ActionBar</h5><p>json文件负责配置ActionBar颜色，我们只需要在里面添加如下代码即可</p>
+<p><img src="/2018/10/08/微信小程序-从零开始/wx3.png" alt="wx3"></p>
+<p><img src="/2018/10/08/微信小程序-从零开始/wx4.png" alt="wx4"></p>
+<h5 id="配置首页"><a href="#配置首页" class="headerlink" title="配置首页"></a>配置首页</h5><p>Json文件负责配置页面路径<br>所以我们在里面加入如下代码，开发工具会自动为我们简历文件夹及页面需要的文件</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"pages": [</span><br><span class="line">    <span class="string">"pages/index/index"</span></span><br><span class="line">  ]</span><br></pre></td></tr></table></figure>
+<h5 id="美化页面"><a href="#美化页面" class="headerlink" title="美化页面"></a>美化页面</h5><p>美化页面我们用到了 wxml 和 wxss文件<br>在工具为我们创建index.wxml文件里面写入以下代码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">view</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">text</span> <span class="attr">class</span>=<span class="string">"window"</span>&gt;</span>Hello<span class="tag">&lt;/<span class="name">text</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后在index.wxss文件里面写入以下代码</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.window</span>&#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#4995fa</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 index.js中有生成的代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Page(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面的初始数据</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  data: &#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面加载</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLoad: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面初次渲染完成</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onReady: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面显示</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面隐藏</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面卸载</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onUnload: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面相关事件处理函数--监听用户下拉动作</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面上拉触底事件的处理函数</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 用户点击右上角分享</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShareAppMessage: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
       
 
       
@@ -840,7 +740,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">小程序</a>
         		</li>
       		
 		</ul>
@@ -850,108 +750,7 @@
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/22/Android-Framework初识/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-android体系架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/19/android体系架构/">android体系架构</a>
-    </h1>
-  
-
-        
-        <a href="/2018/10/19/android体系架构/" class="archive-article-date">
-  	<time datetime="2018-10-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="/2018/10/19/android体系架构/3245308-768c2e38180411b8.png" alt="android-system-architecture1"></p>
-<blockquote>
-<p>Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。</p>
-</blockquote>
-<p>可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux 内核 + driver ）。</p>
-<p>从高到低了解下 Android 的系统架构：</p>
-<h5 id="Android-应用层"><a href="#Android-应用层" class="headerlink" title="Android 应用层"></a>Android 应用层</h5><p>Android的应用程序主要是用户界面方面的，现在主要通过 Java 跟 kotlin 来编写。</p>
-<h5 id="Android-应用框架层"><a href="#Android-应用框架层" class="headerlink" title="Android 应用框架层"></a>Android 应用框架层</h5><p>该层主要为 Android 应用层提供 APIs，是一个应用程序的框架，包含了应用程序中需要的各种控件。</p>
-<h5 id="Android-系统运行层"><a href="#Android-系统运行层" class="headerlink" title="Android 系统运行层"></a>Android 系统运行层</h5><p>本层分成两个部分，一部分是各种程序库，另一个部分是运行时环境。</p>
-<h6 id="程序库"><a href="#程序库" class="headerlink" title="程序库"></a>程序库</h6><ul>
-<li>C 库：C 语言的标准库，系统中最为底层的库，通过 Linux 的系统调用来实现；</li>
-<li>多媒体框架（MediaFramework）：Android 多媒体的核心部分，基于 PacketVideo 的 OpenCore，从功能上一共分为两部分，一部分是音频、视频的回放（ PlayBack ），一部分是音频、视频的记录（ Recorder ）；</li>
-<li>SGL：底层的2D图形引擎；</li>
-<li>SSL：Secure Socket Layer，未育 TCP/IP 协议与各种应用层协议之间，为数据通讯提供安全支持；</li>
-<li>OpenGL ES 1.0：3D支持；</li>
-<li>界面管理工具（ Surface Management）：提供了管理显示子系统等功能；</li>
-<li>SQLite：嵌入式数据库；</li>
-<li>WebKit：web 浏览器引擎；</li>
-<li>FreeType：位图和矢量显示</li>
-</ul>
-<h6 id="运行环境"><a href="#运行环境" class="headerlink" title="运行环境"></a>运行环境</h6><p>Android 运行时环境主要是虚拟机技术 Dalvik。 Dalvik 虚拟机与一般的 Java 虚拟机（ JVM ）不同，它执行的不是 Java标准的字节码（ bytecode ），而是 Dalvik 可执行格式（ .dex ）。执行过程中，每一个应用程序即一个进程。二者最大的区别是 JVM 是基于栈的虚拟机（ Stack-base ），而 Dalvik 是基于寄存器的虚拟机（ Register-base ），后者可根据硬件实现最大优化。</p>
-<h5 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h5><p>Android 的核心系统服务依赖于 Linux 2.6 内核 ，如安全性，内存管理，进程管理， 网络协议栈和驱动模型。 Linux 内核也同时作为硬件和软件栈之间的抽象层。其外还对其做了部分修改，主要涉及两部分修改：</p>
-<ul>
-<li>Binder (IPC)：提供有效的进程间通信，虽然linux内核本身已经提供了这些功能，但Android系统很多服务都需要用到该功能，为了某种原因其实现了自己的一套。</li>
-</ul>
-<ul>
-<li>电源管理：省电。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/19/android体系架构/">展开全文 >></a>
+          <a class="article-more-a" href="/2018/10/08/微信小程序-从零开始/">展开全文 >></a>
         </p>
       
 
@@ -1033,6 +832,207 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2018/10/07/Charles实践/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Android-Framework初识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/22/Android-Framework初识/">Android Framework初识</a>
+    </h1>
+  
+
+        
+        <a href="/2018/06/22/Android-Framework初识/" class="archive-article-date">
+  	<time datetime="2018-06-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。</p>
+<p>Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。</p>
+<h5 id="服务端（部分）"><a href="#服务端（部分）" class="headerlink" title="服务端（部分）"></a>服务端（部分）</h5><ul>
+<li>ActivityManagerService（AMS）：管理Activity；</li>
+<li>WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口；</li>
+<li>KeyQ 类:：WMS的内部类，一旦创建就会启动一个新的线程，线程不断接受和读取用户的 UI 操作消息，并把消息存进消息队列 QueueEvent；</li>
+<li>InputDispatcherThread：一旦创建启动一个新的线程，不断地从消息队列 QueueEvent 中读取消息并过滤，并将消息发送到当前活动的客户端中。</li>
+</ul>
+<h5 id="客户端（部分）"><a href="#客户端（部分）" class="headerlink" title="客户端（部分）"></a>客户端（部分）</h5><ul>
+<li>ActivityThread：主线程类，即UI线程类，程序入口为 ActivityThread 的 main 函数入口。它根据AMS的要求调度和执行 activites 和其他操作；</li>
+<li>ViewRoot：负责客户端跟 WMS 交互，。内部有 W 类，W类继承于 Binder。当 WMS 与客户端进行通信时调用该类。内部有 ViewRootHandler 类继承于 Handler，所以能在 W 类接收到 Wms 的消息后把消息传递到 UI 线程中。同时，界面绘制的起点也在其中 - performTraversals；</li>
+<li>W 类：ViewRoot 助手，ViewRoot 内部类，主要帮助 ViewRoot 实现把 Wms 的 IPC 调用转换成本地的一个异步调用；</li>
+<li>Activity 类</li>
+<li>PhoneWindow：继承于 Window 类，里面会放一个 DecorView，提供了一组统一窗口操作的 API；</li>
+<li>Window：提供一些通用的窗口操作 API；</li>
+<li>DecorView：这是我们所能看到的 View 的所有，它集成自 FrameLayout，我们写的布局 view 就是放在它里面的；</li>
+<li>ApplicationThread：继承于 Binder，当 AMS 想调用客户端方法时调用；</li>
+<li>Instrumentionn：负责直接与 Ams 对话，所有想调用 Ams 的操作都集中在这里，负责单向调用 Ams；</li>
+<li>WindowManager：客户端与 WindowManagerService 通信使用。</li>
+</ul>
+<h5 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h5><p>Linux 驱动与 Framework 相关的主要有两部分：SurfaceFlingger，Binder。每一个窗口都对应一个画 Surface，SF主要是把各个 Surface 显示到同一屏幕上。Binder 是提供跨进程的消息传递。</p>
+<h5 id="Android-Framework-三大核心功能"><a href="#Android-Framework-三大核心功能" class="headerlink" title="Android Framework 三大核心功能"></a>Android Framework 三大核心功能</h5><ul>
+<li>View.java：View 的工作原理，实现包括绘制view、处理触摸、按键事件等；</li>
+<li>ActivityManagerService.java：管理所有的应用程序的 Activity 等；</li>
+<li>WindowManagerService.java：为所有应用程序分配窗口，并管理这些窗口。</li>
+</ul>
+<p><a href="https://github.com/aosp-mirror" target="_blank" rel="noopener">https://github.com/aosp-mirror</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/06/22/Android-Framework初识/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-android体系架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/19/android体系架构/">android体系架构</a>
+    </h1>
+  
+
+        
+        <a href="/2018/06/19/android体系架构/" class="archive-article-date">
+  	<time datetime="2018-06-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="/2018/06/19/android体系架构/3245308-768c2e38180411b8.png" alt="android-system-architecture1"></p>
+<blockquote>
+<p>Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。</p>
+</blockquote>
+<p>可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux 内核 + driver ）。</p>
+<p>从高到低了解下 Android 的系统架构：</p>
+<h5 id="Android-应用层"><a href="#Android-应用层" class="headerlink" title="Android 应用层"></a>Android 应用层</h5><p>Android的应用程序主要是用户界面方面的，现在主要通过 Java 跟 kotlin 来编写。</p>
+<h5 id="Android-应用框架层"><a href="#Android-应用框架层" class="headerlink" title="Android 应用框架层"></a>Android 应用框架层</h5><p>该层主要为 Android 应用层提供 APIs，是一个应用程序的框架，包含了应用程序中需要的各种控件。</p>
+<h5 id="Android-系统运行层"><a href="#Android-系统运行层" class="headerlink" title="Android 系统运行层"></a>Android 系统运行层</h5><p>本层分成两个部分，一部分是各种程序库，另一个部分是运行时环境。</p>
+<h6 id="程序库"><a href="#程序库" class="headerlink" title="程序库"></a>程序库</h6><ul>
+<li>C 库：C 语言的标准库，系统中最为底层的库，通过 Linux 的系统调用来实现；</li>
+<li>多媒体框架（MediaFramework）：Android 多媒体的核心部分，基于 PacketVideo 的 OpenCore，从功能上一共分为两部分，一部分是音频、视频的回放（ PlayBack ），一部分是音频、视频的记录（ Recorder ）；</li>
+<li>SGL：底层的2D图形引擎；</li>
+<li>SSL：Secure Socket Layer，未育 TCP/IP 协议与各种应用层协议之间，为数据通讯提供安全支持；</li>
+<li>OpenGL ES 1.0：3D支持；</li>
+<li>界面管理工具（ Surface Management）：提供了管理显示子系统等功能；</li>
+<li>SQLite：嵌入式数据库；</li>
+<li>WebKit：web 浏览器引擎；</li>
+<li>FreeType：位图和矢量显示</li>
+</ul>
+<h6 id="运行环境"><a href="#运行环境" class="headerlink" title="运行环境"></a>运行环境</h6><p>Android 运行时环境主要是虚拟机技术 Dalvik。 Dalvik 虚拟机与一般的 Java 虚拟机（ JVM ）不同，它执行的不是 Java标准的字节码（ bytecode ），而是 Dalvik 可执行格式（ .dex ）。执行过程中，每一个应用程序即一个进程。二者最大的区别是 JVM 是基于栈的虚拟机（ Stack-base ），而 Dalvik 是基于寄存器的虚拟机（ Register-base ），后者可根据硬件实现最大优化。</p>
+<h5 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h5><p>Android 的核心系统服务依赖于 Linux 2.6 内核 ，如安全性，内存管理，进程管理， 网络协议栈和驱动模型。 Linux 内核也同时作为硬件和软件栈之间的抽象层。其外还对其做了部分修改，主要涉及两部分修改：</p>
+<ul>
+<li>Binder (IPC)：提供有效的进程间通信，虽然linux内核本身已经提供了这些功能，但Android系统很多服务都需要用到该功能，为了某种原因其实现了自己的一套。</li>
+</ul>
+<ul>
+<li>电源管理：省电。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/06/19/android体系架构/">展开全文 >></a>
         </p>
       
 
@@ -1184,11 +1184,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">

@@ -6,20 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Android Framework初识 | 吃着火锅唱着歌</title>
+  <title>android体系架构 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。 Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。 服务端（部分） ActivityManagerService（AMS）：管理Activity； WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口； KeyQ">
+  <meta name="description" content="Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。  可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux">
 <meta name="keywords" content="Android">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android Framework初识">
-<meta property="og:url" content="http://www.programan.top/2018/10/22/Android-Framework初识/index.html">
+<meta property="og:title" content="android体系架构">
+<meta property="og:url" content="http://www.programan.top/2018/06/19/android体系架构/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。 Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。 服务端（部分） ActivityManagerService（AMS）：管理Activity； WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口； KeyQ">
+<meta property="og:description" content="Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。  可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-10-23T03:34:08.297Z">
+<meta property="og:image" content="http://www.programan.top/2018/06/19/android体系架构/3245308-768c2e38180411b8.png">
+<meta property="og:updated_time" content="2018-11-14T09:23:14.307Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android Framework初识">
-<meta name="twitter:description" content="Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。 Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。 服务端（部分） ActivityManagerService（AMS）：管理Activity； WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口； KeyQ">
+<meta name="twitter:title" content="android体系架构">
+<meta name="twitter:description" content="Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。  可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux">
+<meta name="twitter:image" content="http://www.programan.top/2018/06/19/android体系架构/3245308-768c2e38180411b8.png">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -155,53 +157,54 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Android-Framework初识" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-android体系架构" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Android Framework初识
+      android体系架构
     </h1>
   
 
         
-        <a href="/2018/10/22/Android-Framework初识/" class="archive-article-date">
-  	<time datetime="2018-10-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-22</time>
+        <a href="/2018/06/19/android体系架构/" class="archive-article-date">
+  	<time datetime="2018-06-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-19</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。</p>
-<p>Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。</p>
-<h5 id="服务端（部分）"><a href="#服务端（部分）" class="headerlink" title="服务端（部分）"></a>服务端（部分）</h5><ul>
-<li>ActivityManagerService（AMS）：管理Activity；</li>
-<li>WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口；</li>
-<li>KeyQ 类:：WMS的内部类，一旦创建就会启动一个新的线程，线程不断接受和读取用户的 UI 操作消息，并把消息存进消息队列 QueueEvent；</li>
-<li>InputDispatcherThread：一旦创建启动一个新的线程，不断地从消息队列 QueueEvent 中读取消息并过滤，并将消息发送到当前活动的客户端中。</li>
+        <p><img src="/2018/06/19/android体系架构/3245308-768c2e38180411b8.png" alt="android-system-architecture1"></p>
+<blockquote>
+<p>Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。</p>
+</blockquote>
+<p>可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux 内核 + driver ）。</p>
+<p>从高到低了解下 Android 的系统架构：</p>
+<h5 id="Android-应用层"><a href="#Android-应用层" class="headerlink" title="Android 应用层"></a>Android 应用层</h5><p>Android的应用程序主要是用户界面方面的，现在主要通过 Java 跟 kotlin 来编写。</p>
+<h5 id="Android-应用框架层"><a href="#Android-应用框架层" class="headerlink" title="Android 应用框架层"></a>Android 应用框架层</h5><p>该层主要为 Android 应用层提供 APIs，是一个应用程序的框架，包含了应用程序中需要的各种控件。</p>
+<h5 id="Android-系统运行层"><a href="#Android-系统运行层" class="headerlink" title="Android 系统运行层"></a>Android 系统运行层</h5><p>本层分成两个部分，一部分是各种程序库，另一个部分是运行时环境。</p>
+<h6 id="程序库"><a href="#程序库" class="headerlink" title="程序库"></a>程序库</h6><ul>
+<li>C 库：C 语言的标准库，系统中最为底层的库，通过 Linux 的系统调用来实现；</li>
+<li>多媒体框架（MediaFramework）：Android 多媒体的核心部分，基于 PacketVideo 的 OpenCore，从功能上一共分为两部分，一部分是音频、视频的回放（ PlayBack ），一部分是音频、视频的记录（ Recorder ）；</li>
+<li>SGL：底层的2D图形引擎；</li>
+<li>SSL：Secure Socket Layer，未育 TCP/IP 协议与各种应用层协议之间，为数据通讯提供安全支持；</li>
+<li>OpenGL ES 1.0：3D支持；</li>
+<li>界面管理工具（ Surface Management）：提供了管理显示子系统等功能；</li>
+<li>SQLite：嵌入式数据库；</li>
+<li>WebKit：web 浏览器引擎；</li>
+<li>FreeType：位图和矢量显示</li>
 </ul>
-<h5 id="客户端（部分）"><a href="#客户端（部分）" class="headerlink" title="客户端（部分）"></a>客户端（部分）</h5><ul>
-<li>ActivityThread：主线程类，即UI线程类，程序入口为 ActivityThread 的 main 函数入口。它根据AMS的要求调度和执行 activites 和其他操作；</li>
-<li>ViewRoot：负责客户端跟 WMS 交互，。内部有 W 类，W类继承于 Binder。当 WMS 与客户端进行通信时调用该类。内部有 ViewRootHandler 类继承于 Handler，所以能在 W 类接收到 Wms 的消息后把消息传递到 UI 线程中。同时，界面绘制的起点也在其中 - performTraversals；</li>
-<li>W 类：ViewRoot 助手，ViewRoot 内部类，主要帮助 ViewRoot 实现把 Wms 的 IPC 调用转换成本地的一个异步调用；</li>
-<li>Activity 类</li>
-<li>PhoneWindow：继承于 Window 类，里面会放一个 DecorView，提供了一组统一窗口操作的 API；</li>
-<li>Window：提供一些通用的窗口操作 API；</li>
-<li>DecorView：这是我们所能看到的 View 的所有，它集成自 FrameLayout，我们写的布局 view 就是放在它里面的；</li>
-<li>ApplicationThread：继承于 Binder，当 AMS 想调用客户端方法时调用；</li>
-<li>Instrumentionn：负责直接与 Ams 对话，所有想调用 Ams 的操作都集中在这里，负责单向调用 Ams；</li>
-<li>WindowManager：客户端与 WindowManagerService 通信使用。</li>
+<h6 id="运行环境"><a href="#运行环境" class="headerlink" title="运行环境"></a>运行环境</h6><p>Android 运行时环境主要是虚拟机技术 Dalvik。 Dalvik 虚拟机与一般的 Java 虚拟机（ JVM ）不同，它执行的不是 Java标准的字节码（ bytecode ），而是 Dalvik 可执行格式（ .dex ）。执行过程中，每一个应用程序即一个进程。二者最大的区别是 JVM 是基于栈的虚拟机（ Stack-base ），而 Dalvik 是基于寄存器的虚拟机（ Register-base ），后者可根据硬件实现最大优化。</p>
+<h5 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h5><p>Android 的核心系统服务依赖于 Linux 2.6 内核 ，如安全性，内存管理，进程管理， 网络协议栈和驱动模型。 Linux 内核也同时作为硬件和软件栈之间的抽象层。其外还对其做了部分修改，主要涉及两部分修改：</p>
+<ul>
+<li>Binder (IPC)：提供有效的进程间通信，虽然linux内核本身已经提供了这些功能，但Android系统很多服务都需要用到该功能，为了某种原因其实现了自己的一套。</li>
 </ul>
-<h5 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h5><p>Linux 驱动与 Framework 相关的主要有两部分：SurfaceFlingger，Binder。每一个窗口都对应一个画 Surface，SF主要是把各个 Surface 显示到同一屏幕上。Binder 是提供跨进程的消息传递。</p>
-<h5 id="Android-Framework-三大核心功能"><a href="#Android-Framework-三大核心功能" class="headerlink" title="Android Framework 三大核心功能"></a>Android Framework 三大核心功能</h5><ul>
-<li>View.java：View 的工作原理，实现包括绘制view、处理触摸、按键事件等；</li>
-<li>ActivityManagerService.java：管理所有的应用程序的 Activity 等；</li>
-<li>WindowManagerService.java：为所有应用程序分配窗口，并管理这些窗口。</li>
+<ul>
+<li>电源管理：省电。</li>
 </ul>
-<p><a href="https://github.com/aosp-mirror" target="_blank" rel="noopener">https://github.com/aosp-mirror</a></p>
 
       
 
@@ -271,7 +274,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2018/10/22/Android-Framework初识/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2018/06/19/android体系架构/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -285,20 +288,15 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/11/05/Android音视频开发进阶导图/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/06/22/Android-Framework初识/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Android音视频开发进阶导图
+          Android Framework初识
         
       </div>
     </a>
   
-  
-    <a href="/2018/10/19/android体系架构/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">android体系架构</div>
-      <i class="icon-circle-right"></i>
-    </a>
   
 </nav>
 
@@ -327,8 +325,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://www.programan.top/2018/10/22/Android-Framework初识/", 
-    sourceId: "Android-Framework初识",
+    url: "http://www.programan.top/2018/06/19/android体系架构/", 
+    sourceId: "android体系架构",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };
@@ -462,11 +460,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
