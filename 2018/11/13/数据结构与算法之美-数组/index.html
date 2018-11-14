@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://www.programan.top">
   <title>数据结构与算法之美-数组 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
+  <meta name="description" content="什么是数组数组（Array）是一种线性表数据结构。用一组连续的内存空间，来存储一组具有相同类型的数据。 线性表 线性表就是排成线一样的数据结构  常见的线性表结构：数组、队列、链表、栈等  线性表最多有前跟后两个方向  连续的内存空间和相同的数据类型 随机访问 插入删除效率低  根据下标随机访问-寻址公式1a[i]_address = base_address + i * data_type_si">
 <meta name="keywords" content="数据结构与算法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数据结构与算法之美-数组">
 <meta property="og:url" content="http://www.programan.top/2018/11/13/数据结构与算法之美-数组/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="什么是数组数组（Array）是一种线性表数据结构。用一组连续的内存空间，来存储一组具有相同类型的数据。 线性表 线性表就是排成线一样的数据结构  常见的线性表结构：数组、队列、链表、栈等  线性表最多有前跟后两个方向  连续的内存空间和相同的数据类型 随机访问 插入删除效率低  根据下标随机访问-寻址公式1a[i]_address = base_address + i * data_type_si">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-13T10:55:52.114Z">
+<meta property="og:updated_time" content="2018-11-14T07:01:05.419Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据结构与算法之美-数组">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:description" content="什么是数组数组（Array）是一种线性表数据结构。用一组连续的内存空间，来存储一组具有相同类型的数据。 线性表 线性表就是排成线一样的数据结构  常见的线性表结构：数组、队列、链表、栈等  线性表最多有前跟后两个方向  连续的内存空间和相同的数据类型 随机访问 插入删除效率低  根据下标随机访问-寻址公式1a[i]_address = base_address + i * data_type_si">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -175,7 +175,34 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h4 id="什么是数组"><a href="#什么是数组" class="headerlink" title="什么是数组"></a>什么是数组</h4><p>数组（Array）是一种<strong>线性表数据结构</strong>。用一组<strong>连续的内存空间</strong>，来存储一组具有<strong>相同类型</strong>的数据。</p>
+<h5 id="线性表"><a href="#线性表" class="headerlink" title="线性表"></a>线性表</h5><ul>
+<li><p>线性表就是排成线一样的数据结构</p>
+</li>
+<li><p>常见的线性表结构：数组、队列、链表、栈等</p>
+</li>
+<li>线性表最多有前跟后两个方向</li>
+</ul>
+<h5 id="连续的内存空间和相同的数据类型"><a href="#连续的内存空间和相同的数据类型" class="headerlink" title="连续的内存空间和相同的数据类型"></a>连续的内存空间和相同的数据类型</h5><ul>
+<li>随机访问</li>
+<li>插入删除效率低</li>
+</ul>
+<h4 id="根据下标随机访问-寻址公式"><a href="#根据下标随机访问-寻址公式" class="headerlink" title="根据下标随机访问-寻址公式"></a>根据下标随机访问-寻址公式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + i * data_type_size</span><br></pre></td></tr></table></figure>
+<h4 id="数组插入删除低效"><a href="#数组插入删除低效" class="headerlink" title="数组插入删除低效"></a>数组插入删除低效</h4><p>为了保持数据连续性，需要移动数据，最好时间复杂度是 O(1)，最坏时间复杂度是 O(n)，平均时间复杂度是 O(n)</p>
+<h5 id="提高数组插入删除效率"><a href="#提高数组插入删除效率" class="headerlink" title="提高数组插入删除效率"></a>提高数组插入删除效率</h5><p>JVM 标记清除垃圾回收算法核心思想，先对数据进行标记，等需要的时候对数据进行统一处理。</p>
+<h4 id="数组的访问越界"><a href="#数组的访问越界" class="headerlink" title="数组的访问越界"></a>数组的访问越界</h4><h4 id="容器能否够完全代替数组"><a href="#容器能否够完全代替数组" class="headerlink" title="容器能否够完全代替数组"></a>容器能否够完全代替数组</h4><p>ArrayList优势：可将许多数组操作的细节封装起来，动态扩容；</p>
+<p>动态扩容耗时，如果确定数据大小，可指定 ArrayList 大小，可以省去多次内存申请跟数据搬移的操作；</p>
+<h5 id="数组应用场景"><a href="#数组应用场景" class="headerlink" title="数组应用场景"></a>数组应用场景</h5><ul>
+<li>ArrayList 无法存储基本类型，自动装箱、封箱消耗资源。所以如果特别关注资源，或者希望使用基本类型，可使用数组</li>
+<li>如果数组大小事先已知，且不需要 ArrayList 的大部分功能，可使用数组</li>
+<li>多维数组，直观。</li>
+</ul>
+<h4 id="为什么数组要从-0-开始编号？"><a href="#为什么数组要从-0-开始编号？" class="headerlink" title="为什么数组要从 0 开始编号？"></a>为什么数组要从 0 开始编号？</h4><p>由于数组是通过寻址公式，计算出该元素存储的内存地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + i * data_type_size</span><br></pre></td></tr></table></figure>
+<p>如果数组是从 1 开始计数，那么就会变成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + （i-1）* data_type_size</span><br></pre></td></tr></table></figure>
+<p>对于CPU来说，多了一次减法的指令。<br>当然，还有一定的历史原因。</p>
+
       
 
       
