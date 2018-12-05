@@ -156,6 +156,107 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-android体系架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/19/android体系架构/">android体系架构</a>
+    </h1>
+  
+
+        
+        <a href="/2018/06/19/android体系架构/" class="archive-article-date">
+  	<time datetime="2018-06-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-19</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="/2018/06/19/android体系架构/3245308-768c2e38180411b8.png" alt="android-system-architecture1"></p>
+<blockquote>
+<p>Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。</p>
+</blockquote>
+<p>可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux 内核 + driver ）。</p>
+<p>从高到低了解下 Android 的系统架构：</p>
+<h5 id="Android-应用层"><a href="#Android-应用层" class="headerlink" title="Android 应用层"></a>Android 应用层</h5><p>Android的应用程序主要是用户界面方面的，现在主要通过 Java 跟 kotlin 来编写。</p>
+<h5 id="Android-应用框架层"><a href="#Android-应用框架层" class="headerlink" title="Android 应用框架层"></a>Android 应用框架层</h5><p>该层主要为 Android 应用层提供 APIs，是一个应用程序的框架，包含了应用程序中需要的各种控件。</p>
+<h5 id="Android-系统运行层"><a href="#Android-系统运行层" class="headerlink" title="Android 系统运行层"></a>Android 系统运行层</h5><p>本层分成两个部分，一部分是各种程序库，另一个部分是运行时环境。</p>
+<h6 id="程序库"><a href="#程序库" class="headerlink" title="程序库"></a>程序库</h6><ul>
+<li>C 库：C 语言的标准库，系统中最为底层的库，通过 Linux 的系统调用来实现；</li>
+<li>多媒体框架（MediaFramework）：Android 多媒体的核心部分，基于 PacketVideo 的 OpenCore，从功能上一共分为两部分，一部分是音频、视频的回放（ PlayBack ），一部分是音频、视频的记录（ Recorder ）；</li>
+<li>SGL：底层的2D图形引擎；</li>
+<li>SSL：Secure Socket Layer，未育 TCP/IP 协议与各种应用层协议之间，为数据通讯提供安全支持；</li>
+<li>OpenGL ES 1.0：3D支持；</li>
+<li>界面管理工具（ Surface Management）：提供了管理显示子系统等功能；</li>
+<li>SQLite：嵌入式数据库；</li>
+<li>WebKit：web 浏览器引擎；</li>
+<li>FreeType：位图和矢量显示</li>
+</ul>
+<h6 id="运行环境"><a href="#运行环境" class="headerlink" title="运行环境"></a>运行环境</h6><p>Android 运行时环境主要是虚拟机技术 Dalvik。 Dalvik 虚拟机与一般的 Java 虚拟机（ JVM ）不同，它执行的不是 Java标准的字节码（ bytecode ），而是 Dalvik 可执行格式（ .dex ）。执行过程中，每一个应用程序即一个进程。二者最大的区别是 JVM 是基于栈的虚拟机（ Stack-base ），而 Dalvik 是基于寄存器的虚拟机（ Register-base ），后者可根据硬件实现最大优化。</p>
+<h5 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h5><p>Android 的核心系统服务依赖于 Linux 2.6 内核 ，如安全性，内存管理，进程管理， 网络协议栈和驱动模型。 Linux 内核也同时作为硬件和软件栈之间的抽象层。其外还对其做了部分修改，主要涉及两部分修改：</p>
+<ul>
+<li>Binder (IPC)：提供有效的进程间通信，虽然linux内核本身已经提供了这些功能，但Android系统很多服务都需要用到该功能，为了某种原因其实现了自己的一套。</li>
+</ul>
+<ul>
+<li>电源管理：省电。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/06/19/android体系架构/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Android-studio快捷键（Mac）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -468,11 +569,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -480,11 +581,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
               </li>
              
               <li class="article-tag-list-item">
