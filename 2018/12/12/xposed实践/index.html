@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="吃着火锅唱着歌">
 <meta property="og:description" content="突然觉得这个分类，应该改名奇巧淫技，或许会更好听点。偷鸡摸狗的话，并不是说这个是见不得人的东西。不过以后再说吧，毕竟不是今天的重点 前言公司要每个技术序列的人都要做技术分享，一开始的时候确实没有想好要讲什么，毕竟同行，说的浅了没技术含量，说的深了担心自己给自己挖坑（滑稽脸）。最后，还是选择了 xposed 这个主题，因为 xposed 对于安卓来说确实是一个牛逼的存在，使用起来还是挺牛逼的，但是过">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-12T12:41:00.328Z">
+<meta property="og:updated_time" content="2018-12-12T12:52:50.917Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="xposed实践">
 <meta name="twitter:description" content="突然觉得这个分类，应该改名奇巧淫技，或许会更好听点。偷鸡摸狗的话，并不是说这个是见不得人的东西。不过以后再说吧，毕竟不是今天的重点 前言公司要每个技术序列的人都要做技术分享，一开始的时候确实没有想好要讲什么，毕竟同行，说的浅了没技术含量，说的深了担心自己给自己挖坑（滑稽脸）。最后，还是选择了 xposed 这个主题，因为 xposed 对于安卓来说确实是一个牛逼的存在，使用起来还是挺牛逼的，但是过">
@@ -312,7 +312,19 @@
 <li>findAndHookXXX：查找并Hook</li>
 <li>只能Hook方法与构造方法，不能Hook接口和抽象方法</li>
 </ul>
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上，是本次分享的全部了。</p>
+<h4 id="Xposed-模块开发优势和不足"><a href="#Xposed-模块开发优势和不足" class="headerlink" title="Xposed 模块开发优势和不足"></a>Xposed 模块开发优势和不足</h4><p><strong>优势</strong></p>
+<ol>
+<li>功能强大，既可以修改系统应用，也可以修改其他应用。hook android,hook everything.</li>
+<li>使用灵活，既可以针对一款应用进行Hook，也可以针对所有应用进行Hook。</li>
+</ol>
+<p><strong>不足</strong></p>
+<ol>
+<li>无法调试。只能通过打印日志进行跟踪。（例如：XposedBridge.log）</li>
+<li>无法即时生效。启用/禁用模块，你需要重启手机。</li>
+<li>multidex 支持不足。详见<a href="https://link.jianshu.com?t=https://github.com/rovo89/XposedBridge/issues/30#issuecomment-68488797" target="_blank" rel="noopener">Multidex support</a></li>
+</ol>
+<h4 id="抖音自动翻页"><a href="#抖音自动翻页" class="headerlink" title="抖音自动翻页"></a>抖音自动翻页</h4><p>如果有时间的话，跟大家一块 hook 一下抖音，实现自动翻页的功能。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上，是本次分享的全部了。温馨提示，搞基需谨慎。</p>
 
       
 

@@ -400,7 +400,19 @@
 <li>findAndHookXXX：查找并Hook</li>
 <li>只能Hook方法与构造方法，不能Hook接口和抽象方法</li>
 </ul>
-<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上，是本次分享的全部了。</p>
+<h4 id="Xposed-模块开发优势和不足"><a href="#Xposed-模块开发优势和不足" class="headerlink" title="Xposed 模块开发优势和不足"></a>Xposed 模块开发优势和不足</h4><p><strong>优势</strong></p>
+<ol>
+<li>功能强大，既可以修改系统应用，也可以修改其他应用。hook android,hook everything.</li>
+<li>使用灵活，既可以针对一款应用进行Hook，也可以针对所有应用进行Hook。</li>
+</ol>
+<p><strong>不足</strong></p>
+<ol>
+<li>无法调试。只能通过打印日志进行跟踪。（例如：XposedBridge.log）</li>
+<li>无法即时生效。启用/禁用模块，你需要重启手机。</li>
+<li>multidex 支持不足。详见<a href="https://link.jianshu.com?t=https://github.com/rovo89/XposedBridge/issues/30#issuecomment-68488797" target="_blank" rel="noopener">Multidex support</a></li>
+</ol>
+<h4 id="抖音自动翻页"><a href="#抖音自动翻页" class="headerlink" title="抖音自动翻页"></a>抖音自动翻页</h4><p>如果有时间的话，跟大家一块 hook 一下抖音，实现自动翻页的功能。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上，是本次分享的全部了。温馨提示，搞基需谨慎。</p>
 
       
 
