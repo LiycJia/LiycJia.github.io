@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="吃着火锅唱着歌">
 <meta property="og:description" content="js 中 const、let、var 的区别 const 定义的变量不可以修改（基本数据类型），并且必须初始化； var 定义的变量可以修改，未初始化不会报错，输出 undefined； let 是块级作用域，函数内部定义，对外部没影响。  js 中，中括号、大括号{} 大括号标识一个对象，大部分情况下要有成对的属性和值，或者函数； 12345678910var LangShen = &amp;#123;">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-14T08:30:09.311Z">
+<meta property="og:updated_time" content="2018-12-14T09:11:20.385Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微信小程序 - 零碎点">
 <meta name="twitter:description" content="js 中 const、let、var 的区别 const 定义的变量不可以修改（基本数据类型），并且必须初始化； var 定义的变量可以修改，未初始化不会报错，输出 undefined； let 是块级作用域，函数内部定义，对外部没影响。  js 中，中括号、大括号{} 大括号标识一个对象，大部分情况下要有成对的属性和值，或者函数； 12345678910var LangShen = &amp;#123;">
@@ -186,6 +186,15 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LangShen = [ <span class="string">"Name"</span>,<span class="string">"LangShen"</span>,<span class="string">"AGE"</span>,<span class="string">"28"</span> ]; </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> LangShen = <span class="built_in">Array</span>( <span class="string">"Name"</span>,<span class="string">"LangShen"</span>,<span class="string">"AGE"</span>,<span class="string">"28"</span> );</span><br></pre></td></tr></table></figure>
 <p>{ } 和[ ] 一起使用，我们前面说到，{ } 是一个对象，[ ] 是一个数组，我们可以组成一个对象数组</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LangShen = &#123; <span class="string">"Name"</span>:<span class="string">"Langshen"</span>, </span><br><span class="line">	<span class="string">"MyWife"</span>:[ <span class="string">"LuLu"</span>,<span class="string">"26"</span> ], </span><br><span class="line">	<span class="string">"MySon"</span>:[&#123;<span class="string">"Name"</span>:<span class="string">"Son1"</span>&#125;,&#123;<span class="string">"Name"</span>:<span class="string">"Son2"</span>&#125;,&#123;<span class="string">"Name"</span>:<span class="string">"Son3"</span>&#125;] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h4><h5 id="数组的创建"><a href="#数组的创建" class="headerlink" title="数组的创建"></a>数组的创建</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arrayObj = <span class="keyword">new</span> <span class="built_in">Array</span>();　<span class="comment">//创建一个数组  </span></span><br><span class="line"><span class="keyword">var</span> arrayObj = <span class="keyword">new</span> <span class="built_in">Array</span>([size]);　<span class="comment">//创建一个数组并指定长度，注意不是上限，是长度  </span></span><br><span class="line"><span class="keyword">var</span> arrayObj = <span class="keyword">new</span> <span class="built_in">Array</span>([element0[, element1[, ...[, elementN]]]]);　创建一个数组并赋值</span><br></pre></td></tr></table></figure>
+<p>要说明的是，虽然第二种方法创建数组指定了长度，但实际上所有情况下数组都是变长的，也就是说即使指定了长度为5，仍然可以将元素存储在规定长度以外的，注意：这时长度会随之改变。</p>
+<h5 id="数组的添加"><a href="#数组的添加" class="headerlink" title="数组的添加"></a>数组的添加</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arrayObj. push([item1 [item2 [. . . [itemN ]]]]);<span class="comment">// 将一个或多个新元素添加到数组结尾，并返回数组新长度 </span></span><br><span class="line">arrayObj.unshift([item1 [item2 [. . . [itemN ]]]]);<span class="comment">// 将一个或多个新元素添加到数组开始，数组中的元素自动后移，返回数组新长度 </span></span><br><span class="line">arrayObj.splice(insertPos,<span class="number">0</span>,[item1[, item2[, . . . [,itemN]]]]);<span class="comment">//方法向/从数组中添加/删除项目，然后返回被删除的项目。</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组元素的访问"><a href="#数组元素的访问" class="headerlink" title="数组元素的访问"></a>数组元素的访问</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> testGetArrValue = arrayObj[<span class="number">1</span>]; <span class="comment">//获取数组的元素值  </span></span><br><span class="line">arrayObj[<span class="number">1</span>]= <span class="string">"这是新值"</span>; <span class="comment">//给数组元素赋予新的值</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组元素的删除"><a href="#数组元素的删除" class="headerlink" title="数组元素的删除"></a>数组元素的删除</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.pop()<span class="comment">//移除最后一个元素并返回该元素</span></span><br><span class="line">arrayObj.shift()<span class="comment">//把数组的第一个元素从其中删除，并返回第一个元素的值</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组的截图和合并"><a href="#数组的截图和合并" class="headerlink" title="数组的截图和合并"></a>数组的截图和合并</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.slice(start, [end]); <span class="comment">//以数组的形式返回数组的一部分，注意不包括 end 对应的元素，如果省略 end 将复制 start 之后的所有元素  </span></span><br><span class="line">rrayObj.concat([item1[, item2[, . . . [,itemN]]]]); <span class="comment">//将多个数组（也可以是字符串，或者是数组和字符串的混合）连接为一个数组，返回连接好的新的数组</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组的拷贝"><a href="#数组的拷贝" class="headerlink" title="数组的拷贝"></a>数组的拷贝</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.slice(<span class="number">0</span>); <span class="comment">//返回数组的拷贝数组，注意是一个新的数组，不是指向</span></span><br><span class="line">arrayObj.concat(); <span class="comment">//返回数组的拷贝数组，注意是一个新的数组，不是指向</span></span><br></pre></td></tr></table></figure>
+<p>数组元素的排序</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.reverse(); <span class="comment">//反转元素（最前的排到最后、最后的排到最前），返回数组地址</span></span><br><span class="line">arrayObj.sort(); <span class="comment">//对数组元素排序，返回数组地址</span></span><br></pre></td></tr></table></figure>
 
       
 
@@ -268,6 +277,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2018/12/17/探索RcyclerView各组成部分/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          探索RcyclerView各组成部分
+        
+      </div>
+    </a>
   
   
     <a href="/2018/12/12/xposed实践/" id="article-nav-older" class="article-nav-link-wrap">
