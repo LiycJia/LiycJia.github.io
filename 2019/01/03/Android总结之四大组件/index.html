@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://www.programan.top">
   <title>Android总结之四大组件 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 异常情况下的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、">
+  <meta name="description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 特殊的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onS">
 <meta name="keywords" content="Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android总结之四大组件">
 <meta property="og:url" content="http://www.programan.top/2019/01/03/Android总结之四大组件/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 异常情况下的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、">
+<meta property="og:description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 特殊的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onS">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-03T11:59:03.942Z">
+<meta property="og:updated_time" content="2019-01-08T11:56:30.618Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android总结之四大组件">
-<meta name="twitter:description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 异常情况下的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、">
+<meta name="twitter:description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 特殊的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onS">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -176,10 +176,48 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h4 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h4><h5 id="Activity生命周期"><a href="#Activity生命周期" class="headerlink" title="Activity生命周期"></a>Activity生命周期</h5><p>生命周期：<code>onCreate()</code> -&gt; <code>onStart()</code> - &gt; <code>onResume()</code> -&gt; <code>onPause()</code> -&gt; <code>onStop()</code> -&gt; <code>onDestroy()</code></p>
-<p><strong>异常情况下的生命周期</strong></p>
+<p><strong>特殊的生命周期</strong></p>
 <ul>
-<li>资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onStop、onDestroy 会相继执行，因为是异常销毁，系统会调用 onSaveInstanceState 来保存 activity 当前状态，这个方法的调用时机是在 onStop 之前，与 onPause 无时序关系。activity 重建后会调用 onRestoreInstanceState，并且把销毁时 onSaveInstance 保存的 Bundle 对象作为参数同时传递给 onRestoreInstance 和 onCreate，onRestoreInstance 在 onStart 方法之后回调。同时，onRestoreInstance 方法会自动帮我们做一些恢复工作。另外，和 activity 一样，每个 view 都有自己相关的 onSaveInstanceState 方法和 onRestoreInstanceState 方法。</li>
+<li><p>资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onStop、onDestroy 会相继执行，因为是异常销毁，系统会调用 onSaveInstanceState 来保存 activity 当前状态，这个方法的调用时机是在 onStop 之前，与 onPause 无时序关系。activity 重建后会调用 onRestoreInstanceState，并且把销毁时 onSaveInstance 保存的 Bundle 对象作为参数同时传递给 onRestoreInstance 和 onCreate，onRestoreInstance 在 onStart 方法之后回调。同时，onRestoreInstance 方法会自动帮我们做一些恢复工作。另外，和 activity 一样，每个 view 都有自己相关的 onSaveInstanceState 方法和 onRestoreInstanceState 方法。</p>
+</li>
+<li><p>应用场景：假设 Activity A 位于栈顶，从 A 跳转 B 时声明周期</p>
+<p>当用户点击A中按钮来到B时，假设B全部遮挡住了A，将依次执行A:onPause -&gt; B:onCreate -&gt; B:onStart -&gt; B:onResume -&gt; A:onStop。</p>
+<p>此时如果点击Back键，将依次执行B:onPause -&gt; A:onRestart -&gt; A:onStart -&gt; A:onResume -&gt; B:onStop -&gt; B:onDestroy。</p>
+</li>
 </ul>
+<h5 id="Activity-启动模式"><a href="#Activity-启动模式" class="headerlink" title="Activity 启动模式"></a>Activity 启动模式</h5><ul>
+<li><p><strong>standard - 默认模式</strong></p>
+<p>默认的启动模式，既标准模式，在不指定启动模式的前提下，系统默认使用该模式启动 Activity，每次启动一个 Activity 都会重写一个新的实例，不管这个实例存在不存在。该 Activity 属于启动它的 Activity 所在的任务占中。</p>
+<p>应用场景：默认。</p>
+</li>
+<li><p><strong>singleTop - 栈顶复用模式</strong></p>
+<p>该模式下，当前栈中已存在该 Activity 实例并且该实例位于栈顶，则不会重新创建 Activity 的实例，而是复用栈顶的实例，并且将 Intent 对象传入，回调 onNewIntent 方法。其余情况，与 standard 模式相同，会重新创建实例。</p>
+<p>应用场景：登录页面、WXPayEntryActivity、WXEntryActivity 、推送通知栏。</p>
+</li>
+<li><p><strong>singleTask - 栈内复用模式</strong></p>
+<p>该模式下，如果栈中存在这个 Activity 的实例就会复用这个 Activity，不管它是否位于栈顶，复用时，会将它<strong>上面的 Activity</strong> 全部出栈，并且会回调该实例的 onNewIntent 方法。其实这个过程还存在一个任务栈的匹配，因为这个模式启动时，会在自己需要的任务栈中寻找实例，这个任务栈就是通过 taskAffinity 属性指定。如果这个任务栈不存在，则会创建这个任务栈。</p>
+<p>应用场景：应用主页面、WebView页面、扫一扫页面、电商中：确认订单页面，付款页面。</p>
+</li>
+<li><p><strong>singleInstance - 全局唯一模式</strong></p>
+<p>该模式具备 singleTask 模式的所有特性，并且这种模式下的 Activity 会单独占用一个 Task 栈，具备全局唯一性，即整个系统中只有一个实例。由于栈内复用的特性，后续的请求不会创建新的 Activity 实例，除非这个特殊的任务栈被销毁。以 singleInstance 模式启动的 Activity 在整个系统中是单利的，如果启动这样的 Activity 时已经存在一个实例，那么会把它所在的任务调度到前台，重用这个实例。</p>
+<p>应用场景：系统 Launcher、锁屏键、来电显示等系统应用。</p>
+</li>
+</ul>
+<h5 id="TaskAffinity-属性"><a href="#TaskAffinity-属性" class="headerlink" title="TaskAffinity 属性"></a>TaskAffinity 属性</h5><p> 任务相关性。</p>
+<ul>
+<li>这个参数标识了一个 Activity 所需任务栈的名字。默认情况下，所有 Activity 所需的任务战的名字为应用的包名。</li>
+<li>每个 Activity 的 taskAffinity 值都可以被指定，用来覆盖其默认值。</li>
+<li>通常来说，具有相同 taskAffinity 的 Activity 属于同一个任务。</li>
+<li>当设置一个 Activity 的 taskAffinity 属性为空字符串时，表明这个 Activity 不属于任何 task。</li>
+<li>taskAffinity 属性不对 standard 和 singleTop 模式有任何影响，这两种模式下不会创建新的 task（如果不指定默认值，即包名）。</li>
+</ul>
+<h5 id="Activity-与-Fragment-生命周期关系"><a href="#Activity-与-Fragment-生命周期关系" class="headerlink" title="Activity 与 Fragment 生命周期关系"></a>Activity 与 Fragment 生命周期关系</h5><p>创建过程：Fragment - onAttach -&gt; Fragment - onCreate -&gt; Fragment - onCreateView -&gt; Activity - onCreate -&gt; Fragment - onActivityCreate -&gt; Activity - onStart -&gt; Fragment - onStart -&gt; Activity - onResume -&gt; Fragment - onResume</p>
+<p>销毁过程：Fragment - onPause -&gt; Activity - onPause -&gt; Fragment - onStop -&gt; Activity - onStop -&gt; Fragment - onDestroyView -&gt; Fragment - onDestroy -&gt; Fragment - onDetach -&gt; Activity - onDestroy</p>
+<h5 id="Activity-与-menu-创建先后顺序"><a href="#Activity-与-menu-创建先后顺序" class="headerlink" title="Activity 与 menu 创建先后顺序"></a>Activity 与 menu 创建先后顺序</h5><p>在 Activity 创建完回调 onResume 后创建 menu，回调 onCreateOptionMenu。</p>
+<h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><h5 id="本地服务（LocalService）"><a href="#本地服务（LocalService）" class="headerlink" title="本地服务（LocalService）"></a>本地服务（LocalService）</h5><blockquote>
+<p>调用者和service在同一个进程里，所以运行在主进程的main线程中。所以不能进行耗时操作，可以采用在service里面<strong>创建一个Thread</strong>来执行任务。service影响的是<strong>进程</strong>的生命周期，讨论与Thread的区别没有意义。<br> <strong>任何 Activity 都可以控制同一 Service，而系统也只会创建一个对应 Service 的实例</strong>。</p>
+</blockquote>
+<p>参考：<a href="https://blog.csdn.net/mynameishuangshuai/article/details/51491074" target="_blank" rel="noopener">https://blog.csdn.net/mynameishuangshuai/article/details/51491074</a></p>
 
       
 
