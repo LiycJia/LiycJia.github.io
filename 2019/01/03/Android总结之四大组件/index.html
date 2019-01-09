@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="吃着火锅唱着歌">
 <meta property="og:description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 特殊的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onS">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-01-08T11:56:30.618Z">
+<meta property="og:updated_time" content="2019-01-09T12:32:24.146Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android总结之四大组件">
 <meta name="twitter:description" content="ActivityActivity生命周期生命周期：onCreate() -&amp;gt; onStart() - &amp;gt; onResume() -&amp;gt; onPause() -&amp;gt; onStop() -&amp;gt; onDestroy() 特殊的生命周期  资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onS">
@@ -217,7 +217,90 @@
 <h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><h5 id="本地服务（LocalService）"><a href="#本地服务（LocalService）" class="headerlink" title="本地服务（LocalService）"></a>本地服务（LocalService）</h5><blockquote>
 <p>调用者和service在同一个进程里，所以运行在主进程的main线程中。所以不能进行耗时操作，可以采用在service里面<strong>创建一个Thread</strong>来执行任务。service影响的是<strong>进程</strong>的生命周期，讨论与Thread的区别没有意义。<br> <strong>任何 Activity 都可以控制同一 Service，而系统也只会创建一个对应 Service 的实例</strong>。</p>
 </blockquote>
-<p>参考：<a href="https://blog.csdn.net/mynameishuangshuai/article/details/51491074" target="_blank" rel="noopener">https://blog.csdn.net/mynameishuangshuai/article/details/51491074</a></p>
+<p><strong>启动方式</strong>：</p>
+<ul>
+<li><p>start 方式启动服务</p>
+<p>步骤：</p>
+<blockquote>
+<p>1、定义一个类继承 service</p>
+<p>2、清单文件中配置 service</p>
+<p>3、使用 context 的 startService(Intent) 方法启动 service</p>
+<p>4、不使用时，调用 stopService(Intent) 方法停止服务</p>
+</blockquote>
+<p>生命周期：</p>
+<blockquote>
+<p>onCreate() – &gt; onStartCommand() – &gt; onDestory()<br> <strong>注意</strong>：如果服务已经开启，不会重复回调onCreate()方法，如果再次调用context.startService()方法，service而是会调用onStart()或者onStartCommand()方法。停止服务需要调用context.stopService()方法，服务停止的时候回调onDestory被销毁。</p>
+</blockquote>
+<p>特点：</p>
+<p>一旦服务开启就跟调用者（开启者）没有任何关系了。开启者不能调用服务里面的方法。</p>
+</li>
+<li><p>bind 方式启动服务</p>
+<p>步骤：</p>
+<blockquote>
+<p>定义一个类继承 service</p>
+<p>清单文件中注册 service</p>
+<p>使用 context 的 bindService(Intent,ServiceConnection,int) 方法启动 service</p>
+<p>不再使用时，调用 unbindService(ServiceConnection) 方法停止该服务</p>
+</blockquote>
+<p>生命周期：</p>
+<blockquote>
+<p>onCreate() – &gt; onBind() –&gt; onUnbind() – &gt; onDestory()</p>
+</blockquote>
+<p>注意：</p>
+<p>绑定服务不会调用 onStart 或者 onStartCommand 方法</p>
+<p>特点：</p>
+<p>bind 的方式启动服务，绑定服务，服务的生命周期跟随绑定者。绑定者可以调用服务里面的方法。</p>
+</li>
+</ul>
+<h5 id="远程服务"><a href="#远程服务" class="headerlink" title="远程服务"></a>远程服务</h5><p>调用者和 service 不再同一个进程中， service 在单独的进程中的 main 线程，是一种跨进程通信方式。</p>
+<blockquote>
+<p>在服务的内部创建一个内部类，提供一个方法，可以间接调用服务的方法；</p>
+<p>把暴露的接口文件的扩展名改为 .aidl 文件，去掉访问修饰符；</p>
+<p>实现服务的 onbind 方法，继承 Bander 和实现 aidl 定义的接口，提供给外界可调用的方法</p>
+<p>在 Activity 中绑定服务 bindService；</p>
+<p>在服务成功绑定的时候回调 onServiceConnected 方法，床底一个 IBinder 对象</p>
+<p>aidl 定义的接口 .Stub.asInterface(binder) 调用接口里面的方法</p>
+</blockquote>
+<h5 id="IntentService"><a href="#IntentService" class="headerlink" title="IntentService"></a>IntentService</h5><p>IntentService 是 Service 的子类，比普通的 Service 增加了额外的功能。</p>
+<p><strong>Service 本身存在的两个问题：</strong></p>
+<ul>
+<li>Service 不会专门启动一个单独的进程，Service 与它所在的应用位于同一个进程中；</li>
+<li>Service 也不是专门一条新进程，因此不应该在 Service 中直接处理耗时的任务</li>
+</ul>
+<p>IntentService 特征：</p>
+<ul>
+<li>会创建独立的 worker 线程来处理所有的 Intent 请求；</li>
+<li>会创建独立的 worker 线程来处理 onHandleIntent 方法实现的代码，无需处理多线程问题；</li>
+<li>所有请求处理完成后，IntentService 会自动停止，无需调用 stopSelf 方法停止；</li>
+<li>为 Service 的 onBind 提供默认实现，返回 null；</li>
+<li>为 Service 的 onStartCommand 提供默认实现，将请求的 Intent 添加到队列中。</li>
+</ul>
+<h4 id="BroadcastReceiver"><a href="#BroadcastReceiver" class="headerlink" title="BroadcastReceiver"></a>BroadcastReceiver</h4><blockquote>
+<p>广播被分为两种不同的类型：“<strong>普通广播</strong>（Normal broadcasts）”和“<strong>有序广播</strong>（Ordered broadcasts）”。普通广播是完全异步的，可以在同一时刻（逻辑上）被所有接收者接收到，消息传递的效率比较高，但缺点是：接收者不能将处理结果传递给下一个接收者，并且无法终止广播Intent的传播；然而有序广播是按照接收者声明的优先级别（声明在intent-filter元素的android:priority属性中，数越大优先级别越高,取值范围:-1000到1000。也可以调用IntentFilter对象的setPriority()进行设置），被接收者依次接收广播。如：A的级别高于B,B的级别高于C,那么，广播先传给A，再传给B，最后传给C。A得到广播后，可以往广播里存入数据，当广播传给B时,B可以从广播中得到A存入的数据。</p>
+</blockquote>
+<p>发送广播</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Context.sendBroadcast()</span><br><span class="line">发送的是普通广播，所有订阅者都有机会获得并进行处理。</span><br><span class="line"></span><br><span class="line">Context.sendOrderedBroadcast()</span><br><span class="line">发送的是有序广播，系统会根据接收者声明的优先级别按顺序逐个执行接收者，前面的接收者有权终止广播(BroadcastReceiver.abortBroadcast())，如果广播被前面的接收者终止，后面的接收者就再也无法获取到广播。对于有序广播，前面的接收者可以将处理结果通过setResultExtras(Bundle)方法存放进结果对象，然后传给下一个接收者，通过代码：Bundle bundle =getResultExtras(<span class="keyword">true</span>))可以获取上一个接收者存入在结果对象中的数据。</span><br><span class="line">系统收到短信，发出的广播属于有序广播。如果想阻止用户收到短信，可以通过设置优先级，让你们自定义的接收者先获取到广播，然后终止广播，这样用户就接收不到短信了。</span><br></pre></td></tr></table></figure>
+<p>注意：BroadCastReceiver 生命周期很短，在 onReceiver 中需要进行耗时操作时，应该考虑在 Service 中开启一个新线程处理。</p>
+<p><strong>静态注册和动态注册区别</strong></p>
+<ul>
+<li>动态注册广播不是常驻型广播，也就是说广播跟随activity的生命周期。注意: 在activity结束前，移除广播接收器。<br> 静态注册是常驻型，也就是说当应用程序关闭后，如果有信息广播来，程序也会被系统调用自动运行。</li>
+<li>当广播为有序广播时：<br> 1 优先级高的先接收<br> 2 同优先级的广播接收器，动态优先于静态<br> 3 同优先级的同类广播接收器，静态：先扫描的优先于后扫描的，动态：先注册的优先于后注册的。</li>
+<li>当广播为普通广播时：<br> 1 无视优先级，动态广播接收器优先于静态广播接收器<br> 2 同优先级的同类广播接收器，静态：先扫描的优先于后扫描的，动态：先注册的优先于后注册的。</li>
+</ul>
+<p><strong>小结：</strong></p>
+<ul>
+<li>在Android 中如果要发送一个广播必须使用sendBroadCast 向系统发送对其感兴趣的广播接收器中。</li>
+<li>使用广播必须要有一个intent 对象必设置其action动作对象</li>
+<li>使用广播必须在配置文件中显式的指明该广播对象</li>
+<li>每次接收广播都会重新生成一个接收广播的对象</li>
+<li>在BroadCastReceiver中尽量不要处理太多逻辑问题，建议复杂的逻辑交给Activity 或者 Service 去处理</li>
+<li>如果在AndroidManifest.xml中注册，当应用程序关闭的时候，也会接收到广播。在应用程序中注册就不产生这种情况了。</li>
+</ul>
+<h4 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h4><blockquote>
+<p>contentprovider是android四大组件之一的内容提供器，它主要的作用就是将程序的内部的数据和外部进行共享，为数据提供外部访问接口，被访问的数据主要以数据库的形式存在，而且还可以选择共享哪一部分的数据。这样一来，对于程序当中的隐私数据可以不共享，从而更加安全。contentprovider是android中一种跨程序共享数据的重要组件。</p>
+</blockquote>
+<p>参考：    <a href="https://blog.csdn.net/mynameishuangshuai/article/details/51491074" target="_blank" rel="noopener">https://blog.csdn.net/mynameishuangshuai/article/details/51491074</a></p>
+<p>​        <a href="https://www.jianshu.com/p/51aaa65d5d25" target="_blank" rel="noopener">https://www.jianshu.com/p/51aaa65d5d25</a></p>
 
       
 
