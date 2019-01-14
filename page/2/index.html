@@ -156,6 +156,106 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-数据结构与算法之美-数组" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/11/13/数据结构与算法之美-数组/">数据结构与算法之美-数组</a>
+    </h1>
+  
+
+        
+        <a href="/2018/11/13/数据结构与算法之美-数组/" class="archive-article-date">
+  	<time datetime="2018-11-13T10:55:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-13</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="什么是数组"><a href="#什么是数组" class="headerlink" title="什么是数组"></a>什么是数组</h4><p>数组（Array）是一种<strong>线性表数据结构</strong>。用一组<strong>连续的内存空间</strong>，来存储一组具有<strong>相同类型</strong>的数据。</p>
+<h5 id="线性表"><a href="#线性表" class="headerlink" title="线性表"></a>线性表</h5><ul>
+<li><p>线性表就是排成线一样的数据结构</p>
+</li>
+<li><p>常见的线性表结构：数组、队列、链表、栈等</p>
+</li>
+<li>线性表最多有前跟后两个方向</li>
+</ul>
+<h5 id="连续的内存空间和相同的数据类型"><a href="#连续的内存空间和相同的数据类型" class="headerlink" title="连续的内存空间和相同的数据类型"></a>连续的内存空间和相同的数据类型</h5><ul>
+<li>随机访问</li>
+<li>插入删除效率低</li>
+</ul>
+<h4 id="根据下标随机访问-寻址公式"><a href="#根据下标随机访问-寻址公式" class="headerlink" title="根据下标随机访问-寻址公式"></a>根据下标随机访问-寻址公式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + i * data_type_size</span><br></pre></td></tr></table></figure>
+<h4 id="数组插入删除低效"><a href="#数组插入删除低效" class="headerlink" title="数组插入删除低效"></a>数组插入删除低效</h4><p>为了保持数据连续性，需要移动数据，最好时间复杂度是 O(1)，最坏时间复杂度是 O(n)，平均时间复杂度是 O(n)</p>
+<h5 id="提高数组插入删除效率"><a href="#提高数组插入删除效率" class="headerlink" title="提高数组插入删除效率"></a>提高数组插入删除效率</h5><p>JVM 标记清除垃圾回收算法核心思想，先对数据进行标记，等需要的时候对数据进行统一处理。</p>
+<h4 id="数组的访问越界"><a href="#数组的访问越界" class="headerlink" title="数组的访问越界"></a>数组的访问越界</h4><h4 id="容器能否够完全代替数组"><a href="#容器能否够完全代替数组" class="headerlink" title="容器能否够完全代替数组"></a>容器能否够完全代替数组</h4><p>ArrayList优势：可将许多数组操作的细节封装起来，动态扩容；</p>
+<p>动态扩容耗时，如果确定数据大小，可指定 ArrayList 大小，可以省去多次内存申请跟数据搬移的操作；</p>
+<h5 id="数组应用场景"><a href="#数组应用场景" class="headerlink" title="数组应用场景"></a>数组应用场景</h5><ul>
+<li>ArrayList 无法存储基本类型，自动装箱、封箱消耗资源。所以如果特别关注资源，或者希望使用基本类型，可使用数组</li>
+<li>如果数组大小事先已知，且不需要 ArrayList 的大部分功能，可使用数组</li>
+<li>多维数组，直观。</li>
+</ul>
+<h4 id="为什么数组要从-0-开始编号？"><a href="#为什么数组要从-0-开始编号？" class="headerlink" title="为什么数组要从 0 开始编号？"></a>为什么数组要从 0 开始编号？</h4><p>由于数组是通过寻址公式，计算出该元素存储的内存地址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + i * data_type_size</span><br></pre></td></tr></table></figure>
+<p>如果数组是从 1 开始计数，那么就会变成：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a[i]_address = base_address + （i-1）* data_type_size</span><br></pre></td></tr></table></figure>
+<p>对于CPU来说，多了一次减法的指令。<br>当然，还有一定的历史原因。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">数据结构与算法</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/11/13/数据结构与算法之美-数组/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-数据结构与算法之美-复杂度分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1203,15 +1303,15 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Python</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">数据结构与算法</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
             
             <div class="clearfix"></div>

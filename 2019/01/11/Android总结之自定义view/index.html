@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Tag: Python | 吃着火锅唱着歌</title>
+  <title>Android总结之自定义view | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
-<meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
-<meta property="og:type" content="website">
-<meta property="og:title" content="吃着火锅唱着歌">
-<meta property="og:url" content="http://www.programan.top/tags/Python/index.html">
+  <meta name="description" content="项目中用到的自定义 view 还是有限的，所有有些知识点也是遗漏，这次做一个稍微全面点的总结，复习一下。 自定义 view 需要至少重写两个构造函数 123456public MyView(Context context) &amp;#123;         	super(context);     &amp;#125;      public MyView(Context context, Attribute">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android总结之自定义view">
+<meta property="og:url" content="http://www.programan.top/2019/01/11/Android总结之自定义view/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="项目中用到的自定义 view 还是有限的，所有有些知识点也是遗漏，这次做一个稍微全面点的总结，复习一下。 自定义 view 需要至少重写两个构造函数 123456public MyView(Context context) &amp;#123;         	super(context);     &amp;#125;      public MyView(Context context, Attribute">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-14T12:28:29.627Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="吃着火锅唱着歌">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:title" content="Android总结之自定义view">
+<meta name="twitter:description" content="项目中用到的自定义 view 还是有限的，所有有些知识点也是遗漏，这次做一个稍微全面点的总结，复习一下。 自定义 view 需要至少重写两个构造函数 123456public MyView(Context context) &amp;#123;         	super(context);     &amp;#125;      public MyView(Context context, Attribute">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -154,60 +155,211 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Android总结之自定义view" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/04/Python-爬虫的工具列表/" class="archive-article-date">
-  	<time datetime="2019-01-04T06:24:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-04</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/04/Python-爬虫的工具列表/">Python 爬虫的工具列表</a>
+    <h1 class="article-title" itemprop="name">
+      Android总结之自定义view
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/01/11/Android总结之自定义view/" class="archive-article-date">
+  	<time datetime="2019-01-11T11:03:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目中用到的自定义 view 还是有限的，所有有些知识点也是遗漏，这次做一个稍微全面点的总结，复习一下。</p>
+<p>自定义 view 需要至少重写两个构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyView</span><span class="params">(Context context)</span> </span>&#123;         </span><br><span class="line">	<span class="keyword">super</span>(context);     </span><br><span class="line">&#125;      </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">super</span>(context, attrs);     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而且大部分时候只需重写两个函数：onMeasure()、onDraw()。onMeasure() 方法负责对当前 view 的尺寸进行测量，onDraw（）方法负责把当前这个 view 绘制出来。</p>
+<h5 id="onMeasure"><a href="#onMeasure" class="headerlink" title="onMeasure"></a>onMeasure</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span></span></span><br></pre></td></tr></table></figure>
+<p>在 onMeasure 方法中，参数 widthMeasureSpec 与 heightMeasureSpec 包含了尺寸的测量模式和尺寸大小。我们知道 int 类型数据占用 32 个 bit，这个参数数值将 int 数据的前两个 bit 用于区分不同的布局模式，后面 30 个 bit 用于存放尺寸的数据。Android 内置类 MeasureSpec 可以帮助计算测量模式与尺寸：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> widthMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line"><span class="keyword">int</span> widthSize = MeasureSpec.getSize(widthMeasureSpec);</span><br></pre></td></tr></table></figure>
+<p>请注意，这里的尺寸大小并不是最终我们的 View 的尺寸大小，而是父 view 提供的参考大小。至于测量模式，表示了 view 与父 view 直接的关系，测量模式有三种：</p>
+<table>
+<thead>
+<tr>
+<th>测量模式</th>
+<th>表示意思</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UNSPECIFIED</td>
+<td>父容器没有对当前View有任何限制，当前View可以任意取尺寸</td>
+</tr>
+<tr>
+<td>EXACTLY</td>
+<td>当前的尺寸就是当前View应该取的尺寸</td>
+</tr>
+<tr>
+<td>AT_MOST</td>
+<td>当前尺寸是当前View能取的最大尺寸</td>
+</tr>
+</tbody>
+</table>
+<p>测量模式与布局时 wrap_content、match_parent 以及写成固定尺寸对应关系：</p>
+<blockquote>
+<p>match_parent –&gt; EXACTLY。match_parent 要利用父 View 给子 View 提供的剩余空间，而父 View 的剩余空间是确定的，也就是这个测量模式对应的数值锁存放的尺寸。</p>
+</blockquote>
+<blockquote>
+<p>wrap_content –&gt; AT_MOST。就是我们想要将大小设置为包裹我们的 View 内容，那么尺寸就是父 View 给我们作为参考的尺寸，是要不超过这个尺寸就可以，具体尺寸可以根据我们的需求去设定。</p>
+</blockquote>
+<blockquote>
+<p>固定尺寸 –&gt;EXACTLY。用户自己制定尺寸的大小。</p>
+</blockquote>
+<h5 id="重新-onMeasure-方法"><a href="#重新-onMeasure-方法" class="headerlink" title="重新 onMeasure 方法"></a>重新 onMeasure 方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getMySize</span><span class="params">(<span class="keyword">int</span> defaultSize, <span class="keyword">int</span> measureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> mySize = defaultSize;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> mode = MeasureSpec.getMode(measureSpec);</span><br><span class="line">        <span class="keyword">int</span> size = MeasureSpec.getSize(measureSpec);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (mode) &#123;</span><br><span class="line">            <span class="keyword">case</span> MeasureSpec.UNSPECIFIED: &#123;<span class="comment">//如果没有指定大小，就设置为默认大小</span></span><br><span class="line">                mySize = defaultSize;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">case</span> MeasureSpec.AT_MOST: &#123;<span class="comment">//如果测量模式是最大取值为size</span></span><br><span class="line">                <span class="comment">//我们将大小取最大值,你也可以取其他值</span></span><br><span class="line">                mySize = size;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">case</span> MeasureSpec.EXACTLY: &#123;<span class="comment">//如果是固定的大小，那就不要去改变它</span></span><br><span class="line">                mySize = size;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mySize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> width = getMySize(<span class="number">100</span>, widthMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> height = getMySize(<span class="number">100</span>, heightMeasureSpec);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (width &lt; height) &#123;</span><br><span class="line">            height = width;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            width = height;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        setMeasuredDimension(width, height);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="重写-onDraw-方法"><a href="#重写-onDraw-方法" class="headerlink" title="重写 onDraw 方法"></a>重写 onDraw 方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//调用父View的onDraw函数，因为View这个类帮我们实现了一些</span></span><br><span class="line">        <span class="comment">// 基本的而绘制功能，比如绘制背景颜色、背景图片等</span></span><br><span class="line">        <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line">        <span class="keyword">int</span> r = getMeasuredWidth() / <span class="number">2</span>;<span class="comment">//也可以是getMeasuredHeight()/2,本例中我们已经将宽高设置相等了</span></span><br><span class="line">        <span class="comment">//圆心的横坐标为当前的View的左边起始位置+半径</span></span><br><span class="line">        <span class="keyword">int</span> centerX = getLeft() + r;</span><br><span class="line">        <span class="comment">//圆心的纵坐标为当前的View的顶部起始位置+半径</span></span><br><span class="line">        <span class="keyword">int</span> centerY = getTop() + r;</span><br><span class="line"></span><br><span class="line">        Paint paint = <span class="keyword">new</span> Paint();</span><br><span class="line">        paint.setColor(Color.GREEN);</span><br><span class="line">        <span class="comment">//开始绘制</span></span><br><span class="line">        canvas.drawCircle(centerX, centerY, r, paint);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义布局属性"><a href="#自定义布局属性" class="headerlink" title="自定义布局属性"></a>自定义布局属性</h5><ul>
+<li>首先需要再 res/values/styles.xml 文件（如果没有需要自己创建）里面生命一个需要自定义的属性；</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;resources&gt;</span><br><span class="line">    &lt;!--name为声明的<span class="string">"属性集合"</span>名，可以随便取，但是最好是设置为跟我们的View一样的名称--&gt;</span><br><span class="line">    &lt;declare-styleable name=<span class="string">"MyView"</span>&gt;</span><br><span class="line">        &lt;!--声明我们的属性，名称为default_size,取值类型为尺寸类型（dp,px等）--&gt;</span><br><span class="line">        &lt;attr name=<span class="string">"default_size"</span> format=<span class="string">"dimension"</span> /&gt;</span><br><span class="line">    &lt;/declare-styleable&gt;</span><br><span class="line">&lt;/resources&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>在布局文件中使用自定义的属性；</p>
+<p>注意：需要再根标签中设定命名空间，命名空间的名称可以自己定义，命名空间的值为固定：“<a href="http://schemas.android.com/apk/res-auto”。" target="_blank" rel="noopener">http://schemas.android.com/apk/res-auto”。</a></p>
+</li>
+<li><p>在自定义 View 里面通过参数 AttributeSet 把定义的属性取出。</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> defalutSize;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">super</span>(context, attrs);</span><br><span class="line">      <span class="comment">//第二个参数就是我们在styles.xml文件中的&lt;declare-styleable&gt;标签</span></span><br><span class="line">        <span class="comment">//即属性集合的标签，在R文件中名称为R.styleable+name</span></span><br><span class="line">        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MyView);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第一个参数为属性集合里面的属性，R文件名称：R.styleable+属性集合名称+下划线+属性名称</span></span><br><span class="line">        <span class="comment">//第二个参数为，如果没有设置这个属性，则设置的默认的值</span></span><br><span class="line">        defalutSize = a.getDimensionPixelSize(R.styleable.MyView_default_size, <span class="number">100</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//最后记得将TypedArray对象回收</span></span><br><span class="line">        a.recycle();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>sh</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/01/11/Android总结之自定义view/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2019/01/04/Python-爬虫的工具列表/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Python 爬虫的工具列表</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
+  
+  <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+<script>
+  var cloudTieConfig = {
+    url: "http://www.programan.top/2019/01/11/Android总结之自定义view/", 
+    sourceId: "Android总结之自定义view",
+    productKey: "true",
+    target: "cloud-tie-wrapper"
+  };
+</script>
+<script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -230,9 +382,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
