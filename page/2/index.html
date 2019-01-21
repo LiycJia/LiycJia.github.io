@@ -156,6 +156,161 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android-Monitor工具记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/05/Android-Monitor工具记录/">Android Profiler工具记录</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/05/Android-Monitor工具记录/" class="archive-article-date">
+  	<time datetime="2018-12-05T06:12:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-05</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Android Studio Profiler 三种性能监测工具：Memory Profiler、CPU Profiler、Network Profiler。简单记录下这些工具的使用：</p>
+<h4 id="Memory-Profiler"><a href="#Memory-Profiler" class="headerlink" title="Memory Profiler"></a>Memory Profiler</h4><p>用来监测 App 内存使用情况，判断是否有内存泄漏。如图：</p>
+<p><img src="/2018/12/05/Android-Monitor工具记录/WX20181205-144010.png" alt="Memory monitor"></p>
+<p>A 处是手动触发 GC 操作，B处 Dump Java heap，获取当前的堆栈信息，生成.hprof文件。</p>
+<p>Record 可以记录某段时间的内存分配情况。</p>
+<p>通过与应用交互并在Memory Profiler中观察它是如何影响内存的使用，图表可以为你展示一些潜在的问题:</p>
+<ol>
+<li>频繁的垃圾收集活动使应用运行缓慢</li>
+<li>应用耗尽内存导致app崩溃</li>
+<li>潜在的内存泄漏</li>
+</ol>
+<p>正常情况下，上图中的D区域会随着时间的走势慢慢上升(就算你与APP没有任何交互)，直到E区域被用完，则会触发GC操作，释放内存，周而复始。如果你发现你的应用是静态的，但是E区域的内存很快就被用完了，即频繁的触发GC操作，这时你就应该引起重视，说不定你的代码中就存在着引起内存泄漏的隐患。</p>
+<h5 id="内存计算指标"><a href="#内存计算指标" class="headerlink" title="内存计算指标"></a>内存计算指标</h5><p>根据Android系统，你在内存分析器的顶部看到的数字(如上图红线部分)基于你的应用所提交的所有私有内存页面。此计数不包括与系统或其他应用程序共享的页。</p>
+<p>内存类别如下:</p>
+<ul>
+<li>Java：从Java或Kotlin代码中分配的对象的内存</li>
+<li>Native：从C或c++代码中分配的对象的内存，即使你没有在app中使用c++，你可能会看到一些本地内存，因为Android框架使用Native内存来处理各种任务，比如处理图像资产和其他图形——即使你写的代码是Java或Kotlin</li>
+<li>Graphics：用于图形缓冲区队列的内存用于显示屏幕上的像素，包括GL表面、GL纹理等。(注意，这是与CPU共享的内存，而不是专用的GPU内存)</li>
+<li>Stack：在你的应用程序中，Native和Java栈使用的内存。这通常与你的应用程序运行的线程数有关</li>
+<li>Code：您的应用程序用于代码和资源的内存，如dex字节码，优化或编译的dex代码。所以库和字体</li>
+<li>Other：应用程序使用的内存，系统不确定如何分类</li>
+<li>Allocated：应用程序分配的Java/Kotlin对象的数量。这并不计算用C或c++分配的对象</li>
+</ul>
+<h5 id="Dump-Java-Heap"><a href="#Dump-Java-Heap" class="headerlink" title="Dump Java Heap"></a>Dump Java Heap</h5><p>使用场景：定位内存泄漏<br>点击上图中的 B 按钮开始检测 APP，此时 APP 会变得很卡，容易发生 ANR，一段时间过后会生成 .hprof 文件，如下图所示：</p>
+<p><img src="/2018/12/05/Android-Monitor工具记录/WX20181205-151446.png" alt="WX20181205-151446"></p>
+<p>在 class 中：</p>
+<ul>
+<li>Allocations：该类在堆中分配的数量；</li>
+<li>Shallow Size：所有该类的实例占用的内存大小；</li>
+<li>Retained Size：该类实例可支配的内存大小，是该对象自己的shallow size，加上从该对象能直接或间接访问到对象的shallow size之和。换句话说,释放该对象后，节省的内存大小。</li>
+</ul>
+<p>选中当前列表的某一个类，如下图：</p>
+<p><img src="/2018/12/05/Android-Monitor工具记录/WX20181205-152202.png" alt="WX20181205-152202"></p>
+<p>在 instance 中：</p>
+<ul>
+<li>Depth：GC Roots 点到该实例的最短链路数；</li>
+<li>Shallow Size：单个实例占用的内存大小；</li>
+<li>Retained Size：该实例可支配的内存大小。</li>
+</ul>
+<h5 id="heap-dump-保存为-HPROF"><a href="#heap-dump-保存为-HPROF" class="headerlink" title="heap dump 保存为 HPROF"></a>heap dump 保存为 HPROF</h5><p><img src="/2018/12/05/Android-Monitor工具记录/image-20181205155932949.png" alt="image-20181205155932949"></p>
+<p>如果你需要从Android HPROF文件格式转换为Java SE HPROF格式，可以使用hprof-conv工具进行转化，它的位置在 android_sdk/platform-tools/目录下，运行hprof-conv命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv heap-original.hprof heap-converted.hprof</span><br></pre></td></tr></table></figure>
+<h5 id="GC-Roots"><a href="#GC-Roots" class="headerlink" title="GC Roots"></a>GC Roots</h5><p>对象存活的判定:<br>当一个对象不会再被使用的时候，我们会说这对象已经死亡。对象何时死亡，写程序的人应当是最清楚的。如果计算机也要弄清楚这件事情，就需要使用一些方法来进行对象存活判定，常见的方法有<strong>引用计数（Reference Counting）</strong>和<strong>可达性分析（Reachability Analysis）</strong>两种。</p>
+<p><strong>引用计数算法</strong>的大致思想是给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时刻计数器为0的对象就是不可能再被使用的。<br>Java语言里面没有选用引用计数算法来管理内存，其中最主要原因是它没有一个优雅的方案解决对象之间相互循环引用的问题：<br><strong>当两个对象互相引用，即使它们都无法被外界使用时，它们的引用计数器也不会为0。</strong></p>
+<p><strong>可达性算法</strong>的基本思路就是通过一系列的称为GC根节点（GC Roots）的对象作为起始点，从这些节点开始进行向下搜索，搜索所走过的路径成为引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连（用图论的话来说就是从GC Roots到这个对象不可达）时，则证明此对象是不可用的。</p>
+<h4 id="CPU-Profiler"><a href="#CPU-Profiler" class="headerlink" title="CPU Profiler"></a>CPU Profiler</h4><h4 id="Network-Profiler"><a href="#Network-Profiler" class="headerlink" title="Network Profiler"></a>Network Profiler</h4><blockquote>
+<p>原文解释：</p>
+<ol>
+<li><p>Alloc Count: Number of allocations in the heap.</p>
+</li>
+<li><p>Native Size: Total amount of native memory used by this object type (in bytes). This column is visible only for Android 7.0 and higher.<br>You will see memory here for some objects allocated in Java because Android uses native memory for some framework classes, such as Bitmap.</p>
+</li>
+<li><p>Shallow Size: Total amount of Java memory used by this object type (in bytes).</p>
+</li>
+<li><p>Retained Size: Total size of memory being retained due to all instances of this class (in bytes).<br>At the top of the class list, you can use the left drop-down list to switch between the following heap dumps:</p>
+</li>
+<li><p>Default heap: When no heap is specified by the system.</p>
+</li>
+<li><p>App heap: The primary heap on which your app allocates memory.</p>
+</li>
+<li><p>Image heap: The system boot image, containing classes that are preloaded during boot time. Allocations here are guaranteed to never move or go away.</p>
+</li>
+<li><p>Zygote heap: The copy-on-write heap where an app process is forked from in the Android system.<br>The list of objects in the heap are arranged by class name, by default. You can use the other drop-down to switch between the following arrangements:</p>
+</li>
+<li><p>Arrange by class: Groups all allocations based on class name.</p>
+</li>
+<li><p>Arrange by package: Groups all allocations based on package name.</p>
+</li>
+<li><p>Arrange by callstack: Groups all allocations into their corresponding call stack. This option works only if you capture the heap dump while recording allocations. Even so, there are likely to be objects in the heap that were allocated before you started recording, so those allocations appear first, simply listed by class name.</p>
+</li>
+</ol>
+<ol>
+<li><p>Depth: The shortest number of hops from any GC root to the selected instance.</p>
+</li>
+<li><p>Native Size: Size of this instance in native memory. This column is visible only for Android 7.0 and higher.</p>
+</li>
+<li><p>Shallow Size: Size of this instance in Java memory.</p>
+</li>
+<li><p>Retained Size: Size of memory that this instance dominates (as per the dominator tree).</p>
+</li>
+</ol>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/05/Android-Monitor工具记录/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-数据结构与算法之美-数组" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -975,203 +1130,9 @@
 
 
   
-    <article id="post-Android-studio快捷键（Mac）" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/15/Android-studio快捷键（Mac）/">Android studio快捷键（Mac）</a>
-    </h1>
-  
-
-        
-        <a href="/2018/06/15/Android-studio快捷键（Mac）/" class="archive-article-date">
-  	<time datetime="2018-06-15T07:06:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h5 id="mac上按键符号"><a href="#mac上按键符号" class="headerlink" title="mac上按键符号"></a>mac上按键符号</h5><p>⌥ : option / alt</p>
-<p>⇧ : shift</p>
-<p>⌃ : control</p>
-<p>⌘ : command</p>
-<p>⎋ : esc</p>
-<h5 id="（一）查找-查看相关"><a href="#（一）查找-查看相关" class="headerlink" title="（一）查找/查看相关"></a>（一）查找/查看相关</h5><p><strong>搜索任意内容</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">双击 sft</span><br></pre></td></tr></table></figure>
-<p><strong>当前文件查找/替换</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cmd + F / cmd + R</span><br><span class="line">使用cmd + G，sft + cmd + G，跳到下一个/上一个高亮的变量</span><br></pre></td></tr></table></figure>
-<p><strong>全局查找/替换</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + cmd + F / sft + cmd + R</span><br></pre></td></tr></table></figure>
-<p><strong>全局搜索类</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + O</span><br></pre></td></tr></table></figure>
-<p><strong>全局搜索类/方法/参数</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + O</span><br></pre></td></tr></table></figure>
-<p><strong>打开最近访问的文件列表</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + E</span><br></pre></td></tr></table></figure>
-<p><strong>类/方法在全局项目中引用情况</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + fn + F7 / cmd + 鼠标点击</span><br></pre></td></tr></table></figure>
-<p><strong>类/方法在当前文件中引用情况</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + fn + F7</span><br></pre></td></tr></table></figure>
-<p><strong>方法被调用层级结构</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + H</span><br></pre></td></tr></table></figure>
-<p><strong>查看接口的实现</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + B</span><br></pre></td></tr></table></figure>
-<p><strong>跳转至超类的方法</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + U</span><br></pre></td></tr></table></figure>
-<p><strong>跳转至第几行</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + L</span><br></pre></td></tr></table></figure>
-<p><strong>返回到上次编辑位置</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmd + [ / ]</span><br><span class="line"></span><br><span class="line">opt + cmd + ← / →</span><br></pre></td></tr></table></figure>
-<p><strong>当前编辑的文件中结构快速导航</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + fn + F12</span><br></pre></td></tr></table></figure>
-<p><strong>列出函数方法一系列的有效参数</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + P</span><br></pre></td></tr></table></figure>
-<p><strong>跳转至错误或警告</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fn + F2</span><br></pre></td></tr></table></figure>
-<p><strong>查看类／方法的注释文档</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fn + F1</span><br></pre></td></tr></table></figure>
-<h5 id="（二）控制操作相关"><a href="#（二）控制操作相关" class="headerlink" title="（二）控制操作相关"></a>（二）控制操作相关</h5><p><strong>Surround with快速调出if,for,try…catch,while等环绕代码</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + T</span><br></pre></td></tr></table></figure>
-<p><strong>快速生成模版代码块，如if,while,return</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + J</span><br></pre></td></tr></table></figure>
-<p><strong>快速生成getter／setter方法，构造方法，toString()方法等</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + N</span><br></pre></td></tr></table></figure>
-<p><strong>行尾自动添加分号，if后面自动加“(){ }”</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + cmd + enter</span><br></pre></td></tr></table></figure>
-<p><strong>引入重写父类的方法</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + O</span><br></pre></td></tr></table></figure>
-<p><strong>引入接口或抽象类方法的实现</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + I</span><br></pre></td></tr></table></figure>
-<p><strong>下一步意图猜测</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + return</span><br></pre></td></tr></table></figure>
-<p><strong>将最近使用的剪贴板内容选择插入到文本</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + cmd + V</span><br></pre></td></tr></table></figure>
-<p><strong>注释与取消注释，注释效果 //…</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + /</span><br></pre></td></tr></table></figure>
-<p><strong>注释与取消注释，注释效果 /…/</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + /</span><br></pre></td></tr></table></figure>
-<p><strong>上下移动代码</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + sft + up/down</span><br></pre></td></tr></table></figure>
-<p><strong>上下代码行换位</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + sft + up/down</span><br></pre></td></tr></table></figure>
-<p><strong>单词间或驼峰间跳转</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Alt + ← / →</span><br></pre></td></tr></table></figure>
-<p><strong>切换大小写</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + cmd + U</span><br></pre></td></tr></table></figure>
-<p><strong>切换文件</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + tab</span><br></pre></td></tr></table></figure>
-<p><strong>选择区域</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opt + up/down</span><br><span class="line"></span><br><span class="line">注：如果光标停留在大括号处，则选中整个大括号区域</span><br></pre></td></tr></table></figure>
-<p><strong>局部代码块展开/收缩</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + + / cmd + -</span><br></pre></td></tr></table></figure>
-<p><strong>全部代码块展开/收缩</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + cmd + + / sft + cmd + -</span><br></pre></td></tr></table></figure>
-<p><strong>撤销/取消撤销</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + Z / sft + cmd +Z</span><br></pre></td></tr></table></figure>
-<p><strong>删除行</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + delete</span><br></pre></td></tr></table></figure>
-<p><strong>复制行</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + D</span><br></pre></td></tr></table></figure>
-<p><strong>合并行</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + ctr + J</span><br></pre></td></tr></table></figure>
-<p><strong>格式化代码</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + L</span><br></pre></td></tr></table></figure>
-<p><strong>自动缩进对齐</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + alt + I</span><br></pre></td></tr></table></figure>
-<p><strong>清除无效包引用</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + ctr + O</span><br></pre></td></tr></table></figure>
-<p><strong>打开设置</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + ,</span><br></pre></td></tr></table></figure>
-<p><strong>隐藏窗口</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + esc</span><br></pre></td></tr></table></figure>
-<h5 id="（三）代码重构相关"><a href="#（三）代码重构相关" class="headerlink" title="（三）代码重构相关"></a>（三）代码重构相关</h5><p><strong>类名／方法名／变量名 重命名操作</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sft + fn + F6</span><br></pre></td></tr></table></figure>
-<p><strong>方法重构，方法抽离</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + M</span><br></pre></td></tr></table></figure>
-<p><strong>抽离成方法参数</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + P</span><br></pre></td></tr></table></figure>
-<p><strong>抽离为局部变量</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + V</span><br></pre></td></tr></table></figure>
-<p><strong>抽离为成员变量</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + F</span><br></pre></td></tr></table></figure>
-<h5 id="（四）编译运行调试"><a href="#（四）编译运行调试" class="headerlink" title="（四）编译运行调试"></a>（四）编译运行调试</h5><p><strong>编译源码</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + fn + F9</span><br></pre></td></tr></table></figure>
-<p><strong>运行</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + R</span><br></pre></td></tr></table></figure>
-<p><strong>调试</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ctr + B</span><br></pre></td></tr></table></figure>
-<p><strong>Step Into（进入到代码）</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fn + F7</span><br></pre></td></tr></table></figure>
-<p><strong>Step Over（跳到下一步）</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fn + F8</span><br></pre></td></tr></table></figure>
-<p><strong>直接运行</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">opt + cmd + R</span><br></pre></td></tr></table></figure>
-<p><strong>退出调试</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + fn + F2</span><br></pre></td></tr></table></figure>
-<h5 id="（五）补充"><a href="#（五）补充" class="headerlink" title="（五）补充"></a>（五）补充</h5><p><strong>添加/移除书签</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F3</span><br></pre></td></tr></table></figure>
-<p><strong>查看书签</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cmd + F3</span><br></pre></td></tr></table></figure>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/06/15/Android-studio快捷键（Mac）/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
     </nav>
   
 
@@ -1287,11 +1248,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">

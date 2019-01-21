@@ -243,6 +243,184 @@
 
 
   
+    <article id="post-Android总结之网络那些事儿" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/15/Android总结之网络那些事儿/">Android总结之网络那些事儿</a>
+    </h1>
+  
+
+        
+        <a href="/2019/01/15/Android总结之网络那些事儿/" class="archive-article-date">
+  	<time datetime="2019-01-15T11:08:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Http 方面的知识平常也会遇到，但是一般了解的也不深，今天记录几个常遇到的知识点。</p>
+<h4 id="Http-报文"><a href="#Http-报文" class="headerlink" title="Http 报文"></a>Http 报文</h4><p>http 报文可以分为请求报文和响应报文，格式大同小异，主要分为三个部分：</p>
+<ol>
+<li>起始行</li>
+<li>首部</li>
+<li>主体</li>
+</ol>
+<p>请求报文格式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">method</span>&gt;</span> <span class="tag">&lt;<span class="name">request-url</span>&gt;</span> <span class="tag">&lt;<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">headers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">entity-body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>响应报文格式：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span> <span class="tag">&lt;<span class="name">status</span>&gt;</span> <span class="tag">&lt;<span class="name">reason-phrase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">headers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">entity-body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>各个标签的解释：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">method</span>&gt;</span> 指请求方法，常用的主要是Get、 Post、Head 还有其他一些我们这里就不说了，有兴趣的可以自己查阅一下</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span> 指协议版本，现在通常都是Http/1.1了</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">request-url</span>&gt;</span> 请求地址</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">status</span>&gt;</span> 指响应状态码， 我们熟悉的200、404等等</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">reason-phrase</span>&gt;</span> 原因短语，200 OK 、404 Not Found 这种后面的描述就是原因短语，通常不必太关注。</span><br></pre></td></tr></table></figure>
+<h5 id="method"><a href="#method" class="headerlink" title="method"></a>method</h5><h5 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h5><p>常见的状态码主要有<br>200 OK  请求成功，实体包含请求的资源<br>301 Moved Permanent 请求的URL被移除了，通常会在Location首部中包含新的URL用于重定向。<br>304 Not Modified    条件请求进行再验证，资源未改变。<br>404 Not Found       资源不存在<br>206 Partial Content 成功执行一个部分请求。这个在用于断点续传时会涉及到。</p>
+<h5 id="header"><a href="#header" class="headerlink" title="header"></a>header</h5><p>在请求报文和响应报文中都可以携带一些信息，通过与其他部分配合，能够实现各种强大的功能。这些信息位于起始行之下与请求实体之间，以键值对的形式，称之为首部。每条首部以回车换行符结尾，最后一个首部额外多一个换行，与实体分隔开。</p>
+<p>这里我们重点关注一下<br>Date<br>Cache-Control<br>Last-Modified<br>Etag<br>Expires<br>If-Modified-Since<br>If-None-Match<br>If-Unmodified-Since<br>If-Range<br>If-Match</p>
+<h5 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h5><h4 id="Http-缓存"><a href="#Http-缓存" class="headerlink" title="Http 缓存"></a>Http 缓存</h4><p>当我们发起一个http请求后，服务器返回所请求的资源，这时我们可以将该资源的副本存储在本地，这样当再次对该url资源发起请求时，我们能快速的从本地存储设备中获取到该url资源，这就是所谓的缓存。缓存既可以节约不必要的网络带宽，又能迅速对http请求做出响应。</p>
+<blockquote>
+<p>先摆出几个概念：</p>
+<ol>
+<li>新鲜度检测</li>
+<li>再验证</li>
+<li>再验证命中</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol>
+<li>新鲜度检测<br>我们需要通过检测资源是否超过一定的时间，来判断缓存资源是否新鲜可用。那么这个一定的时间怎么决定呢？其实是由服务器通过在响应报文中增加 <code>Cache-Control:max-age</code>，或是 <code>Expire</code> 这两个首部来实现的。值得注意的是 Cache-Control 是 http1.1 的协议规范，通常是接相对的时间，即多少秒以后，需要结合 <code>last-modified</code> 这个首部计算出绝对时间。而 Expire 是 http1.0 的规范，后面接一个绝对时间。</li>
+<li>再验证<br>如果通过新鲜度检测发现需要请求服务器进行再验证，那么我们至少需要告诉服务器，我们已经缓存了一个什么样的资源了，然后服务器来判断这个缓存资源到底是不是与当前的资源一致。逻辑是这样没错。那怎么告诉服务器我当前已经有一个备用的缓存资源了呢？我们可以采用一种称之为<code>条件请求</code>的方式实现再验证。</li>
+<li>Http定义了5个首部用于条件请求:<br>If-Modified-Since<br>If-None-Match<br>If-Unmodified-Since<br>If-Range<br>If-Match</li>
+</ol>
+</blockquote>
+<h4 id="Https"><a href="#Https" class="headerlink" title="Https"></a>Https</h4><blockquote>
+<p>简单的说 Http + 加密 + 认证 + 完整性保护 = Https</p>
+</blockquote>
+<p>传统的 Http 协议是一种应用层的传输协议，Http 直接与 TCP 协议通信，其本身存在一些缺点：</p>
+<ol>
+<li>Http协议使用明文传输，容易遭到窃听。</li>
+<li>Http 对于通信双方都没有进行身份验证，通信双方无法确认对方是否是伪装的客户端或者服务端。</li>
+<li>Http 对于传输内容的完整性没有确认的办法，往往容易在传输的过程中遭到劫持篡改。</li>
+</ol>
+<p>因此，在一些需要保证安全性的场景下，Http 无法抵御这些攻击。</p>
+<p>Https 则可以听过增加的 SSL\TLS，支持对于通信内容的加密，以及通信双飞的身份验证。</p>
+<h5 id="Https-加密"><a href="#Https-加密" class="headerlink" title="Https 加密"></a>Https 加密</h5><p>近代密码学中加密的方式主要有两类：</p>
+<ol>
+<li>对称秘钥加密</li>
+<li>非对称秘钥加密</li>
+</ol>
+<p>对称秘钥加密是指加密与解密过程使用同一把秘钥。这种方式的优点是处理速度快，但是如何安全的从一方将秘钥传递到通信的另一方是一个问题。</p>
+<p>非对称秘钥加密是指加密与解密使用两把不同的秘钥。这两把秘钥，一把叫公开秘钥，可以随意对外公开。一把叫私有秘钥，只用于本身持有。得到公开秘钥的客户端可以使用公开秘钥对传输内容进行加密，而只有私有秘钥持有者本身可以对公开秘钥加密的内容进行解密。这种方式克服了秘钥交换的问题，但是相对于对称秘钥加密的方式，处理速度较慢。</p>
+<p>SSL\TLS的加密方式则是结合了两种加密方式的优点。首先采用非对称秘钥加密，将一个对称秘钥使用公开秘钥加密后传输到对方。对方使用私有秘钥解密，得到传输的对称秘钥。之后双方再使用对称秘钥进行通信。这样即解决了对称秘钥加密的秘钥传输问题，又利用了对称秘钥的高效率来进行通信内容的加密与解密。</p>
+<h5 id="Https-的认证"><a href="#Https-的认证" class="headerlink" title="Https 的认证"></a>Https 的认证</h5><p>SSL\TLS采用的混合加密的方式还是存在一个问题，即怎么样确保用于加密的公开秘钥确实是所期望的服务器所分发的呢？也许在收到公开秘钥时，这个公开秘钥已经被别人篡改了。因此，我们还需要对这个秘钥进行认证的能力，以确保我们通信的对方是我们所期望的对象。</p>
+<p>目前的做法是使用由数字证书认证机构颁发的公开秘钥证书。服务器的运营人员可以向认证机构提出公开秘钥申请。认证机构在审核之后，会将公开秘钥与共钥证书绑定。服务器就可以将这个共钥证书下发给客户端，客户端在收到证书后，使用认证机构的公开秘钥进行验证。一旦验证成功，即可知道这个秘钥是可以信任的秘钥。</p>
+<h5 id="Https的通信流程："><a href="#Https的通信流程：" class="headerlink" title="Https的通信流程："></a>Https的通信流程：</h5><ol>
+<li>Client发起请求</li>
+<li>Server端响应请求，并在之后将证书发送至Client</li>
+<li>Client使用认证机构的共钥认证证书，并从证书中取出Server端共钥。</li>
+<li>Client使用共钥加密一个随机秘钥，并传到Server</li>
+<li>Server使用私钥解密出随机秘钥</li>
+<li>通信双方使用随机秘钥最为对称秘钥进行加密解密。</li>
+</ol>
+<h4 id="TCP-IP-协议简介"><a href="#TCP-IP-协议简介" class="headerlink" title="TCP/IP 协议简介"></a>TCP/IP 协议简介</h4><h5 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h5><p>IP（Internet Protocol）协议提供了主机和主机间的通信。</p>
+<p>为了完成不同主机的通信，我们需要某种方式来唯一标识一台主机，这个标识就是著名的 IP 地址。通过 IP 地址，IP 协议就能帮我们把一个数据包发送给对方。</p>
+<h5 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h5><p>上面说到，IP 协议提供了主机与主机间的通信。TCP 协议在 IP 协议提供的主机间通信功能的基础上，完成了两个主机上进程对进程的通信。</p>
+<p>有了 IP，不同主机可以进行通信。但是计算机收到数据后，并不知道数据属于哪个进程（简单讲，进程就是一个正在运行的应用程序）。TCP的作用就在于，让我们知道这个数据属于哪个进程，从而完成进程间的通信。</p>
+<p>为了标识数据属于哪个进程，我们给需要进行 TCP 通信的进程分配一个唯一的数字来标识它。这个数字就是我们常说的端口号。</p>
+<p>TCP 的全称是 Transmission Control Protocol，大家对它说的最多的，大概是面向连接的特性了。之所以说它是有连接的，是说进行通信前，通信双方需要先经过一个三次握手的过程。三次握手完成后，连接便建立了。这时候我们才可以接受/发送数据。（与之对应的 UDP，不需要经过握手，就可以直接发送数据）。</p>
+<p>三次握手过程：</p>
+<ol>
+<li>首先，客户向服务端发送一个 <code>SYN</code>，假设此时 sequence number 为 <code>x</code>。这个 <code>x</code> 是由操作系统根据一定的规则生成的，不妨认为它是一个随机数。</li>
+<li>服务端收到 <code>SYN</code> 后，会向客户端再发送一个 <code>SYN</code>，此时服务器的 <code>seq number = y</code>。与此同时，会 <code>ACK x+1</code>，告诉客户端“已经收到了 <code>SYN</code>，可以发送数据了”。</li>
+<li>客户端收到服务器的 <code>SYN</code> 后，回复一个 <code>ACK y+1</code>，这个 <code>ACK</code> 则是告诉服务器，<code>SYN</code> 已经收到，服务器可以发送数据了。</li>
+</ol>
+<p>经过这 3 步，TCP 连接就建立了。这里需要注意的有三点：</p>
+<ol>
+<li>连接是由客户端主动发起的</li>
+<li>在第 3 步客户端向服务器回复 <code>ACK</code> 的时候，TCP 协议是允许我们携带数据的。之所以做不到，是 API 的限制导致的。</li>
+<li>TCP 协议还允许 “四次握手” 的发生，同样的，由于 API 的限制，这个极端的情况并不会发生。</li>
+</ol>
+<h4 id="Socket-基本用法"><a href="#Socket-基本用法" class="headerlink" title="Socket 基本用法"></a>Socket 基本用法</h4><p>Socket 是 TCP 层的封装，通过 Socket，我们就能进程 TCP 通信。</p>
+<p>在 Java 的 SDK 中，socket 的共有两个接口：用于监听客户连接的 ServerSocket 和用于通信的 Socket。使用 socket 的步骤如下：</p>
+<ol>
+<li>创建 ServerSocket 并监听客户连接</li>
+<li>创建 Socket 连接服务端</li>
+<li>通过 Socket 获取输入输出流进行通信</li>
+</ol>
+<p>Socket Demo：</p>
+<p>​    1、创建 ServerSocket 并监听客户连接</p>
+<ol>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServerSocket mServerSocket;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EchoServer</span><span class="params">(<span class="keyword">int</span> port)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 1. 创建一个 ServerSocket 并监听端口 port</span></span><br><span class="line">        mServerSocket = <span class="keyword">new</span> ServerSocket(port);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 2. 开始接受客户连接</span></span><br><span class="line">        Socket client = mServerSocket.accept();</span><br><span class="line">        handleClient(client);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleClient</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 3. 使用 socket 进行通信 ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            EchoServer server = <span class="keyword">new</span> EchoServer(<span class="number">9877</span>);</span><br><span class="line">            server.run();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>   2、使用 Socket 连接服务端</p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Socket mSocket;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EchoClient</span><span class="params">(String host, <span class="keyword">int</span> port)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 创建 socket 并连接服务器</span></span><br><span class="line">        mSocket = <span class="keyword">new</span> Socket(host, port);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 和服务端进行通信</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 由于服务端运行在同一主机，这里我们使用 localhost</span></span><br><span class="line">            EchoClient client = <span class="keyword">new</span> EchoClient(<span class="string">"localhost"</span>, <span class="number">9877</span>);</span><br><span class="line">            client.run();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>   3、通过 Socket 获取输入/输出流进行通信</p>
+<p>   首先，我们来实现服务端（服务端就是不停的输入数据，然后写会给客户端）：</p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServer</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleClient</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        InputStream in = socket.getInputStream();</span><br><span class="line">        OutputStream out = socket.getOutputStream();</span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> n;</span><br><span class="line">        <span class="keyword">while</span> ((n = in.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            out.write(buffer, <span class="number">0</span>, n);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>   接下来，是客户端的实现（客户端在读取用户输入的同时，又会读取服务器的响应，所以需要创建一个线程来读取服务器的响应）：</p>
+   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoClient</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Thread readerThread = <span class="keyword">new</span> Thread(<span class="keyword">this</span>::readResponse);</span><br><span class="line">        readerThread.start();</span><br><span class="line"></span><br><span class="line">        OutputStream out = mSocket.getOutputStream();</span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> n;</span><br><span class="line">        <span class="keyword">while</span> ((n = System.in.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            out.write(buffer, <span class="number">0</span>, n);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readResponse</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InputStream in = mSocket.getInputStream();</span><br><span class="line">            <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="keyword">int</span> n;</span><br><span class="line">            <span class="keyword">while</span> ((n = in.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                System.out.write(buffer, <span class="number">0</span>, n);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>   注意：</p>
+<ol>
+<li>在上面代码中没有处理异常，实际中在发生异常时需要关闭 socket，并根据实际业务做一些错误处理工作。</li>
+<li>在客户端，没有停止 readThread。实际中，可以通过关闭 socket 来让线程从阻塞中返回。</li>
+<li>demo 中服务端只处理了一个客户连接，如果需要同时处理多个客户端，可以创建线程来处理请求。</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/01/15/Android总结之网络那些事儿/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Android总结之自定义view" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2024,164 +2202,9 @@
 
 
   
-    <article id="post-Android-Monitor工具记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/12/05/Android-Monitor工具记录/">Android Profiler工具记录</a>
-    </h1>
-  
-
-        
-        <a href="/2018/12/05/Android-Monitor工具记录/" class="archive-article-date">
-  	<time datetime="2018-12-05T06:12:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Android Studio Profiler 三种性能监测工具：Memory Profiler、CPU Profiler、Network Profiler。简单记录下这些工具的使用：</p>
-<h4 id="Memory-Profiler"><a href="#Memory-Profiler" class="headerlink" title="Memory Profiler"></a>Memory Profiler</h4><p>用来监测 App 内存使用情况，判断是否有内存泄漏。如图：</p>
-<p><img src="/2018/12/05/Android-Monitor工具记录/WX20181205-144010.png" alt="Memory monitor"></p>
-<p>A 处是手动触发 GC 操作，B处 Dump Java heap，获取当前的堆栈信息，生成.hprof文件。</p>
-<p>Record 可以记录某段时间的内存分配情况。</p>
-<p>通过与应用交互并在Memory Profiler中观察它是如何影响内存的使用，图表可以为你展示一些潜在的问题:</p>
-<ol>
-<li>频繁的垃圾收集活动使应用运行缓慢</li>
-<li>应用耗尽内存导致app崩溃</li>
-<li>潜在的内存泄漏</li>
-</ol>
-<p>正常情况下，上图中的D区域会随着时间的走势慢慢上升(就算你与APP没有任何交互)，直到E区域被用完，则会触发GC操作，释放内存，周而复始。如果你发现你的应用是静态的，但是E区域的内存很快就被用完了，即频繁的触发GC操作，这时你就应该引起重视，说不定你的代码中就存在着引起内存泄漏的隐患。</p>
-<h5 id="内存计算指标"><a href="#内存计算指标" class="headerlink" title="内存计算指标"></a>内存计算指标</h5><p>根据Android系统，你在内存分析器的顶部看到的数字(如上图红线部分)基于你的应用所提交的所有私有内存页面。此计数不包括与系统或其他应用程序共享的页。</p>
-<p>内存类别如下:</p>
-<ul>
-<li>Java：从Java或Kotlin代码中分配的对象的内存</li>
-<li>Native：从C或c++代码中分配的对象的内存，即使你没有在app中使用c++，你可能会看到一些本地内存，因为Android框架使用Native内存来处理各种任务，比如处理图像资产和其他图形——即使你写的代码是Java或Kotlin</li>
-<li>Graphics：用于图形缓冲区队列的内存用于显示屏幕上的像素，包括GL表面、GL纹理等。(注意，这是与CPU共享的内存，而不是专用的GPU内存)</li>
-<li>Stack：在你的应用程序中，Native和Java栈使用的内存。这通常与你的应用程序运行的线程数有关</li>
-<li>Code：您的应用程序用于代码和资源的内存，如dex字节码，优化或编译的dex代码。所以库和字体</li>
-<li>Other：应用程序使用的内存，系统不确定如何分类</li>
-<li>Allocated：应用程序分配的Java/Kotlin对象的数量。这并不计算用C或c++分配的对象</li>
-</ul>
-<h5 id="Dump-Java-Heap"><a href="#Dump-Java-Heap" class="headerlink" title="Dump Java Heap"></a>Dump Java Heap</h5><p>使用场景：定位内存泄漏<br>点击上图中的 B 按钮开始检测 APP，此时 APP 会变得很卡，容易发生 ANR，一段时间过后会生成 .hprof 文件，如下图所示：</p>
-<p><img src="/2018/12/05/Android-Monitor工具记录/WX20181205-151446.png" alt="WX20181205-151446"></p>
-<p>在 class 中：</p>
-<ul>
-<li>Allocations：该类在堆中分配的数量；</li>
-<li>Shallow Size：所有该类的实例占用的内存大小；</li>
-<li>Retained Size：该类实例可支配的内存大小，是该对象自己的shallow size，加上从该对象能直接或间接访问到对象的shallow size之和。换句话说,释放该对象后，节省的内存大小。</li>
-</ul>
-<p>选中当前列表的某一个类，如下图：</p>
-<p><img src="/2018/12/05/Android-Monitor工具记录/WX20181205-152202.png" alt="WX20181205-152202"></p>
-<p>在 instance 中：</p>
-<ul>
-<li>Depth：GC Roots 点到该实例的最短链路数；</li>
-<li>Shallow Size：单个实例占用的内存大小；</li>
-<li>Retained Size：该实例可支配的内存大小。</li>
-</ul>
-<h5 id="heap-dump-保存为-HPROF"><a href="#heap-dump-保存为-HPROF" class="headerlink" title="heap dump 保存为 HPROF"></a>heap dump 保存为 HPROF</h5><p><img src="/2018/12/05/Android-Monitor工具记录/image-20181205155932949.png" alt="image-20181205155932949"></p>
-<p>如果你需要从Android HPROF文件格式转换为Java SE HPROF格式，可以使用hprof-conv工具进行转化，它的位置在 android_sdk/platform-tools/目录下，运行hprof-conv命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hprof-conv heap-original.hprof heap-converted.hprof</span><br></pre></td></tr></table></figure>
-<h5 id="GC-Roots"><a href="#GC-Roots" class="headerlink" title="GC Roots"></a>GC Roots</h5><p>对象存活的判定:<br>当一个对象不会再被使用的时候，我们会说这对象已经死亡。对象何时死亡，写程序的人应当是最清楚的。如果计算机也要弄清楚这件事情，就需要使用一些方法来进行对象存活判定，常见的方法有<strong>引用计数（Reference Counting）</strong>和<strong>可达性分析（Reachability Analysis）</strong>两种。</p>
-<p><strong>引用计数算法</strong>的大致思想是给对象中添加一个引用计数器，每当有一个地方引用它时，计数器值就加1；当引用失效时，计数器值就减1；任何时刻计数器为0的对象就是不可能再被使用的。<br>Java语言里面没有选用引用计数算法来管理内存，其中最主要原因是它没有一个优雅的方案解决对象之间相互循环引用的问题：<br><strong>当两个对象互相引用，即使它们都无法被外界使用时，它们的引用计数器也不会为0。</strong></p>
-<p><strong>可达性算法</strong>的基本思路就是通过一系列的称为GC根节点（GC Roots）的对象作为起始点，从这些节点开始进行向下搜索，搜索所走过的路径成为引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连（用图论的话来说就是从GC Roots到这个对象不可达）时，则证明此对象是不可用的。</p>
-<h4 id="CPU-Profiler"><a href="#CPU-Profiler" class="headerlink" title="CPU Profiler"></a>CPU Profiler</h4><h4 id="Network-Profiler"><a href="#Network-Profiler" class="headerlink" title="Network Profiler"></a>Network Profiler</h4><blockquote>
-<p>原文解释：</p>
-<ol>
-<li><p>Alloc Count: Number of allocations in the heap.</p>
-</li>
-<li><p>Native Size: Total amount of native memory used by this object type (in bytes). This column is visible only for Android 7.0 and higher.<br>You will see memory here for some objects allocated in Java because Android uses native memory for some framework classes, such as Bitmap.</p>
-</li>
-<li><p>Shallow Size: Total amount of Java memory used by this object type (in bytes).</p>
-</li>
-<li><p>Retained Size: Total size of memory being retained due to all instances of this class (in bytes).<br>At the top of the class list, you can use the left drop-down list to switch between the following heap dumps:</p>
-</li>
-<li><p>Default heap: When no heap is specified by the system.</p>
-</li>
-<li><p>App heap: The primary heap on which your app allocates memory.</p>
-</li>
-<li><p>Image heap: The system boot image, containing classes that are preloaded during boot time. Allocations here are guaranteed to never move or go away.</p>
-</li>
-<li><p>Zygote heap: The copy-on-write heap where an app process is forked from in the Android system.<br>The list of objects in the heap are arranged by class name, by default. You can use the other drop-down to switch between the following arrangements:</p>
-</li>
-<li><p>Arrange by class: Groups all allocations based on class name.</p>
-</li>
-<li><p>Arrange by package: Groups all allocations based on package name.</p>
-</li>
-<li><p>Arrange by callstack: Groups all allocations into their corresponding call stack. This option works only if you capture the heap dump while recording allocations. Even so, there are likely to be objects in the heap that were allocated before you started recording, so those allocations appear first, simply listed by class name.</p>
-</li>
-</ol>
-<ol>
-<li><p>Depth: The shortest number of hops from any GC root to the selected instance.</p>
-</li>
-<li><p>Native Size: Size of this instance in native memory. This column is visible only for Android 7.0 and higher.</p>
-</li>
-<li><p>Shallow Size: Size of this instance in Java memory.</p>
-</li>
-<li><p>Retained Size: Size of memory that this instance dominates (as per the dominator tree).</p>
-</li>
-</ol>
-</blockquote>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/12/05/Android-Monitor工具记录/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 
@@ -2297,11 +2320,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
