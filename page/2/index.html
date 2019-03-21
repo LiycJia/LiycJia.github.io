@@ -156,6 +156,974 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-探索RcyclerView各组成部分" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/17/探索RcyclerView各组成部分/">探索RcyclerView各组成部分</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/17/探索RcyclerView各组成部分/" class="archive-article-date">
+  	<time datetime="2018-12-17T07:02:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天有个需求，有个地区列表要改成可展开收起的列表，正好可以探索一下 recyclerview 的各个组成部分。</p>
+<p>今天着重记录一下：<strong>ViewHolder、Adapter、AdapterDataObservable、RecyclerViewDataObServer、LayoutManager、Recycler、RecyclerPool</strong>。</p>
+<p>先上一张图大致描述下他们之间的关系，这张图是 adapter.nofifyXX() 时 Recyclerview 的执行逻辑涉及到的一些类：</p>
+<p><img src="/2018/12/17/探索RcyclerView各组成部分/WechatIMG346.jpeg" alt="RecyclerView组成类之间的关系"></p>
+<h4 id="ViewHolder"><a href="#ViewHolder" class="headerlink" title="ViewHolder"></a>ViewHolder</h4><p>对于Adapter来说，一个ViewHolder就对应一个data。它也是Recycler缓存池的基本单元。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ViewHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">final</span> View itemView;</span><br><span class="line">        <span class="keyword">int</span> mPosition = NO_POSITION;</span><br><span class="line">        <span class="keyword">int</span> mItemViewType = INVALID_TYPE;</span><br><span class="line">        <span class="keyword">int</span> mFlags;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面列举了 ViewHolder 中最重要的 4 个属性：</p>
+<p>itemView：会被当做 child view 来添加到 RecyclerView 中。</p>
+<p>mPosition：标记当前 ViewHolder 在 Adapter 中所处的位置。</p>
+<p>mItemViewType：当前 ViewHolder 的 Type，在 ViewHolder 保存到 RecyclerPool 时，主要靠这个类型来对 ViewHolder 做复用。</p>
+<p>mFlags：标记ViewHolder的状态，比如 FLAG_BOUND(显示在屏幕上)、FLAG_INVALID(无效，想要使用必须rebound)、FLAG_REMOVED(已被移除)等。</p>
+<h4 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h4><p>其工作是把 data 和 view 绑定，即上面说的一个 data 对应一个 ViewHolder。主要负责 ViewHolder 的创建以及数据变化时通知 RecyclerView。</p>
+<p>Adaper 会引用一个数据集合，getItemCount() 用来告诉 RecyclerView 展示的总条目。另外，Adapter 不是直接映射 data -&gt; ViewHolder，而是 data position -&gt; data type -&gt;ViewHolder。所以对于 ViewHolder 来说，它知道的只是它的 view type。</p>
+<h4 id="AdapterDataObservable"><a href="#AdapterDataObservable" class="headerlink" title="AdapterDataObservable"></a>AdapterDataObservable</h4><p>Adapter 是数据源的直接接触者，当数据源发生变化时，它需要通知给 RecyclerView。这里使用的模式是观察者模式，AdapterDataObservable 是数据源变化是的被观察者， RecyclerViewDataObservable 是观察者。开发中使用的 notifyXX() 刷新 ui，就是抵用的 adapterDataObservable 的 notifyChanged() 。</p>
+<h4 id="RecyclerViewDataObserver"><a href="#RecyclerViewDataObserver" class="headerlink" title="RecyclerViewDataObserver"></a>RecyclerViewDataObserver</h4><p>继承自 AdapterDataObserver，用来监听 Adapter 的数据变化。</p>
+<h4 id="LayoutManager"><a href="#LayoutManager" class="headerlink" title="LayoutManager"></a>LayoutManager</h4><p>它是RecyclerView的布局管理者，RecyclerView在onLayout时，会利用它来layoutChildren,它决定了RecyclerView中的子View的摆放规则。但不止如此, 它做的工作还有:</p>
+<ol>
+<li>测量子View</li>
+<li>对子View进行布局</li>
+<li>对子View进行回收</li>
+<li>子View动画的调度</li>
+<li>负责RecyclerView滚动的实现</li>
+<li>…</li>
+</ol>
+<h4 id="Recycler"><a href="#Recycler" class="headerlink" title="Recycler"></a>Recycler</h4><p>对于 LayoutManager 来说，它是 ViewHolder 的提供者。对于 RecyclerView 来说，它是 ViewHolder 的管理者，是 RecyclerView 最核心的实现。下面这张图大致描述了它的组成:</p>
+<p><img src="/2018/12/17/探索RcyclerView各组成部分/WechatIMG347.tiff" alt="img"></p>
+<h5 id="scrap-list"><a href="#scrap-list" class="headerlink" title="scrap list"></a>scrap list</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">final ArrayList&lt;ViewHolder&gt; mAttachedScrap = new ArrayList&lt;&gt;();</span><br><span class="line">ArrayList&lt;ViewHolder&gt; mChangedScrap = null;</span><br></pre></td></tr></table></figure>
+<h5 id="View-Scrap状态"><a href="#View-Scrap状态" class="headerlink" title="View Scrap状态"></a>View Scrap状态</h5><p>相信你在许多 RecyclerView 的 crash log 中都看到过这个单词。它是指 View 在 RecyclerView 布局期间进入分离状态的子视图。即它已经被 deatach(标记为 FLAG_TMP_DETACHED 状态)了。这种 View 是可以被立即复用的。</p>
+<p>它在复用时，如果数据没有更新，是不需要调用 onBindViewHolder 方法的。如果数据更新了，那么需要重新调用 onBindViewHolder。</p>
+<p>mAttachedScrap 和 mChangedScrap 中的 View 复用主要作用在 adapter.notifyXXX 时。这时候就会产生很多scrap 状态的 view。 也可以把它理解为一个 ViewHolder 的缓存。不过在从这里获取 ViewHolder 时完全是根据ViewHolder 的position 而不是 item type。如果在 notifyXX 时 data 已经被移除掉你，那么其中对应的ViewHolder 也会被移除掉。</p>
+<h5 id="mCacheViews"><a href="#mCacheViews" class="headerlink" title="mCacheViews"></a>mCacheViews</h5><p>可以把它理解为 RecyclerView 的一级缓存。它的默认大小是3, 从中可以根据 item type 或者 position 来获取ViewHolder。可以通过 RecyclerView.setItemViewCacheSize() 来改变它的大小。</p>
+<h5 id="RecycledViewPool"><a href="#RecycledViewPool" class="headerlink" title="RecycledViewPool"></a>RecycledViewPool</h5><p>它是一个可以被复用的 ViewHolder 缓存池。即可以给多个 RecycledView 来设置统一个 RecycledViewPool。这个对于多 tab feed 流应用可能会有很显著的效果。它内部利用一个 ScrapData 来保存 ViewHolder 集合:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ScrapData</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ArrayList&lt;ViewHolder&gt; mScrapHeap = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">int</span> mMaxScrap = DEFAULT_MAX_SCRAP;   <span class="comment">//最多缓存5个</span></span><br><span class="line">    <span class="keyword">long</span> mCreateRunningAverageNs = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">long</span> mBindRunningAverageNs = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">SparseArray&lt;ScrapData&gt; mScrap = <span class="keyword">new</span> SparseArray&lt;&gt;();  <span class="comment">//RecycledViewPool 用来保存ViewHolder的容器</span></span><br></pre></td></tr></table></figure>
+<p>一个 ScrapData 对应一种 type 的 ViewHolder 集合。看一下它的获取 ViewHolder 和保存 ViewHolder 的方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//存</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putRecycledView</span><span class="params">(ViewHolder scrap)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> viewType = scrap.getItemViewType();</span><br><span class="line">    <span class="keyword">final</span> ArrayList&lt;ViewHolder&gt; scrapHeap = getScrapDataForType(viewType).mScrapHeap;</span><br><span class="line">    <span class="keyword">if</span> (mScrap.get(viewType).mMaxScrap &lt;= scrapHeap.size())  <span class="keyword">return</span>; <span class="comment">//到最大极限就不能放了</span></span><br><span class="line">    scrap.resetInternal();  <span class="comment">//放到里面，这个view就相当于和原来的信息完全隔离了，只记得他的type，清除其相关状态</span></span><br><span class="line">    scrapHeap.add(scrap);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//取</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> ScrapData <span class="title">getScrapDataForType</span><span class="params">(<span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">    ScrapData scrapData = mScrap.get(viewType);</span><br><span class="line">    <span class="keyword">if</span> (scrapData == <span class="keyword">null</span>) &#123;</span><br><span class="line">        scrapData = <span class="keyword">new</span> ScrapData();</span><br><span class="line">        mScrap.put(viewType, scrapData);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> scrapData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/17/探索RcyclerView各组成部分/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-微信小程序-零碎点" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/14/微信小程序-零碎点/">微信小程序 - 零碎点</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/14/微信小程序-零碎点/" class="archive-article-date">
+  	<time datetime="2018-12-14T06:58:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="js-中-const、let、var-的区别"><a href="#js-中-const、let、var-的区别" class="headerlink" title="js 中 const、let、var 的区别"></a>js 中 const、let、var 的区别</h4><ul>
+<li>const 定义的变量不可以修改（基本数据类型），并且必须初始化；</li>
+<li>var 定义的变量可以修改，未初始化不会报错，输出 undefined；</li>
+<li>let 是块级作用域，函数内部定义，对外部没影响。</li>
+</ul>
+<h4 id="js-中，中括号、大括号"><a href="#js-中，中括号、大括号" class="headerlink" title="js 中，中括号、大括号"></a>js 中，中括号、大括号</h4><p>{} 大括号标识一个对象，大部分情况下要有成对的属性和值，或者函数；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LangShen = &#123;<span class="string">"Name"</span>:<span class="string">"Langshen"</span>,<span class="string">"AGE"</span>:<span class="string">"28"</span>&#125;; </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> LangShen = &#123; </span><br><span class="line">	Name = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">		<span class="keyword">return</span> <span class="string">"LangShen"</span>; </span><br><span class="line">	&#125;, </span><br><span class="line">	Age = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; </span><br><span class="line">		<span class="keyword">return</span> <span class="string">"28"</span>; </span><br><span class="line">	&#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>[] 中括号标识一个数组，也可以理解为一个数组对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LangShen = [ <span class="string">"Name"</span>,<span class="string">"LangShen"</span>,<span class="string">"AGE"</span>,<span class="string">"28"</span> ]; </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> LangShen = <span class="built_in">Array</span>( <span class="string">"Name"</span>,<span class="string">"LangShen"</span>,<span class="string">"AGE"</span>,<span class="string">"28"</span> );</span><br></pre></td></tr></table></figure>
+<p>{ } 和[ ] 一起使用，我们前面说到，{ } 是一个对象，[ ] 是一个数组，我们可以组成一个对象数组</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> LangShen = &#123; <span class="string">"Name"</span>:<span class="string">"Langshen"</span>, </span><br><span class="line">	<span class="string">"MyWife"</span>:[ <span class="string">"LuLu"</span>,<span class="string">"26"</span> ], </span><br><span class="line">	<span class="string">"MySon"</span>:[&#123;<span class="string">"Name"</span>:<span class="string">"Son1"</span>&#125;,&#123;<span class="string">"Name"</span>:<span class="string">"Son2"</span>&#125;,&#123;<span class="string">"Name"</span>:<span class="string">"Son3"</span>&#125;] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h4><h5 id="数组的创建"><a href="#数组的创建" class="headerlink" title="数组的创建"></a>数组的创建</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arrayObj = <span class="keyword">new</span> <span class="built_in">Array</span>();　<span class="comment">//创建一个数组  </span></span><br><span class="line"><span class="keyword">var</span> arrayObj = <span class="keyword">new</span> <span class="built_in">Array</span>([size]);　<span class="comment">//创建一个数组并指定长度，注意不是上限，是长度  </span></span><br><span class="line"><span class="keyword">var</span> arrayObj = <span class="keyword">new</span> <span class="built_in">Array</span>([element0[, element1[, ...[, elementN]]]]);　创建一个数组并赋值</span><br></pre></td></tr></table></figure>
+<p>要说明的是，虽然第二种方法创建数组指定了长度，但实际上所有情况下数组都是变长的，也就是说即使指定了长度为5，仍然可以将元素存储在规定长度以外的，注意：这时长度会随之改变。</p>
+<h5 id="数组的添加"><a href="#数组的添加" class="headerlink" title="数组的添加"></a>数组的添加</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arrayObj. push([item1 [item2 [. . . [itemN ]]]]);<span class="comment">// 将一个或多个新元素添加到数组结尾，并返回数组新长度 </span></span><br><span class="line">arrayObj.unshift([item1 [item2 [. . . [itemN ]]]]);<span class="comment">// 将一个或多个新元素添加到数组开始，数组中的元素自动后移，返回数组新长度 </span></span><br><span class="line">arrayObj.splice(insertPos,<span class="number">0</span>,[item1[, item2[, . . . [,itemN]]]]);<span class="comment">//方法向/从数组中添加/删除项目，然后返回被删除的项目。</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组元素的访问"><a href="#数组元素的访问" class="headerlink" title="数组元素的访问"></a>数组元素的访问</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> testGetArrValue = arrayObj[<span class="number">1</span>]; <span class="comment">//获取数组的元素值  </span></span><br><span class="line">arrayObj[<span class="number">1</span>]= <span class="string">"这是新值"</span>; <span class="comment">//给数组元素赋予新的值</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组元素的删除"><a href="#数组元素的删除" class="headerlink" title="数组元素的删除"></a>数组元素的删除</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.pop()<span class="comment">//移除最后一个元素并返回该元素</span></span><br><span class="line">arrayObj.shift()<span class="comment">//把数组的第一个元素从其中删除，并返回第一个元素的值</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组的截图和合并"><a href="#数组的截图和合并" class="headerlink" title="数组的截图和合并"></a>数组的截图和合并</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.slice(start, [end]); <span class="comment">//以数组的形式返回数组的一部分，注意不包括 end 对应的元素，如果省略 end 将复制 start 之后的所有元素  </span></span><br><span class="line">rrayObj.concat([item1[, item2[, . . . [,itemN]]]]); <span class="comment">//将多个数组（也可以是字符串，或者是数组和字符串的混合）连接为一个数组，返回连接好的新的数组</span></span><br></pre></td></tr></table></figure>
+<h5 id="数组的拷贝"><a href="#数组的拷贝" class="headerlink" title="数组的拷贝"></a>数组的拷贝</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.slice(<span class="number">0</span>); <span class="comment">//返回数组的拷贝数组，注意是一个新的数组，不是指向</span></span><br><span class="line">arrayObj.concat(); <span class="comment">//返回数组的拷贝数组，注意是一个新的数组，不是指向</span></span><br></pre></td></tr></table></figure>
+<p>数组元素的排序</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arrayObj.reverse(); <span class="comment">//反转元素（最前的排到最后、最后的排到最前），返回数组地址</span></span><br><span class="line">arrayObj.sort(); <span class="comment">//对数组元素排序，返回数组地址</span></span><br></pre></td></tr></table></figure>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">小程序</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/14/微信小程序-零碎点/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-xposed实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/12/xposed实践/">xposed实践</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/12/xposed实践/" class="archive-article-date">
+  	<time datetime="2018-12-12T07:52:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>突然觉得这个分类，应该改名奇巧淫技，或许会更好听点。偷鸡摸狗的话，并不是说这个是见不得人的东西。不过以后再说吧，毕竟不是今天的重点</p>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>公司要每个技术序列的人都要做技术分享，一开始的时候确实没有想好要讲什么，毕竟同行，说的浅了没技术含量，说的深了担心自己给自己挖坑（滑稽脸）。最后，还是选择了 xposed 这个主题，因为 xposed 对于安卓来说确实是一个牛逼的存在，使用起来还是挺牛逼的，但是过程不是很复杂，作为技术去分享的话，可以自己控制一下。比如，设计的 Android 系统启动，xposed 的原理分析，还有一些 xposed 项目的分析，感觉这些应该能蒙混过去的把。。。心慌的，毕竟第一次。</p>
+<h4 id="xposed-是什么"><a href="#xposed-是什么" class="headerlink" title="xposed 是什么"></a>xposed 是什么</h4><p>百度说：</p>
+<p>Xposed 框架是一款可以在不修改 APK 的情况下影响程序运行(修改系统)的框架服务，基于它可以制作出许多功能强大的模块，且在功能不冲突的情况下同时运作。</p>
+<p>维基说：</p>
+<p>Xposed框架（Xposed framework）是一套开源的、在 Android 高权限模式下运行的框架服务，可以在不修改 APK 文件的情况下修改程序的运行（修改系统），基于它可以制作出许多功能强大的模块，且在功能不冲突的情况下同时运作。这套框架需要设备打开了 Root 权限方可安装使用。</p>
+<p>OK，其实 xposed 就是一个框架，通过这个框架你能拿到很多系统级别的东西，比如系统级别的数据返回（ Mac、手机型号、IMEI 等），这样你就可以直接欺骗一些应用，去设置你想设置的手机参数；再比如可以拿到运行在系统上的各个应用的试了，这样你就可以调用这些实例的方法，把 App 的界面改成自己想要的样子，去掉界面里不喜欢的东西（广告），自动抢红包，消息防撤回，步数修改等等。</p>
+<p>当然，高收益常常伴随的是高风险，在这里，想要使用 xposed，风险就是需要 root 你的手机，经常搞基的人是知道这个的，具体操作就不在这里细说了，我用的机子是小米的，系统刷成开发版可以直接修改 root 权限的，还是挺方便的，VirtualXposed 倒是可以不用 root，不过属于阉割版，可玩性肯定就没那么好了。</p>
+<p>有了 xposed，我们可以加载很多 App 插件，理论上通过这些插件，我们可以 hook 到系统任意一个 Java 进程（zygote、systemserver、systemui）。</p>
+<h4 id="xposed原理"><a href="#xposed原理" class="headerlink" title="xposed原理"></a>xposed原理</h4><p>首先，我们来简单梳理一下 Android 系统的启动流程：</p>
+<ol>
+<li><p>启动电源以及系统启动</p>
+<p>当电源按下时引导芯片代码开始从预定义的地方（固化在 ROM）开始执行。加载引导程序 Bootloader 到RAM，然后执行。</p>
+</li>
+<li><p>引导程序 BootLoader</p>
+<p>引导程序 BootLoader 是在 Android 操作系统开始运行前的一个小程序，它的主要作用是把系统 OS 拉起来并运行。</p>
+</li>
+<li><p>Linux 内核启动</p>
+<p>内核启动时，设置缓存、被保护存储器、计划列表、加载驱动。当内核完成系统设置，它首先在系统文件中寻找 init.rc 文件，并启动 init 进程。</p>
+</li>
+<li><p>init 进程启动</p>
+<p>初始化和启动属性服务，并且启动 zygote 进程。</p>
+<p>init 进程有两个责任，一是挂载目录，比如/sys、/dev、/proc，二是运行 init.rc 脚本。</p>
+</li>
+<li><p>zygote 进程启动</p>
+<p>创建 JavaVM 并为 JavaVM 注册 JNI，创建服务端 Socket，启动 SystemServer 进程。在这个阶段，你可以看到启动动画。</p>
+</li>
+<li><p>SystemServer 进程启动</p>
+<p>启动 Binder 线程池和 SystemServiceManager，并且启动各种系统服务。</p>
+</li>
+<li><p>Launcher启动</p>
+<p>被 SystemServer 进程启动的 ActivityManagerService 会启动 Launcher，Launcher 启动后会将已安装应用的快捷图标显示到界面上。</p>
+</li>
+</ol>
+<p>在 Android 系统中，应用程序进程以及系统服务进程 SystemServer 都是有 zygote 进程孵化出来的，而 zygote 进程则是由 init 进程启动的（毕竟基于 Linux 系统），zygote 进程在启动的时候会创建一个 Dalvik（5.0以前默认，之后ART，空间交换时间） 虚拟机实每当它孵化一个新的应用程序简称时，都会将这个 Dalvik/ART 虚拟机实例复制到新的应用进程里面去，从而使得每一个应用程序进程都有各一个独立的 Dalvik/ART 虚拟机实例。而 zygote 进程对应的执行文件是/system/bin/app_process，而 Xposed 所做的就是替换了 app_process。</p>
+<p>Xposed 用自己实现的 app_process 替换了系统提供的 app_process，加载一个额外的jar包，然后入口从原来的：com.android.internal.osZygoteInit.main() 被替换成了： de.robv.android.xposed.XposedBridge.main()， 然后创建的 Zygote 进程就变成 Hook 的 Zygote 进程了，而后面 Fork 出来的进程也是被Hook过的。</p>
+<p>相关的一些文档：</p>
+<ul>
+<li>官网：<a href="http://repo/" target="_blank" rel="noopener">http://repo</a>.<a href="http://xposed.info/" target="_blank" rel="noopener">xposed.info/</a></li>
+<li>作者Github仓库：<a href="https://github.com/rovo89" target="_blank" rel="noopener">https://github.com/rovo89</a></li>
+<li>官方教程：<a href="https://github.com/rovo89/XposedBridge/wiki/Development-tutorial" target="_blank" rel="noopener">https://github.com/rovo89/XposedBridge/wiki/Development-tutorial</a></li>
+<li>XposedBridge.jar下载：<a href="https://jcenter/" target="_blank" rel="noopener">https://jcenter</a>.<a href="http://bintray.com/de/robv/android/xposed/api" target="_blank" rel="noopener">bintray.com/de/robv/android/xposed/api</a></li>
+</ul>
+<h4 id="工程组成"><a href="#工程组成" class="headerlink" title="工程组成"></a>工程组成</h4><p><strong>XposedInstaller</strong></p>
+<p>这是 Xposed 的插件管理和功能控制 APP，也就是说 Xposed 整体管控功能就是由这个APP来完成的，它包括启用Xposed 插件功能，下载和启用指定插件APP，还可以禁用 Xposed 插件功能等。注意，这个app要正常无误得运行必须能拿到 root 权限。</p>
+<p><strong>Xposed</strong></p>
+<p>这个项目属于 Xposed 框架，其实它就是单独搞了一套 xposed 版的 zygote。这个 zygote 会替换系统原生的zygote。所以，它需要由 XposedInstaller 在 root 之后放到 /system/bin 下。</p>
+<p><strong>XposedBridge</strong></p>
+<p>这个项目也是 Xposed 框架，它属于 Xposed 框架的Java部分，编译出来是一个 XposedBridge.jar 包。</p>
+<p><strong>XposedTools</strong></p>
+<p>Xposed 和 XposedBridge 编译依赖于Android源码，而且还有一些定制化的东西。所以XposedTools就是用来帮助我们编译 Xposed 和 XposedBridge的。</p>
+<h4 id="Xposed-项目创建"><a href="#Xposed-项目创建" class="headerlink" title="Xposed 项目创建"></a>Xposed 项目创建</h4><p>要上主菜了，先给大家说几句，其实 Xposed 插件就是一个完整的 apk，跟我们平常做的 apk 并没有多大的不同，只不过在项目中加了一些标识，让 Xposed 能狗识别，给这个 apk 特殊的权限，可以去影响其他 apk 的运行。</p>
+<p><strong>创建 Android 项目</strong></p>
+<p>当然，首先应该创建一个 Android 项目。</p>
+<p><strong>修改 AndroidManifest.xml</strong></p>
+<p>在 application 节点下添加三个 <meta-data> 属性</meta-data></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;meta-data</span><br><span class="line">    android:name=&quot;xposedmodule&quot;</span><br><span class="line">    android:value=&quot;true&quot; /&gt;</span><br><span class="line">&lt;meta-data</span><br><span class="line">    android:name=&quot;xposeddescription&quot;</span><br><span class="line">    android:value=&quot;主要是Xposed功能的一些简介&quot; /&gt;</span><br><span class="line">&lt;meta-data</span><br><span class="line">    android:name=&quot;xposedminversion&quot;</span><br><span class="line">    android:value=&quot;82&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>xposedmodule： 一般设置为true,表示这是一个xposed模块</li>
+<li>xposeddescription: 一句话描述该模块的用途，可以引用string.xml中的字符串</li>
+<li>xposedminversion：要求支持的Xposed Framework最低版本。</li>
+</ul>
+<p><strong>引入 Xposed Framework API</strong></p>
+<p>在 <code>app/build.gradle</code>文件中声明 Xposed Framework API  的jar包依赖。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compileOnly &apos;de.robv.android.xposed:api:82&apos;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>请留意，这个82是Xposed Framework API的版本号，叫做xposedminversion。</li>
+<li>xposedminversion可以在这里进行查询： <a href="https://link.jianshu.com?t=https://bintray.com/rovo89/de.robv.android.xposed/api" target="_blank" rel="noopener">https://bintray.com/rovo89/de.robv.android.xposed/api</a> </li>
+<li>Xposed Framework API文档请参考：<a href="https://link.jianshu.com?t=http://api.xposed.info/reference/packages.html" target="_blank" rel="noopener">http://api.xposed.info/reference/packages.html</a> </li>
+</ul>
+<p><strong>创建 Xposed 入口文件</strong></p>
+<p>在 assets 文件夹下面创建一个名为 xposed_init 的文件， XposedBridge 会从 assets 目录中的 xposed_init 中获取入口点，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top.programan.xposeddemo.XposedUtil</span><br></pre></td></tr></table></figure>
+<p><strong>编写入口类</strong></p>
+<p>在此之前我们先修改下我们的MainActivity.java，修改下TextView显示的文字：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">        setContentView(R.layout.activity_main)</span><br><span class="line">        text2.text = <span class="string">"罗纳尔多"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后编写入口类，代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XposedInit</span> : <span class="type">IXposedHookLoadPackage &#123;</span></span></span><br><span class="line">    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleLoadPackage</span><span class="params">(lpparam: <span class="type">XC_LoadPackage</span>.<span class="type">LoadPackageParam</span>)</span></span> &#123;</span><br><span class="line">        <span class="comment">//1.判断应用的包名</span></span><br><span class="line">        <span class="keyword">if</span> (lpparam.packageName.equals(<span class="string">"top.programan.xposeddyhook"</span>)) &#123;</span><br><span class="line">            <span class="comment">//2.找到对应的类并hook掉对应相应的方法</span></span><br><span class="line">            <span class="comment">//需要注意findAndHookMethod方法的参数：</span></span><br><span class="line">            <span class="comment">//(1): 要hook掉的类名:需要全路径</span></span><br><span class="line">            <span class="comment">//(2): classloader：</span></span><br><span class="line">            <span class="comment">//(3): 要hook掉的方法名:只需方法名</span></span><br><span class="line">            <span class="comment">//(4): 方法的参数:有几个写几个</span></span><br><span class="line">            <span class="comment">//(5): XC_MethodHook,实现具体的方法，</span></span><br><span class="line">            <span class="comment">// beforeHookedMethod为hook前做的一些操作，afterHookedMethod为hook后做的一些操作</span></span><br><span class="line"></span><br><span class="line">            XposedHelpers.findAndHookMethod(<span class="string">"top.programan.xposeddyhook.MainActivity"</span>,</span><br><span class="line">                lpparam.classLoader, <span class="string">"onCreate"</span>, Bundle::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>, <span class="type">object : XC_MethodHook</span></span>() &#123;</span><br><span class="line">                    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">                    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">beforeHookedMethod</span><span class="params">(param: <span class="type">MethodHookParam</span>)</span></span> &#123;</span><br><span class="line">                        <span class="keyword">super</span>.beforeHookedMethod(param)</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">                    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">afterHookedMethod</span><span class="params">(param: <span class="type">MethodHookParam</span>)</span></span> &#123;</span><br><span class="line">                        <span class="keyword">val</span> clazz = lpparam.classLoader.loadClass(<span class="string">"top.programan.xposeddyhook.MainActivity"</span>)</span><br><span class="line">                        <span class="keyword">val</span> field = clazz.getDeclaredField(<span class="string">"text"</span>)</span><br><span class="line">                        field.isAccessible = <span class="literal">true</span></span><br><span class="line">                        XposedBridge.log(<span class="string">"MainActivity"</span>)<span class="comment">//Xposed日志</span></span><br><span class="line">                        <span class="keyword">val</span> textView = field.<span class="keyword">get</span>(param.thisObject) <span class="keyword">as</span> TextView</span><br><span class="line">                        textView.text = <span class="string">"尤文图斯"</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OK，到这里一个简单的 Xposed 项目已经完成了，安装我们完成的 apk，记得要在 XposedInstaller 里面选择该插件，然后重启手机。不出意外的话，应该是可以正常运行的。</p>
+<p>如上发现，一个普通的 Xposed 项目是不难实现，更难实现的应该是怎么样去逆向逆向 hook 的应用，并找到逆向 hook 对应的代码。</p>
+<h4 id="Xposed-相关-API"><a href="#Xposed-相关-API" class="headerlink" title="Xposed 相关 API"></a>Xposed 相关 API</h4><p><strong>IXposedHookLoadPackage</strong></p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; /**</span><br><span class="line">&gt;  * Get notified when an app (&quot;Android package&quot;) is loaded.</span><br><span class="line">&gt;  * This is especially useful to hook some app-specific methods.</span><br><span class="line">&gt;  *</span><br><span class="line">&gt;  * &lt;p&gt;This interface should be implemented by the module&apos;s main class. Xposed will take care of</span><br><span class="line">&gt;  * registering it as a callback automatically.</span><br><span class="line">&gt;  */</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>翻译起来就是：</p>
+<blockquote>
+<p>当APP加载的时候就会收到通知，对于hook一些应用的特殊方法时十分有效，插件的主方法应该实现这个接口，Xposed将会自动的为他注册回调。</p>
+</blockquote>
+<p>所以来说这个接口的作用很明显，如果是一个应用级别的插件那么入口类就需要实现的这个接口，当插件要hook的应用启动时就会回调这个接口的方法。Xposed自动帮我们做，很贴心。猜测源码实现应该是一个观察者模式。</p>
+<p>使用代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XposedInit</span> : <span class="type">IXposedHookLoadPackage &#123;</span></span></span><br><span class="line">    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleLoadPackage</span><span class="params">(lpparam: <span class="type">XC_LoadPackage</span>.<span class="type">LoadPackageParam</span>)</span></span> &#123;</span><br><span class="line">    	<span class="comment">//相应逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>IXposedHookLoadPackage接口的回调方法handleLoadPackage的参数XC_LoadPackage.LoadPackageParam的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Wraps information about the app being loaded.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LoadPackageParam</span> <span class="keyword">extends</span> <span class="title">XCallback</span>.<span class="title">Param</span> </span>&#123;</span><br><span class="line">		<span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">LoadPackageParam</span><span class="params">(CopyOnWriteSortedSet&lt;XC_LoadPackage&gt; callbacks)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>(callbacks);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The name of the package being loaded. */</span></span><br><span class="line">		<span class="keyword">public</span> String packageName;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The process in which the package is executed. */</span></span><br><span class="line">		<span class="keyword">public</span> String processName;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The ClassLoader used for this package. */</span></span><br><span class="line">		<span class="keyword">public</span> ClassLoader classLoader;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** More information about the application being loaded. */</span></span><br><span class="line">		<span class="keyword">public</span> ApplicationInfo appInfo;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** Set to &#123;<span class="doctag">@code</span> true&#125; if this is the first (and main) application for this process. */</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">boolean</span> isFirstApplication;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到主要是要加载的应用的一些相关信息。</p>
+<p><strong>IXposedHookZygoteInit</strong></p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&gt; /**</span><br><span class="line">&gt;  * Hook the initialization of Zygote process(es), from which all the apps are forked.</span><br><span class="line">&gt;  *</span><br><span class="line">&gt;  * &lt;p&gt;Implement this interface in your module&apos;s main class in order to be notified when Android is</span><br><span class="line">&gt;  * starting up. In &#123;@link IXposedHookZygoteInit&#125;, you can modify objects and place hooks that should</span><br><span class="line">&gt;  * be applied for every app. Only the Android framework/system classes are available at that point</span><br><span class="line">&gt;  * in time. Use &#123;@code null&#125; as class loader for &#123;@link XposedHelpers#findAndHookMethod(String, ClassLoader, String, Object...)&#125;</span><br><span class="line">&gt;  * and its variants.</span><br><span class="line">&gt;  *</span><br><span class="line">&gt;  * &lt;p&gt;If you want to hook one/multiple specific apps, use &#123;@link IXposedHookLoadPackage&#125; instead.</span><br><span class="line">&gt;  */</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>翻译起来的大体意思就是：</p>
+<blockquote>
+<p>hook初始的Zygote进程，所有的应用都会适用。在你插件的主方法实现这个接口，这样当android启动的时候这个接口就会被通知，你修改和hook的地方对所有的应用都会有效，假如你只想对某个应用起作用建议你只需要实现IXposedHookLoadPackage这个接口就行了。</p>
+</blockquote>
+<p>使用代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XposedZygoteInit</span> : <span class="type">IXposedHookZygoteInit &#123;</span></span></span><br><span class="line">    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">initZygote</span><span class="params">(startupParam: <span class="type">IXposedHookZygoteInit</span>.<span class="type">StartupParam</span>?)</span></span> &#123;</span><br><span class="line">        TODO(<span class="string">"not implemented"</span>) <span class="comment">//To change body of created functions use File | Settings | File Templates.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>IXposedHookZygoteInit接口的回调方法initZygote的参数StartupParam的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Data holder for &#123;<span class="doctag">@link</span> #initZygote&#125;. */</span></span><br><span class="line">	<span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">StartupParam</span> </span>&#123;</span><br><span class="line">		<span class="comment">/*package*/</span> StartupParam() &#123;&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The path to the module's APK. */</span></span><br><span class="line">		<span class="keyword">public</span> String modulePath;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Always &#123;<span class="doctag">@code</span> true&#125; on 32-bit ROMs. On 64-bit, it's only &#123;<span class="doctag">@code</span> true&#125; for the primary</span></span><br><span class="line"><span class="comment">		 * process that starts the system_server.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> <span class="keyword">boolean</span> startsSystemServer;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>在Zygote启动时调用，用于系统服务的Hook 回调方法initZygote()。</p>
+<p><strong>IXposedHookInitPackageResources</strong></p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; /**</span><br><span class="line">&gt;  * Get notified when the resources for an app are initialized.</span><br><span class="line">&gt;  * In &#123;@link #handleInitPackageResources&#125;, resource replacements can be created.</span><br><span class="line">&gt;  *</span><br><span class="line">&gt;  * &lt;p&gt;This interface should be implemented by the module&apos;s main class. Xposed will take care of</span><br><span class="line">&gt;  * registering it as a callback automatically.</span><br><span class="line">&gt;  */</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>翻译起来的大体意思就是：</p>
+<blockquote>
+<p>当应用资源被初始化的时候会被通知调用，在handleInitPackageResources方法里面可以替换资源。应该在主方法里面被实现，Xposed会自动注册通知调用回调方法。</p>
+</blockquote>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XposedZygoteInit</span> : <span class="type">IXposedHookInitPackageResources &#123;</span></span></span><br><span class="line">    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleInitPackageResources</span><span class="params">(resparam: <span class="type">XC_InitPackageResources</span>.<span class="type">InitPackageResourcesParam</span>?)</span></span> &#123;</span><br><span class="line">        TODO(<span class="string">"not implemented"</span>) <span class="comment">//To change body of created functions use File | Settings | File Templates.</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>IXposedHookInitPackageResources接口的回调方法handleInitPackageResources的参数InitPackageResourcesParam的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Wraps information about the resources being initialized.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">InitPackageResourcesParam</span> <span class="keyword">extends</span> <span class="title">XCallback</span>.<span class="title">Param</span> </span>&#123;</span><br><span class="line">		<span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">InitPackageResourcesParam</span><span class="params">(CopyOnWriteSortedSet&lt;XC_InitPackageResources&gt; callbacks)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>(callbacks);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The name of the package for which resources are being loaded. */</span></span><br><span class="line">		<span class="keyword">public</span> String packageName;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Reference to the resources that can be used for calls to</span></span><br><span class="line"><span class="comment">		 * &#123;<span class="doctag">@link</span> XResources#setReplacement(String, String, String, Object)&#125;.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="keyword">public</span> XResources res;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>有了这个XResource对象，就可以拿到通过覆写hookLayout方法拿到布局资源树。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">XposedZygoteInit</span> : <span class="type">IXposedHookInitPackageResources &#123;</span></span></span><br><span class="line">    <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleInitPackageResources</span><span class="params">(resparam: <span class="type">XC_InitPackageResources</span>.<span class="type">InitPackageResourcesParam</span>?)</span></span> &#123;</span><br><span class="line">        <span class="comment">//hookLayout方法的参数：</span></span><br><span class="line">        <span class="comment">//1.包名：直接从参数中获取即可</span></span><br><span class="line">        <span class="comment">//2.资源的类型：有id，drawable，layout等等</span></span><br><span class="line">        <span class="comment">//3.布局名称：</span></span><br><span class="line">        <span class="comment">//4.回调接口</span></span><br><span class="line">        resparam?.res?.hookLayout(resparam.packageName, <span class="string">"layout"</span>, <span class="string">"activity_main"</span>, <span class="keyword">object</span> : XC_LayoutInflated() &#123;</span><br><span class="line">            <span class="meta">@Throws(Throwable::class)</span></span><br><span class="line">            <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">handleLayoutInflated</span><span class="params">(liparam: <span class="type">LayoutInflatedParam</span>)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们看下回调接口LayoutInflatedParam的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Wraps information about the inflated layout.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">LayoutInflatedParam</span> <span class="keyword">extends</span> <span class="title">XCallback</span>.<span class="title">Param</span> </span>&#123;</span><br><span class="line">		<span class="comment">/** <span class="doctag">@hide</span> */</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="title">LayoutInflatedParam</span><span class="params">(CopyOnWriteSortedSet&lt;XC_LayoutInflated&gt; callbacks)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">super</span>(callbacks);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The view that has been created from the layout. */</span></span><br><span class="line">		<span class="keyword">public</span> View view;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** Container with the ID and name of the underlying resource. */</span></span><br><span class="line">		<span class="keyword">public</span> ResourceNames resNames;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** Directory from which the layout was actually loaded (e.g. "layout-sw600dp"). */</span></span><br><span class="line">		<span class="keyword">public</span> String variant;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** Resources containing the layout. */</span></span><br><span class="line">		<span class="keyword">public</span> XResources res;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>注意上面的View变量，这个就是布局资源树，可以进行遍历，拿到特定的控件，玩一些狂拽炫酷的东西。</p>
+<p><strong>XposedHelpers</strong></p>
+<p>findAndHookMethod</p>
+<p>具体的使用和相关的参数介绍上面已经说过了，就不再重复，不过需要关注下findAndHookMethod的参数MethodHookParam，具体的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Wraps information about the method call and allows to influence it.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">MethodHookParam</span> <span class="keyword">extends</span> <span class="title">XCallback</span>.<span class="title">Param</span> </span>&#123;</span><br><span class="line">		...</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** The &#123;<span class="doctag">@code</span> this&#125; reference for an instance method, or &#123;<span class="doctag">@code</span> null&#125; for static methods. */</span></span><br><span class="line">		<span class="keyword">public</span> Object thisObject;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** Arguments to the method call. */</span></span><br><span class="line">		<span class="keyword">public</span> Object[] args;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">private</span> Object result = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">private</span> Throwable throwable = <span class="keyword">null</span>;</span><br><span class="line">		<span class="comment">/* package */</span> <span class="keyword">boolean</span> returnEarly = <span class="keyword">false</span>;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/** Returns the result of the method call. */</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> Object <span class="title">getResult</span><span class="params">()</span> </span>&#123;</span><br><span class="line">			<span class="keyword">return</span> result;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * Modify the result of the method call.</span></span><br><span class="line"><span class="comment">		 *</span></span><br><span class="line"><span class="comment">		 * &lt;p&gt;If called from &#123;<span class="doctag">@link</span> #beforeHookedMethod&#125;, it prevents the call to the original method.</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setResult</span><span class="params">(Object result)</span> </span>&#123;</span><br><span class="line">			<span class="keyword">this</span>.result = result;</span><br><span class="line">			<span class="keyword">this</span>.throwable = <span class="keyword">null</span>;</span><br><span class="line">			<span class="keyword">this</span>.returnEarly = <span class="keyword">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">        ...</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>需要关注下thisObject，代表调用该方法的对象实例，如果是静态方法，返回一个Null，比如这里调用onCreate()方法的是MainActivity，那么获得的就是MainActivity实例。</p>
+<p>其他的一些方法</p>
+<ul>
+<li>callMethod(Object obj,String methodName, Object… args)：在APP中调用特定方法； 参数依次是：调用方法的所在类，调用方法名，方法参数</li>
+<li>findClass(String className,ClassLoader classLoader)：获取class类实例 参数依次是类名，类加载器</li>
+<li>findMethodExact：通过反射查找类的成员方法(可setAccessible(true)设置非私有)</li>
+<li>findConstructorExact：通过反射查找构造函数(同样可设置可访问下性)</li>
+<li>findAndHookXXX：查找并Hook</li>
+<li>只能Hook方法与构造方法，不能Hook接口和抽象方法</li>
+</ul>
+<h4 id="Xposed-模块开发优势和不足"><a href="#Xposed-模块开发优势和不足" class="headerlink" title="Xposed 模块开发优势和不足"></a>Xposed 模块开发优势和不足</h4><p><strong>优势</strong></p>
+<ol>
+<li>功能强大，既可以修改系统应用，也可以修改其他应用。hook android,hook everything.</li>
+<li>使用灵活，既可以针对一款应用进行Hook，也可以针对所有应用进行Hook。</li>
+</ol>
+<p><strong>不足</strong></p>
+<ol>
+<li>无法调试。只能通过打印日志进行跟踪。（例如：XposedBridge.log）</li>
+<li>无法即时生效。启用/禁用模块，你需要重启手机。</li>
+<li>multidex 支持不足。详见<a href="https://link.jianshu.com?t=https://github.com/rovo89/XposedBridge/issues/30#issuecomment-68488797" target="_blank" rel="noopener">Multidex support</a></li>
+</ol>
+<h4 id="抖音自动翻页"><a href="#抖音自动翻页" class="headerlink" title="抖音自动翻页"></a>抖音自动翻页</h4><p>如果有时间的话，跟大家一块 hook 一下抖音，实现自动翻页的功能。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上，是本次分享的全部了。温馨提示，搞基需谨慎。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">偷鸡摸狗</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/12/xposed实践/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Mac-终端常用命令" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/12/11/Mac-终端常用命令/">Mac 终端常用命令</a>
+    </h1>
+  
+
+        
+        <a href="/2018/12/11/Mac-终端常用命令/" class="archive-article-date">
+  	<time datetime="2018-12-11T03:11:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-12-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h5 id="目录操作"><a href="#目录操作" class="headerlink" title="目录操作"></a>目录操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">mkdir</td>
+<td style="text-align:center">创建一个目录</td>
+<td style="text-align:center">mkdir dirname</td>
+</tr>
+<tr>
+<td style="text-align:center">rmdir</td>
+<td style="text-align:center">删除一个目录</td>
+<td style="text-align:center">rmdir dirname</td>
+</tr>
+<tr>
+<td style="text-align:center">mvdir</td>
+<td style="text-align:center">移动或重命名一个目录</td>
+<td style="text-align:center">mvdir dir1 dir2</td>
+</tr>
+<tr>
+<td style="text-align:center">cd</td>
+<td style="text-align:center">改变当前目录</td>
+<td style="text-align:center">cd dirname</td>
+</tr>
+<tr>
+<td style="text-align:center">pwd</td>
+<td style="text-align:center">显示当前目录的路径名</td>
+<td style="text-align:center">pwd</td>
+</tr>
+<tr>
+<td style="text-align:center">ls</td>
+<td style="text-align:center">显示当前目录的内容</td>
+<td style="text-align:center">ls -la</td>
+</tr>
+<tr>
+<td style="text-align:center">dircmp</td>
+<td style="text-align:center">比较两个目录的内容</td>
+<td style="text-align:center">dircmp dir1 dir2</td>
+</tr>
+</tbody>
+</table>
+<h5 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">cat</td>
+<td style="text-align:center">显示或连接文件</td>
+<td style="text-align:center">cat filename</td>
+</tr>
+<tr>
+<td style="text-align:center">pg</td>
+<td style="text-align:center">分页格式化显示文件内容</td>
+<td style="text-align:center">pg filename</td>
+</tr>
+<tr>
+<td style="text-align:center">more</td>
+<td style="text-align:center">分屏显示文件内容</td>
+<td style="text-align:center">more filename</td>
+</tr>
+<tr>
+<td style="text-align:center">od</td>
+<td style="text-align:center">显示非文本文件的内容</td>
+<td style="text-align:center">od -c filename</td>
+</tr>
+<tr>
+<td style="text-align:center">cp</td>
+<td style="text-align:center">复制文件或目录</td>
+<td style="text-align:center">cp file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">rm</td>
+<td style="text-align:center">删除文件或目录</td>
+<td style="text-align:center">rm filename</td>
+</tr>
+<tr>
+<td style="text-align:center">mv</td>
+<td style="text-align:center">改变文件名或所在目录</td>
+<td style="text-align:center">mv file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">ln</td>
+<td style="text-align:center">联接文件</td>
+<td style="text-align:center">ln -s file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">find</td>
+<td style="text-align:center">使用匹配表达式查找文件</td>
+<td style="text-align:center">find . -name “*.c” -print</td>
+</tr>
+<tr>
+<td style="text-align:center">file</td>
+<td style="text-align:center">显示文件类型</td>
+<td style="text-align:center">file filename</td>
+</tr>
+<tr>
+<td style="text-align:center">open</td>
+<td style="text-align:center">使用默认的程序打开文件</td>
+<td style="text-align:center">open filename</td>
+</tr>
+</tbody>
+</table>
+<h5 id="选择操作"><a href="#选择操作" class="headerlink" title="选择操作"></a>选择操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">head</td>
+<td style="text-align:center">显示文件的最初几行</td>
+<td style="text-align:center">head -20 filename</td>
+</tr>
+<tr>
+<td style="text-align:center">tail</td>
+<td style="text-align:center">显示文件的最后几行</td>
+<td style="text-align:center">tail -15 filename</td>
+</tr>
+<tr>
+<td style="text-align:center">cut</td>
+<td style="text-align:center">显示文件每行中的某些域</td>
+<td style="text-align:center">cut -f1,7 -d: /etc/passwd</td>
+</tr>
+<tr>
+<td style="text-align:center">colrm</td>
+<td style="text-align:center">从标准输入中删除若干列</td>
+<td style="text-align:center">colrm 8 20 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">paste</td>
+<td style="text-align:center">横向连接文件</td>
+<td style="text-align:center">paste file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">diff</td>
+<td style="text-align:center">比较并显示两个文件的差异</td>
+<td style="text-align:center">diff file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">sed</td>
+<td style="text-align:center">非交互方式流编辑器</td>
+<td style="text-align:center">sed “s/red/green/g” filename</td>
+</tr>
+<tr>
+<td style="text-align:center">grep</td>
+<td style="text-align:center">在文件中按模式查找</td>
+<td style="text-align:center">grep “^[a-zA-Z]” filename</td>
+</tr>
+<tr>
+<td style="text-align:center">awk</td>
+<td style="text-align:center">在文件中查找并处理模式</td>
+<td style="text-align:center">awk ‘{print $1 $1}’ filename</td>
+</tr>
+<tr>
+<td style="text-align:center">sort</td>
+<td style="text-align:center">排序或归并文件</td>
+<td style="text-align:center">sort -d -f -u file1</td>
+</tr>
+<tr>
+<td style="text-align:center">uniq</td>
+<td style="text-align:center">去掉文件中的重复行</td>
+<td style="text-align:center">uniq file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">comm</td>
+<td style="text-align:center">显示两有序文件的公共和非公共行</td>
+<td style="text-align:center">comm file1 file2</td>
+</tr>
+<tr>
+<td style="text-align:center">wc</td>
+<td style="text-align:center">统计文件的字符数、词数和行数</td>
+<td style="text-align:center">wc filename</td>
+</tr>
+<tr>
+<td style="text-align:center">nl</td>
+<td style="text-align:center">给文件加上行号</td>
+<td style="text-align:center">nl file1 &gt;file2</td>
+</tr>
+</tbody>
+</table>
+<h5 id="安全操作"><a href="#安全操作" class="headerlink" title="安全操作"></a>安全操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">passwd</td>
+<td style="text-align:center">修改用户密码</td>
+<td style="text-align:center">passwd</td>
+</tr>
+<tr>
+<td style="text-align:center">chmod</td>
+<td style="text-align:center">改变文件或目录的权限</td>
+<td style="text-align:center">chmod ug+x filename</td>
+</tr>
+<tr>
+<td style="text-align:center">umask</td>
+<td style="text-align:center">定义创建文件的权限掩码</td>
+<td style="text-align:center">umask 027</td>
+</tr>
+<tr>
+<td style="text-align:center">chown</td>
+<td style="text-align:center">改变文件或目录的属主</td>
+<td style="text-align:center">chown newowner filename</td>
+</tr>
+<tr>
+<td style="text-align:center">chgrp</td>
+<td style="text-align:center">改变文件或目录的所属组</td>
+<td style="text-align:center">chgrp staff filename</td>
+</tr>
+<tr>
+<td style="text-align:center">xlock</td>
+<td style="text-align:center">给终端上锁</td>
+<td style="text-align:center">xlock -remote</td>
+</tr>
+</tbody>
+</table>
+<h5 id="编程操作"><a href="#编程操作" class="headerlink" title="编程操作"></a>编程操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">make</td>
+<td style="text-align:center">维护可执行程序的最新版本</td>
+<td style="text-align:center">make</td>
+</tr>
+<tr>
+<td style="text-align:center">touch</td>
+<td style="text-align:center">更新文件的访问和修改时间</td>
+<td style="text-align:center">touch -m 05202400 filename</td>
+</tr>
+<tr>
+<td style="text-align:center">dbx</td>
+<td style="text-align:center">命令行界面调试工具</td>
+<td style="text-align:center">dbx a.out</td>
+</tr>
+<tr>
+<td style="text-align:center">xde</td>
+<td style="text-align:center">图形用户界面调试工具</td>
+<td style="text-align:center">xde a.out</td>
+</tr>
+</tbody>
+</table>
+<h5 id="进程操作"><a href="#进程操作" class="headerlink" title="进程操作"></a>进程操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">ps</td>
+<td style="text-align:center">显示进程当前状态</td>
+<td style="text-align:center">ps u</td>
+</tr>
+<tr>
+<td style="text-align:center">kill</td>
+<td style="text-align:center">终止进程</td>
+<td style="text-align:center">kill -9 30142</td>
+</tr>
+<tr>
+<td style="text-align:center">nice</td>
+<td style="text-align:center">改变待执行命令的优先级</td>
+<td style="text-align:center">nice cc -c *.c</td>
+</tr>
+<tr>
+<td style="text-align:center">renice</td>
+<td style="text-align:center">改变已运行进程的优先级</td>
+<td style="text-align:center">renice +20 32768</td>
+</tr>
+</tbody>
+</table>
+<h5 id="时间操作"><a href="#时间操作" class="headerlink" title="时间操作"></a>时间操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">date</td>
+<td style="text-align:center">显示系统的当前日期和时间</td>
+<td style="text-align:center">date</td>
+</tr>
+<tr>
+<td style="text-align:center">cal</td>
+<td style="text-align:center">显示日历</td>
+<td style="text-align:center">cal 8 1996</td>
+</tr>
+<tr>
+<td style="text-align:center">time</td>
+<td style="text-align:center">统计程序的执行时间</td>
+<td style="text-align:center">time a.out</td>
+</tr>
+</tbody>
+</table>
+<h5 id="网络与通信操作"><a href="#网络与通信操作" class="headerlink" title="网络与通信操作"></a>网络与通信操作</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">telnet</td>
+<td style="text-align:center">远程登录</td>
+<td style="text-align:center">telnet hpc.sp.net.edu.cn</td>
+</tr>
+<tr>
+<td style="text-align:center">rlogin</td>
+<td style="text-align:center">远程登录</td>
+<td style="text-align:center">rlogin hostname -l username</td>
+</tr>
+<tr>
+<td style="text-align:center">rsh</td>
+<td style="text-align:center">在远程主机执行指定命令</td>
+<td style="text-align:center">rsh f01n03 date</td>
+</tr>
+<tr>
+<td style="text-align:center">ftp</td>
+<td style="text-align:center">在本地主机与远程主机之间传输文件</td>
+<td style="text-align:center">ftp ftp.sp.net.edu.cn</td>
+</tr>
+<tr>
+<td style="text-align:center">rcp</td>
+<td style="text-align:center">在本地主机与远程主机 之间复制文件</td>
+<td style="text-align:center">rcp file1 host1:file2</td>
+</tr>
+<tr>
+<td style="text-align:center">ping</td>
+<td style="text-align:center">给一个网络主机发送 回应请求</td>
+<td style="text-align:center">ping hpc.sp.net.edu.cn</td>
+</tr>
+<tr>
+<td style="text-align:center">mail</td>
+<td style="text-align:center">阅读和发送电子邮件</td>
+<td style="text-align:center">mail</td>
+</tr>
+<tr>
+<td style="text-align:center">write</td>
+<td style="text-align:center">给另一用户发送报文</td>
+<td style="text-align:center">write username pts/1</td>
+</tr>
+<tr>
+<td style="text-align:center">mesg</td>
+<td style="text-align:center">允许或拒绝接收报文</td>
+<td style="text-align:center">mesg n</td>
+</tr>
+</tbody>
+</table>
+<h5 id="Korn-Shell-命令"><a href="#Korn-Shell-命令" class="headerlink" title="Korn Shell 命令"></a>Korn Shell 命令</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">history</td>
+<td style="text-align:center">列出最近执行过的 几条命令及编号</td>
+<td style="text-align:center">history</td>
+</tr>
+<tr>
+<td style="text-align:center">r</td>
+<td style="text-align:center">重复执行最近执行过的 某条命令</td>
+<td style="text-align:center">r -2</td>
+</tr>
+<tr>
+<td style="text-align:center">alias</td>
+<td style="text-align:center">给某个命令定义别名</td>
+<td style="text-align:center">alias del=rm -i</td>
+</tr>
+<tr>
+<td style="text-align:center">unalias</td>
+<td style="text-align:center">取消对某个别名的定义</td>
+<td style="text-align:center">unalias del</td>
+</tr>
+</tbody>
+</table>
+<h5 id="其它命令"><a href="#其它命令" class="headerlink" title="其它命令"></a>其它命令</h5><table>
+<thead>
+<tr>
+<th style="text-align:center">命令名</th>
+<th style="text-align:center">功能描述</th>
+<th style="text-align:center">使用举例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">uname</td>
+<td style="text-align:center">显示操作系统的有关信息</td>
+<td style="text-align:center">uname -a</td>
+</tr>
+<tr>
+<td style="text-align:center">clear</td>
+<td style="text-align:center">清除屏幕或窗口内容</td>
+<td style="text-align:center">clear</td>
+</tr>
+<tr>
+<td style="text-align:center">env</td>
+<td style="text-align:center">显示当前所有设置过的环境变量</td>
+<td style="text-align:center">env</td>
+</tr>
+<tr>
+<td style="text-align:center">who</td>
+<td style="text-align:center">列出当前登录的所有用户</td>
+<td style="text-align:center">who</td>
+</tr>
+<tr>
+<td style="text-align:center">whoami</td>
+<td style="text-align:center">显示当前正进行操作的用户名</td>
+<td style="text-align:center">whoami</td>
+</tr>
+<tr>
+<td style="text-align:center">tty</td>
+<td style="text-align:center">显示终端或伪终端的名称</td>
+<td style="text-align:center">tty</td>
+</tr>
+<tr>
+<td style="text-align:center">stty</td>
+<td style="text-align:center">显示或重置控制键定义</td>
+<td style="text-align:center">stty -a</td>
+</tr>
+<tr>
+<td style="text-align:center">du</td>
+<td style="text-align:center">查询磁盘使用情况</td>
+<td style="text-align:center">du -k subdir</td>
+</tr>
+<tr>
+<td style="text-align:center">df</td>
+<td style="text-align:center">显示文件系统的总空间和可用空间</td>
+<td style="text-align:center">df /tmp</td>
+</tr>
+<tr>
+<td style="text-align:center">w</td>
+<td style="text-align:center">显示当前系统活动的总信息</td>
+<td style="text-align:center">w</td>
+</tr>
+</tbody>
+</table>
+<p>原文地址：<a href="https://www.jianshu.com/p/3291de46f3ff" target="_blank" rel="noopener">https://www.jianshu.com/p/3291de46f3ff</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/12/11/Mac-终端常用命令/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Android-Monitor工具记录" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -748,388 +1716,6 @@
 
 
   
-    <article id="post-微信小程序-从零开始" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/08/微信小程序-从零开始/">微信小程序 - 从零开始</a>
-    </h1>
-  
-
-        
-        <a href="/2018/10/08/微信小程序-从零开始/" class="archive-article-date">
-  	<time datetime="2018-10-08T03:30:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="微信小程序中就四种类型的文件"><a href="#微信小程序中就四种类型的文件" class="headerlink" title="微信小程序中就四种类型的文件"></a>微信小程序中就四种类型的文件</h4><ol>
-<li><code>.json</code> 后缀的 <code>JSON</code> 配置文件</li>
-<li><code>.wxml</code> 后缀的 <code>WXML</code> 模板文件</li>
-<li><code>.wxss</code> 后缀的 <code>WXSS</code> 样式文件</li>
-<li><code>.js</code> 后缀的 <code>JS</code> 脚本逻辑文件</li>
-</ol>
-<p>在根目录下用app来命名的这四中类型的文件，就是程序入口文件。</p>
-<h5 id="app-json"><a href="#app-json" class="headerlink" title="app.json"></a>app.json</h5><p>必须要有这个文件，如果没有这个文件，IDE会报错，因为微信框架把这个作为配置文件入口，<br>你只需创建这个文件，里面写个大括号就行<br>以后我们会在这里对整个小程序的全局配置。记录了页面组成，配置小程序的窗口 背景色，配置导航条样式，配置默认标题。</p>
-<h5 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h5><p>必须要有这个文件，没有也是会报错！但是这个文件创建一下就行 什么都不需要写<br>以后我们可以在这个文件中监听并处理小程序的生命周期函数、声明全局变量。</p>
-<h5 id="app-wxss"><a href="#app-wxss" class="headerlink" title="app.wxss"></a>app.wxss</h5><p>这个文件不是必须的。因为它只是个全局CSS样式文件</p>
-<h5 id="app-wxml"><a href="#app-wxml" class="headerlink" title="app.wxml"></a>app.wxml</h5><p>这个也不是必须的，而且这个并不是指主界面哦~因为小程序的主页面是靠在JSON文件中配置来决定的</p>
-<p><strong>有了这两个文件你运行程序，IDE就不会报错了，也意味着这是最简单的微信小程序</strong></p>
-<p><img src="/2018/10/08/微信小程序-从零开始/WX1.png" alt="WX1"></p>
-<h4 id="MakeHammer-做个锤子"><a href="#MakeHammer-做个锤子" class="headerlink" title="MakeHammer 做个锤子"></a>MakeHammer 做个锤子</h4><h5 id="创建程序实例"><a href="#创建程序实例" class="headerlink" title="创建程序实例"></a>创建程序实例</h5><p>app.js文件管理整个程序的生命周期，所以在里面添加如下代码：（输入App IDE会有提示）</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">App(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序初始化完成时，会触发 onLaunch（全局只触发一次）</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLaunch: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App launch"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序启动，或从后台进入前台显示，会触发 onShow</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"App show"</span>);</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序从前台进入后台，会触发 onHide</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 当小程序发生脚本错误，或者 api 调用失败时，会触发 onError 并带上错误信息</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onError: <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</span><br><span class="line">    </span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-<p>具体API解释如下</p>
-<p><img src="/2018/10/08/微信小程序-从零开始/wx2.png" alt="WX2"></p>
-<h5 id="美化ActionBar"><a href="#美化ActionBar" class="headerlink" title="美化ActionBar"></a>美化ActionBar</h5><p>json文件负责配置ActionBar颜色，我们只需要在里面添加如下代码即可</p>
-<p><img src="/2018/10/08/微信小程序-从零开始/wx3.png" alt="wx3"></p>
-<p><img src="/2018/10/08/微信小程序-从零开始/wx4.png" alt="wx4"></p>
-<h5 id="配置首页"><a href="#配置首页" class="headerlink" title="配置首页"></a>配置首页</h5><p>Json文件负责配置页面路径<br>所以我们在里面加入如下代码，开发工具会自动为我们简历文件夹及页面需要的文件</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">"pages": [</span><br><span class="line">    <span class="string">"pages/index/index"</span></span><br><span class="line">  ]</span><br></pre></td></tr></table></figure>
-<h5 id="美化页面"><a href="#美化页面" class="headerlink" title="美化页面"></a>美化页面</h5><p>美化页面我们用到了 wxml 和 wxss文件<br>在工具为我们创建index.wxml文件里面写入以下代码</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">view</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">text</span> <span class="attr">class</span>=<span class="string">"window"</span>&gt;</span>Hello<span class="tag">&lt;/<span class="name">text</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">view</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>然后在index.wxss文件里面写入以下代码</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.window</span>&#123;</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#4995fa</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在 index.js中有生成的代码</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">Page(&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面的初始数据</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  data: &#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面加载</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onLoad: <span class="function"><span class="keyword">function</span> (<span class="params">options</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面初次渲染完成</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onReady: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面显示</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShow: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面隐藏</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onHide: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 生命周期函数--监听页面卸载</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onUnload: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面相关事件处理函数--监听用户下拉动作</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onPullDownRefresh: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 页面上拉触底事件的处理函数</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onReachBottom: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 用户点击右上角分享</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  onShareAppMessage: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">小程序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/08/微信小程序-从零开始/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Charles实践" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/10/07/Charles实践/">Charles实践</a>
-    </h1>
-  
-
-        
-        <a href="/2018/10/07/Charles实践/" class="archive-article-date">
-  	<time datetime="2018-10-07T07:11:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h5 id="一、Map-Local"><a href="#一、Map-Local" class="headerlink" title="一、Map Local"></a>一、Map Local</h5><p>新建一个 json文件，将请求到的json数据复制到该文件，保存到本地。后面需要使用。<br>右键点击该接口，选中Map Local</p>
-<p>map to下选择上面创建的json文件，点击ok</p>
-<p>请求该接口，访问到的数据就是本地json文件的数据了<br>修改json文件，就可以进行调试了，不用每次都打断点修改json数据了0.0</p>
-<h5 id="二、Rewrite"><a href="#二、Rewrite" class="headerlink" title="二、Rewrite"></a>二、Rewrite</h5><p>rewrite功能重写对应的内容，主要可以对某些匹配请求的header、host、url、path、query param、response status、body进行rewrite。<br>第一步点击菜单栏Tools——&gt;Rewrite</p>
-<p>第二步，点击Enable Rewrite前的选框，点击左侧的Add</p>
-<p>设置地址</p>
-<p>设置类型、规则</p>
-<p>URL Rewrite:修改url</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">偷鸡摸狗</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/10/07/Charles实践/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Android-Framework初识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/22/Android-Framework初识/">Android Framework初识</a>
-    </h1>
-  
-
-        
-        <a href="/2018/06/22/Android-Framework初识/" class="archive-article-date">
-  	<time datetime="2018-06-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-22</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Android Framework 层叫应用程序框架层，为上层应用层提供各种 APIs、组件和服务。</p>
-<p>Android Framework 层包含 3 个主要部分：服务端、客户端、Linux 驱动。</p>
-<h5 id="服务端（部分）"><a href="#服务端（部分）" class="headerlink" title="服务端（部分）"></a>服务端（部分）</h5><ul>
-<li>ActivityManagerService（AMS）：管理Activity；</li>
-<li>WindowManagerService（WMS）：控制窗口的显示、隐藏及层序，用来管理窗口；</li>
-<li>KeyQ 类:：WMS的内部类，一旦创建就会启动一个新的线程，线程不断接受和读取用户的 UI 操作消息，并把消息存进消息队列 QueueEvent；</li>
-<li>InputDispatcherThread：一旦创建启动一个新的线程，不断地从消息队列 QueueEvent 中读取消息并过滤，并将消息发送到当前活动的客户端中。</li>
-</ul>
-<h5 id="客户端（部分）"><a href="#客户端（部分）" class="headerlink" title="客户端（部分）"></a>客户端（部分）</h5><ul>
-<li>ActivityThread：主线程类，即UI线程类，程序入口为 ActivityThread 的 main 函数入口。它根据AMS的要求调度和执行 activites 和其他操作；</li>
-<li>ViewRoot：负责客户端跟 WMS 交互，。内部有 W 类，W类继承于 Binder。当 WMS 与客户端进行通信时调用该类。内部有 ViewRootHandler 类继承于 Handler，所以能在 W 类接收到 Wms 的消息后把消息传递到 UI 线程中。同时，界面绘制的起点也在其中 - performTraversals；</li>
-<li>W 类：ViewRoot 助手，ViewRoot 内部类，主要帮助 ViewRoot 实现把 Wms 的 IPC 调用转换成本地的一个异步调用；</li>
-<li>Activity 类</li>
-<li>PhoneWindow：继承于 Window 类，里面会放一个 DecorView，提供了一组统一窗口操作的 API；</li>
-<li>Window：提供一些通用的窗口操作 API；</li>
-<li>DecorView：这是我们所能看到的 View 的所有，它集成自 FrameLayout，我们写的布局 view 就是放在它里面的；</li>
-<li>ApplicationThread：继承于 Binder，当 AMS 想调用客户端方法时调用；</li>
-<li>Instrumentionn：负责直接与 Ams 对话，所有想调用 Ams 的操作都集中在这里，负责单向调用 Ams；</li>
-<li>WindowManager：客户端与 WindowManagerService 通信使用。</li>
-</ul>
-<h5 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h5><p>Linux 驱动与 Framework 相关的主要有两部分：SurfaceFlingger，Binder。每一个窗口都对应一个画 Surface，SF主要是把各个 Surface 显示到同一屏幕上。Binder 是提供跨进程的消息传递。</p>
-<h5 id="Android-Framework-三大核心功能"><a href="#Android-Framework-三大核心功能" class="headerlink" title="Android Framework 三大核心功能"></a>Android Framework 三大核心功能</h5><ul>
-<li>View.java：View 的工作原理，实现包括绘制view、处理触摸、按键事件等；</li>
-<li>ActivityManagerService.java：管理所有的应用程序的 Activity 等；</li>
-<li>WindowManagerService.java：为所有应用程序分配窗口，并管理这些窗口。</li>
-</ul>
-<p><a href="https://github.com/aosp-mirror" target="_blank" rel="noopener">https://github.com/aosp-mirror</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/06/22/Android-Framework初识/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-android体系架构" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/19/android体系架构/">android体系架构</a>
-    </h1>
-  
-
-        
-        <a href="/2018/06/19/android体系架构/" class="archive-article-date">
-  	<time datetime="2018-06-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="/2018/06/19/android体系架构/3245308-768c2e38180411b8.png" alt="android-system-architecture1"></p>
-<blockquote>
-<p>Android系统构架是安卓系统的体系结构，android的系统架构和其操作系统一样，采用了分层的架构，共分为四层，从高到低分别是Android应用层，Android应用框架层，Android系统运行层和Linux内核层。</p>
-</blockquote>
-<p>可以看到，蓝色区域是我们熟悉的 Java 程序，黄色的代表为运行 Java 程序而实现的虚拟机，绿色部分为用 c / c++ 编写的程序库，红色部分为内核（ Linux 内核 + driver ）。</p>
-<p>从高到低了解下 Android 的系统架构：</p>
-<h5 id="Android-应用层"><a href="#Android-应用层" class="headerlink" title="Android 应用层"></a>Android 应用层</h5><p>Android的应用程序主要是用户界面方面的，现在主要通过 Java 跟 kotlin 来编写。</p>
-<h5 id="Android-应用框架层"><a href="#Android-应用框架层" class="headerlink" title="Android 应用框架层"></a>Android 应用框架层</h5><p>该层主要为 Android 应用层提供 APIs，是一个应用程序的框架，包含了应用程序中需要的各种控件。</p>
-<h5 id="Android-系统运行层"><a href="#Android-系统运行层" class="headerlink" title="Android 系统运行层"></a>Android 系统运行层</h5><p>本层分成两个部分，一部分是各种程序库，另一个部分是运行时环境。</p>
-<h6 id="程序库"><a href="#程序库" class="headerlink" title="程序库"></a>程序库</h6><ul>
-<li>C 库：C 语言的标准库，系统中最为底层的库，通过 Linux 的系统调用来实现；</li>
-<li>多媒体框架（MediaFramework）：Android 多媒体的核心部分，基于 PacketVideo 的 OpenCore，从功能上一共分为两部分，一部分是音频、视频的回放（ PlayBack ），一部分是音频、视频的记录（ Recorder ）；</li>
-<li>SGL：底层的2D图形引擎；</li>
-<li>SSL：Secure Socket Layer，未育 TCP/IP 协议与各种应用层协议之间，为数据通讯提供安全支持；</li>
-<li>OpenGL ES 1.0：3D支持；</li>
-<li>界面管理工具（ Surface Management）：提供了管理显示子系统等功能；</li>
-<li>SQLite：嵌入式数据库；</li>
-<li>WebKit：web 浏览器引擎；</li>
-<li>FreeType：位图和矢量显示</li>
-</ul>
-<h6 id="运行环境"><a href="#运行环境" class="headerlink" title="运行环境"></a>运行环境</h6><p>Android 运行时环境主要是虚拟机技术 Dalvik。 Dalvik 虚拟机与一般的 Java 虚拟机（ JVM ）不同，它执行的不是 Java标准的字节码（ bytecode ），而是 Dalvik 可执行格式（ .dex ）。执行过程中，每一个应用程序即一个进程。二者最大的区别是 JVM 是基于栈的虚拟机（ Stack-base ），而 Dalvik 是基于寄存器的虚拟机（ Register-base ），后者可根据硬件实现最大优化。</p>
-<h5 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h5><p>Android 的核心系统服务依赖于 Linux 2.6 内核 ，如安全性，内存管理，进程管理， 网络协议栈和驱动模型。 Linux 内核也同时作为硬件和软件栈之间的抽象层。其外还对其做了部分修改，主要涉及两部分修改：</p>
-<ul>
-<li>Binder (IPC)：提供有效的进程间通信，虽然linux内核本身已经提供了这些功能，但Android系统很多服务都需要用到该功能，为了某种原因其实现了自己的一套。</li>
-</ul>
-<ul>
-<li>电源管理：省电。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/06/19/android体系架构/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1248,11 +1834,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
