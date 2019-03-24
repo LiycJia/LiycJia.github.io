@@ -342,9 +342,9 @@
 </ol>
 <h4 id="设计模式基本原则"><a href="#设计模式基本原则" class="headerlink" title="设计模式基本原则"></a>设计模式基本原则</h4><ul>
 <li>单一职责原则 (Single Responsibility Principle)</li>
-<li>里氏代换原则 (Liskov Substitution Principle)</li>
-<li>依赖倒置原则 (Dependence Inversion Principle)</li>
-<li>接口隔离原则 (Interfere Segregation Principle)</li>
+<li>里氏代换原则 (Liskov Substitution Principle)—任何基类可以出现的地方，子类一定可以出现</li>
+<li>依赖倒置原则 (Dependence Inversion Principle)–抽象不应该依赖于细节，细节应该依赖于抽象。换言之，要针对接口编程，而非针对实现编程</li>
+<li>接口隔离原则 (Interfere Segregation Principle)—客户端不应该依赖它不需要的接口，一个类对另一个类的依赖应该建立在最小的接口上</li>
 <li>迪米特法则 (最少知道法则) (Demeter Principle)</li>
 <li>开闭原则 (Open Close Principle)</li>
 </ul>
@@ -367,11 +367,27 @@
 <tr>
 <td style="text-align:center">对象</td>
 <td style="text-align:center">Abstract Factory (抽象工厂) <br>Builder (建造者)<br>Prototype (原型)<br>Singleton (单例)</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
+<td style="text-align:center">Adapter(对象)<br>Bridge(桥接)<br>Composite(组合)<br>Decorator(装饰者)<br>Facade(外观)<br>Flyweight(享元)<br>Proxy(代理)</td>
+<td style="text-align:center">Chain of Responsibility (职责链)<br>Command (命令)<br>Iterator (迭代器)<br>Mediator (中介者)<br>Memento (备忘录)<br>Observer (观察者)<br>State (状体)<br>Strategy (策略)<br>Visitor (访问者)</td>
 </tr>
 </tbody>
 </table>
+<p>更详细的分类可以看<a href="https://blog.csdn.net/cooldragon/article/details/52164380" target="_blank" rel="noopener">这里</a>。</p>
+<p>在安卓开发中，接触到的设计模式有：</p>
+<ul>
+<li>单例模式，application 类的使用</li>
+<li>Builder 模式，Glide、AlertDialog 的使用。该模式是开闭原则的完全体现</li>
+<li>Adapter 模式，RecyclerView 适配器</li>
+<li>Java IO 库中，涉及到两个设计模式：装饰模式和适配器模式</li>
+<li>Retrofit中使用了外观模式和动态代理模式</li>
+<li>Okhttp 中 Intercepter 就是典型的职责链模式</li>
+<li>RxJava 是典型的观察者模式，Android 中，点击事件也是经典的观察者模式</li>
+</ul>
+<p>参考资料在这里，留着慢慢看，慢慢补充吧</p>
+<ul>
+<li><a href="https://juejin.im/post/5b3cddb6f265da0f8145c049#heading-15" target="_blank" rel="noopener">https://juejin.im/post/5b3cddb6f265da0f8145c049#heading-15</a></li>
+<li><a href="https://blog.csdn.net/longyulu/article/details/9159589" target="_blank" rel="noopener">https://blog.csdn.net/longyulu/article/details/9159589</a></li>
+</ul>
 
       
 
@@ -1683,11 +1699,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1699,11 +1715,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Python</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
               <li class="article-tag-list-item">
