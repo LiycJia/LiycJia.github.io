@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://www.programan.top">
   <title>Android总结之Handler | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
-<meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
+  <meta name="description" content="本来想简单记录一下 Handler 的，但是发现其主要作用就是在 Android 上的消息传递，那就大概记录一下 Android 上的消息机制吧。 Handler 是 Android 消息机制的上层接口，用来将一个任务切换到 Handler 所在的线程中执行。 Android 的消息机制主要是指 Handler 的运行机制，Handler 的运行需要底层的 MessageQueue 和 Loope">
+<meta name="keywords" content="Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android总结之Handler">
 <meta property="og:url" content="http://www.programan.top/2019/03/21/Android总结之Handler/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="本来想简单记录一下 Handler 的，但是发现其主要作用就是在 Android 上的消息传递，那就大概记录一下 Android 上的消息机制吧。 Handler 是 Android 消息机制的上层接口，用来将一个任务切换到 Handler 所在的线程中执行。 Android 的消息机制主要是指 Handler 的运行机制，Handler 的运行需要底层的 MessageQueue 和 Loope">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-21T07:52:40.654Z">
+<meta property="og:updated_time" content="2019-03-24T11:37:49.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android总结之Handler">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:description" content="本来想简单记录一下 Handler 的，但是发现其主要作用就是在 Android 上的消息传递，那就大概记录一下 Android 上的消息机制吧。 Handler 是 Android 消息机制的上层接口，用来将一个任务切换到 Handler 所在的线程中执行。 Android 的消息机制主要是指 Handler 的运行机制，Handler 的运行需要底层的 MessageQueue 和 Loope">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -175,7 +175,18 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>本来想简单记录一下 Handler 的，但是发现其主要作用就是在 Android 上的消息传递，那就大概记录一下 Android 上的消息机制吧。</p>
+<p>Handler 是 Android 消息机制的上层接口，用来将一个任务切换到 Handler 所在的线程中执行。</p>
+<p>Android 的消息机制主要是指 Handler 的运行机制，Handler 的运行需要底层的 MessageQueue 和 Looper 的支撑。MessageQueue 内部存储了一组采用单链表的数据结构来存储的消息队列，以消息队列的形式对外提供插入和删除的工作。Looper 以无限循环的形式去查看 MessageQueue 中是否又新消息并处理，没有的话则一直等待。</p>
+<p>Looper 中的 ThreadLocal 可以在不同的线程中互不干扰的存储并提供数据。线程默认没有 Looper，需要创建。</p>
+<p>系统不允许在子线程访问 UI 线程是因为 Android 的 UI 控件不是线程安全的，多线程兵法访问会造成不可预期的结果。</p>
+<p>消息队列工作流程</p>
+<ul>
+<li>MessageQueue 消息队列包含两个操作，enqueueMessage 插入消息和 next 删除消息</li>
+<li>Looper 通过 Looper.prepare() 方法创建一个 Looper，接着通过 Looper.loop() 方法开启消息循环，从 MessageQueue 消息队列中去无线获取消息。消息为空时，在阻塞在 next 方法中。消息不为空时，会调用 Handler 的dispatchMessage 方法来处理消息。</li>
+<li>Handler 发送消息，即向 MessageQueue 中插入一条消息。</li>
+</ul>
+
       
 
       
@@ -183,6 +194,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -423,11 +445,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Python</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
