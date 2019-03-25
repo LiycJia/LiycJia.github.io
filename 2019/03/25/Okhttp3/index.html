@@ -6,19 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Archives | 吃着火锅唱着歌</title>
+  <title>吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
+  <meta name="description" content="Okhttp3 以 post 为例，请求过程大致分四步：  构建 OKHTTPClient 对象 构建 Request 请求对象 购将 Call 对象 发起请求  Dispatcher调度器。内部维护者最大请求数，每个主机最大请求数，还有三个最重要的队列，分别是 “将要执行的异步请求队列”、”正在执行的异步请求队列”、”正在执行的同步请求队列”。 getResponseWithIntercepto">
 <meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:title" content="吃着火锅唱着歌">
-<meta property="og:url" content="http://www.programan.top/archives/page/3/index.html">
+<meta property="og:url" content="http://www.programan.top/2019/03/25/Okhttp3/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="Okhttp3 以 post 为例，请求过程大致分四步：  构建 OKHTTPClient 对象 构建 Request 请求对象 购将 Call 对象 发起请求  Dispatcher调度器。内部维护者最大请求数，每个主机最大请求数，还有三个最重要的队列，分别是 “将要执行的异步请求队列”、”正在执行的异步请求队列”、”正在执行的同步请求队列”。 getResponseWithIntercepto">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/zKFJDM5V3WxdRJOHzOQ3WhnuQBrTTdPvAu3WicCIOib9p7jTiaZP9MVeUBibrTIML7cNWj4F5dHuibVkfA4cES0PvKg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:updated_time" content="2019-03-25T02:30:40.045Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="吃着火锅唱着歌">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:description" content="Okhttp3 以 post 为例，请求过程大致分四步：  构建 OKHTTPClient 对象 构建 Request 请求对象 购将 Call 对象 发起请求  Dispatcher调度器。内部维护者最大请求数，每个主机最大请求数，还有三个最重要的队列，分别是 “将要执行的异步请求队列”、”正在执行的异步请求队列”、”正在执行的同步请求队列”。 getResponseWithIntercepto">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/zKFJDM5V3WxdRJOHzOQ3WhnuQBrTTdPvAu3WicCIOib9p7jTiaZP9MVeUBibrTIML7cNWj4F5dHuibVkfA4cES0PvKg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -154,291 +157,142 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Okhttp3" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Okhttp3</p>
+<p>以 post 为例，请求过程大致分四步：</p>
+<ol>
+<li>构建 OKHTTPClient 对象</li>
+<li>构建 Request 请求对象</li>
+<li>购将 Call 对象</li>
+<li>发起请求</li>
+</ol>
+<h5 id="Dispatcher"><a href="#Dispatcher" class="headerlink" title="Dispatcher"></a>Dispatcher</h5><p>调度器。内部维护者最大请求数，每个主机最大请求数，还有三个最重要的队列，分别是 “将要执行的异步请求队列”、”正在执行的异步请求队列”、”正在执行的同步请求队列”。</p>
+<h5 id="getResponseWithInterceptorChain"><a href="#getResponseWithInterceptorChain" class="headerlink" title="getResponseWithInterceptorChain()"></a>getResponseWithInterceptorChain()</h5><p>在这个方法中，将用户自定义的一些拦截器和默认的拦截器封装到一个 list 中，然后创建 <code>RealInterceptorChain</code> 对象并执行 <code>proceed(originalRequest)</code> 方法。在 <code>proceed</code> 中，会遍历调用拦截器列表中的拦截器，并调用每一个拦截器的 intercept 方法。</p>
+<p>例如第一个拦截器 <code>RetryAndFollowUpInterceptor</code> 中的 <code>intercept</code> 方法，有 while 循环，在重连次数 <code>followUpCount</code> 超过 20 次的时候，停止重连。循环中，会执行 <code>RealInterceptorChain.proceed()</code> ，会去除下一个拦截器并执行 intercept 方法，以此种方法遍历拦截器列表中的拦截器。</p>
+<p>最后一个拦截器是 <code>CallServerInterceptor</code> 。HttpCodec 这个接口用来编码 http 请求并解码 http 返回结果，也就是说真正的处理请求和结果在这个接口中，它有两个实现类分别是<code>Http1Codec</code>和<code>Http2Codec</code>分别对应Http/1.x和Http/2.x。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/zKFJDM5V3WxdRJOHzOQ3WhnuQBrTTdPvAu3WicCIOib9p7jTiaZP9MVeUBibrTIML7cNWj4F5dHuibVkfA4cES0PvKg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="img"></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/11/05/Android音视频开发进阶导图/" class="archive-article-date">
-  	<time datetime="2018-11-05T07:12:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-05</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/11/05/Android音视频开发进阶导图/">Android音视频开发进阶导图</a>
-    </h1>
-  
+      
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
+      
 
-          
-
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/03/25/Okhttp3/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/08/微信小程序-从零开始/" class="archive-article-date">
-  	<time datetime="2018-10-08T03:30:29.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-08</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/03/24/Android总结之图片相关/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android总结之图片相关</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/08/微信小程序-从零开始/">微信小程序 - 从零开始</a>
-    </h1>
+  
+  
+  <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+<script>
+  var cloudTieConfig = {
+    url: "http://www.programan.top/2019/03/25/Okhttp3/", 
+    sourceId: "Okhttp3",
+    productKey: "true",
+    target: "cloud-tie-wrapper"
+  };
+</script>
+<script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">小程序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/10/07/Charles实践/" class="archive-article-date">
-  	<time datetime="2018-10-07T07:11:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-10-07</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/10/07/Charles实践/">Charles实践</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">偷鸡摸狗</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/09/12/长路漫漫伴你闯/" class="archive-article-date">
-  	<time datetime="2018-09-12T09:28:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-09-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/09/12/长路漫漫伴你闯/">长路漫漫伴你闯</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/06/22/Android-Framework初识/" class="archive-article-date">
-  	<time datetime="2018-06-22T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/06/22/Android-Framework初识/">Android Framework初识</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/06/19/android体系架构/" class="archive-article-date">
-  	<time datetime="2018-06-19T07:41:21.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-19</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/06/19/android体系架构/">android体系架构</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/06/15/Android-studio快捷键（Mac）/" class="archive-article-date">
-  	<time datetime="2018-06-15T07:06:06.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-06-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/06/15/Android-studio快捷键（Mac）/">Android studio快捷键（Mac）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/2/">&laquo; Prev</a><a class="page-number" href="/archives/">1</a><a class="page-number" href="/archives/page/2/">2</a><span class="page-number current">3</span>
-    </nav>
   
 
 
@@ -462,8 +316,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

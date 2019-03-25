@@ -156,6 +156,308 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android总结之四大组件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/03/Android总结之四大组件/">Android总结之四大组件</a>
+    </h1>
+  
+
+        
+        <a href="/2019/01/03/Android总结之四大组件/" class="archive-article-date">
+  	<time datetime="2019-01-03T09:18:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h4><h5 id="Activity生命周期"><a href="#Activity生命周期" class="headerlink" title="Activity生命周期"></a>Activity生命周期</h5><p>生命周期：<code>onCreate()</code> -&gt; <code>onStart()</code> - &gt; <code>onResume()</code> -&gt; <code>onPause()</code> -&gt; <code>onStop()</code> -&gt; <code>onDestroy()</code></p>
+<p><strong>特殊的生命周期</strong></p>
+<ul>
+<li><p>资源相关的系统配置发生改变会导致 activity 被杀死并重新创建。系统配置发生改变以后，activity 会销毁，其 onPause、onStop、onDestroy 会相继执行，因为是异常销毁，系统会调用 onSaveInstanceState 来保存 activity 当前状态，这个方法的调用时机是在 onStop 之前，与 onPause 无时序关系。activity 重建后会调用 onRestoreInstanceState，并且把销毁时 onSaveInstance 保存的 Bundle 对象作为参数同时传递给 onRestoreInstance 和 onCreate，onRestoreInstance 在 onStart 方法之后回调。同时，onRestoreInstance 方法会自动帮我们做一些恢复工作。另外，和 activity 一样，每个 view 都有自己相关的 onSaveInstanceState 方法和 onRestoreInstanceState 方法。</p>
+</li>
+<li><p>应用场景：假设 Activity A 位于栈顶，从 A 跳转 B 时声明周期</p>
+<p>当用户点击A中按钮来到B时，假设B全部遮挡住了A，将依次执行A:onPause -&gt; B:onCreate -&gt; B:onStart -&gt; B:onResume -&gt; A:onStop。</p>
+<p>此时如果点击Back键，将依次执行B:onPause -&gt; A:onRestart -&gt; A:onStart -&gt; A:onResume -&gt; B:onStop -&gt; B:onDestroy。</p>
+</li>
+</ul>
+<h5 id="Activity-启动模式"><a href="#Activity-启动模式" class="headerlink" title="Activity 启动模式"></a>Activity 启动模式</h5><ul>
+<li><p><strong>standard - 默认模式</strong></p>
+<p>默认的启动模式，既标准模式，在不指定启动模式的前提下，系统默认使用该模式启动 Activity，每次启动一个 Activity 都会重写一个新的实例，不管这个实例存在不存在。该 Activity 属于启动它的 Activity 所在的任务占中。</p>
+<p>应用场景：默认。</p>
+</li>
+<li><p><strong>singleTop - 栈顶复用模式</strong></p>
+<p>该模式下，当前栈中已存在该 Activity 实例并且该实例位于栈顶，则不会重新创建 Activity 的实例，而是复用栈顶的实例，并且将 Intent 对象传入，回调 onNewIntent 方法。其余情况，与 standard 模式相同，会重新创建实例。</p>
+<p>应用场景：登录页面、WXPayEntryActivity、WXEntryActivity 、推送通知栏。</p>
+</li>
+<li><p><strong>singleTask - 栈内复用模式</strong></p>
+<p>该模式下，如果栈中存在这个 Activity 的实例就会复用这个 Activity，不管它是否位于栈顶，复用时，会将它<strong>上面的 Activity</strong> 全部出栈，并且会回调该实例的 onNewIntent 方法。其实这个过程还存在一个任务栈的匹配，因为这个模式启动时，会在自己需要的任务栈中寻找实例，这个任务栈就是通过 taskAffinity 属性指定。如果这个任务栈不存在，则会创建这个任务栈。</p>
+<p>应用场景：应用主页面、WebView页面、扫一扫页面、电商中：确认订单页面，付款页面。</p>
+</li>
+<li><p><strong>singleInstance - 全局唯一模式</strong></p>
+<p>该模式具备 singleTask 模式的所有特性，并且这种模式下的 Activity 会单独占用一个 Task 栈，具备全局唯一性，即整个系统中只有一个实例。由于栈内复用的特性，后续的请求不会创建新的 Activity 实例，除非这个特殊的任务栈被销毁。以 singleInstance 模式启动的 Activity 在整个系统中是单利的，如果启动这样的 Activity 时已经存在一个实例，那么会把它所在的任务调度到前台，重用这个实例。</p>
+<p>应用场景：系统 Launcher、锁屏键、来电显示等系统应用。</p>
+</li>
+</ul>
+<h5 id="TaskAffinity-属性"><a href="#TaskAffinity-属性" class="headerlink" title="TaskAffinity 属性"></a>TaskAffinity 属性</h5><p> 任务相关性。</p>
+<ul>
+<li>这个参数标识了一个 Activity 所需任务栈的名字。默认情况下，所有 Activity 所需的任务战的名字为应用的包名。</li>
+<li>每个 Activity 的 taskAffinity 值都可以被指定，用来覆盖其默认值。</li>
+<li>通常来说，具有相同 taskAffinity 的 Activity 属于同一个任务。</li>
+<li>当设置一个 Activity 的 taskAffinity 属性为空字符串时，表明这个 Activity 不属于任何 task。</li>
+<li>taskAffinity 属性不对 standard 和 singleTop 模式有任何影响，这两种模式下不会创建新的 task（如果不指定默认值，即包名）。</li>
+</ul>
+<h5 id="Activity-与-Fragment-生命周期关系"><a href="#Activity-与-Fragment-生命周期关系" class="headerlink" title="Activity 与 Fragment 生命周期关系"></a>Activity 与 Fragment 生命周期关系</h5><p>创建过程：Fragment - onAttach -&gt; Fragment - onCreate -&gt; Fragment - onCreateView -&gt; Activity - onCreate -&gt; Fragment - onActivityCreate -&gt; Activity - onStart -&gt; Fragment - onStart -&gt; Activity - onResume -&gt; Fragment - onResume</p>
+<p>销毁过程：Fragment - onPause -&gt; Activity - onPause -&gt; Fragment - onStop -&gt; Activity - onStop -&gt; Fragment - onDestroyView -&gt; Fragment - onDestroy -&gt; Fragment - onDetach -&gt; Activity - onDestroy</p>
+<h5 id="Activity-与-menu-创建先后顺序"><a href="#Activity-与-menu-创建先后顺序" class="headerlink" title="Activity 与 menu 创建先后顺序"></a>Activity 与 menu 创建先后顺序</h5><p>在 Activity 创建完回调 onResume 后创建 menu，回调 onCreateOptionMenu。</p>
+<h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><h5 id="本地服务（LocalService）"><a href="#本地服务（LocalService）" class="headerlink" title="本地服务（LocalService）"></a>本地服务（LocalService）</h5><blockquote>
+<p>调用者和service在同一个进程里，所以运行在主进程的main线程中。所以不能进行耗时操作，可以采用在service里面<strong>创建一个Thread</strong>来执行任务。service影响的是<strong>进程</strong>的生命周期，讨论与Thread的区别没有意义。<br> <strong>任何 Activity 都可以控制同一 Service，而系统也只会创建一个对应 Service 的实例</strong>。</p>
+</blockquote>
+<p><strong>启动方式</strong>：</p>
+<ul>
+<li><p>start 方式启动服务</p>
+<p>步骤：</p>
+<blockquote>
+<p>1、定义一个类继承 service</p>
+<p>2、清单文件中配置 service</p>
+<p>3、使用 context 的 startService(Intent) 方法启动 service</p>
+<p>4、不使用时，调用 stopService(Intent) 方法停止服务</p>
+</blockquote>
+<p>生命周期：</p>
+<blockquote>
+<p>onCreate() – &gt; onStartCommand() – &gt; onDestory()<br> <strong>注意</strong>：如果服务已经开启，不会重复回调onCreate()方法，如果再次调用context.startService()方法，service而是会调用onStart()或者onStartCommand()方法。停止服务需要调用context.stopService()方法，服务停止的时候回调onDestory被销毁。</p>
+</blockquote>
+<p>特点：</p>
+<p>一旦服务开启就跟调用者（开启者）没有任何关系了。开启者不能调用服务里面的方法。</p>
+</li>
+<li><p>bind 方式启动服务</p>
+<p>步骤：</p>
+<blockquote>
+<p>定义一个类继承 service</p>
+<p>清单文件中注册 service</p>
+<p>使用 context 的 bindService(Intent,ServiceConnection,int) 方法启动 service</p>
+<p>不再使用时，调用 unbindService(ServiceConnection) 方法停止该服务</p>
+</blockquote>
+<p>生命周期：</p>
+<blockquote>
+<p>onCreate() – &gt; onBind() –&gt; onUnbind() – &gt; onDestory()</p>
+</blockquote>
+<p>注意：</p>
+<p>绑定服务不会调用 onStart 或者 onStartCommand 方法</p>
+<p>特点：</p>
+<p>bind 的方式启动服务，绑定服务，服务的生命周期跟随绑定者。绑定者可以调用服务里面的方法。</p>
+</li>
+</ul>
+<h5 id="远程服务"><a href="#远程服务" class="headerlink" title="远程服务"></a>远程服务</h5><p>调用者和 service 不再同一个进程中， service 在单独的进程中的 main 线程，是一种跨进程通信方式。</p>
+<blockquote>
+<p>在服务的内部创建一个内部类，提供一个方法，可以间接调用服务的方法；</p>
+<p>把暴露的接口文件的扩展名改为 .aidl 文件，去掉访问修饰符；</p>
+<p>实现服务的 onbind 方法，继承 Bander 和实现 aidl 定义的接口，提供给外界可调用的方法</p>
+<p>在 Activity 中绑定服务 bindService；</p>
+<p>在服务成功绑定的时候回调 onServiceConnected 方法，床底一个 IBinder 对象</p>
+<p>aidl 定义的接口 .Stub.asInterface(binder) 调用接口里面的方法</p>
+</blockquote>
+<h5 id="IntentService"><a href="#IntentService" class="headerlink" title="IntentService"></a>IntentService</h5><p>IntentService 是 Service 的子类，比普通的 Service 增加了额外的功能。</p>
+<p><strong>Service 本身存在的两个问题：</strong></p>
+<ul>
+<li>Service 不会专门启动一个单独的进程，Service 与它所在的应用位于同一个进程中；</li>
+<li>Service 也不是专门一条新进程，因此不应该在 Service 中直接处理耗时的任务</li>
+</ul>
+<p>IntentService 特征：</p>
+<ul>
+<li>会创建独立的 worker 线程来处理所有的 Intent 请求；</li>
+<li>会创建独立的 worker 线程来处理 onHandleIntent 方法实现的代码，无需处理多线程问题；</li>
+<li>所有请求处理完成后，IntentService 会自动停止，无需调用 stopSelf 方法停止；</li>
+<li>为 Service 的 onBind 提供默认实现，返回 null；</li>
+<li>为 Service 的 onStartCommand 提供默认实现，将请求的 Intent 添加到队列中。</li>
+</ul>
+<h4 id="BroadcastReceiver"><a href="#BroadcastReceiver" class="headerlink" title="BroadcastReceiver"></a>BroadcastReceiver</h4><blockquote>
+<p>广播被分为两种不同的类型：“<strong>普通广播</strong>（Normal broadcasts）”和“<strong>有序广播</strong>（Ordered broadcasts）”。普通广播是完全异步的，可以在同一时刻（逻辑上）被所有接收者接收到，消息传递的效率比较高，但缺点是：接收者不能将处理结果传递给下一个接收者，并且无法终止广播Intent的传播；然而有序广播是按照接收者声明的优先级别（声明在intent-filter元素的android:priority属性中，数越大优先级别越高,取值范围:-1000到1000。也可以调用IntentFilter对象的setPriority()进行设置），被接收者依次接收广播。如：A的级别高于B,B的级别高于C,那么，广播先传给A，再传给B，最后传给C。A得到广播后，可以往广播里存入数据，当广播传给B时,B可以从广播中得到A存入的数据。</p>
+</blockquote>
+<p>发送广播</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Context.sendBroadcast()</span><br><span class="line">发送的是普通广播，所有订阅者都有机会获得并进行处理。</span><br><span class="line"></span><br><span class="line">Context.sendOrderedBroadcast()</span><br><span class="line">发送的是有序广播，系统会根据接收者声明的优先级别按顺序逐个执行接收者，前面的接收者有权终止广播(BroadcastReceiver.abortBroadcast())，如果广播被前面的接收者终止，后面的接收者就再也无法获取到广播。对于有序广播，前面的接收者可以将处理结果通过setResultExtras(Bundle)方法存放进结果对象，然后传给下一个接收者，通过代码：Bundle bundle =getResultExtras(<span class="keyword">true</span>))可以获取上一个接收者存入在结果对象中的数据。</span><br><span class="line">系统收到短信，发出的广播属于有序广播。如果想阻止用户收到短信，可以通过设置优先级，让你们自定义的接收者先获取到广播，然后终止广播，这样用户就接收不到短信了。</span><br></pre></td></tr></table></figure>
+<p>注意：BroadCastReceiver 生命周期很短，在 onReceiver 中需要进行耗时操作时，应该考虑在 Service 中开启一个新线程处理。</p>
+<p><strong>静态注册和动态注册区别</strong></p>
+<ul>
+<li>动态注册广播不是常驻型广播，也就是说广播跟随activity的生命周期。注意: 在activity结束前，移除广播接收器。<br> 静态注册是常驻型，也就是说当应用程序关闭后，如果有信息广播来，程序也会被系统调用自动运行。</li>
+<li>当广播为有序广播时：<br> 1 优先级高的先接收<br> 2 同优先级的广播接收器，动态优先于静态<br> 3 同优先级的同类广播接收器，静态：先扫描的优先于后扫描的，动态：先注册的优先于后注册的。</li>
+<li>当广播为普通广播时：<br> 1 无视优先级，动态广播接收器优先于静态广播接收器<br> 2 同优先级的同类广播接收器，静态：先扫描的优先于后扫描的，动态：先注册的优先于后注册的。</li>
+</ul>
+<p><strong>小结：</strong></p>
+<ul>
+<li>在Android 中如果要发送一个广播必须使用sendBroadCast 向系统发送对其感兴趣的广播接收器中。</li>
+<li>使用广播必须要有一个intent 对象必设置其action动作对象</li>
+<li>使用广播必须在配置文件中显式的指明该广播对象</li>
+<li>每次接收广播都会重新生成一个接收广播的对象</li>
+<li>在BroadCastReceiver中尽量不要处理太多逻辑问题，建议复杂的逻辑交给Activity 或者 Service 去处理</li>
+<li>如果在AndroidManifest.xml中注册，当应用程序关闭的时候，也会接收到广播。在应用程序中注册就不产生这种情况了。</li>
+</ul>
+<h4 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h4><blockquote>
+<p>contentprovider是android四大组件之一的内容提供器，它主要的作用就是将程序的内部的数据和外部进行共享，为数据提供外部访问接口，被访问的数据主要以数据库的形式存在，而且还可以选择共享哪一部分的数据。这样一来，对于程序当中的隐私数据可以不共享，从而更加安全。contentprovider是android中一种跨程序共享数据的重要组件。</p>
+</blockquote>
+<blockquote>
+<p>原文：</p>
+<p>​    <a href="https://blog.csdn.net/mynameishuangshuai/article/details/51491074" target="_blank" rel="noopener">https://blog.csdn.net/mynameishuangshuai/article/details/51491074</a></p>
+<p>​    <a href="https://www.jianshu.com/p/51aaa65d5d25" target="_blank" rel="noopener">https://www.jianshu.com/p/51aaa65d5d25</a></p>
+</blockquote>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/01/03/Android总结之四大组件/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-2019年度计划" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/02/2019年度计划/">2019年度计划</a>
+    </h1>
+  
+
+        
+        <a href="/2019/01/02/2019年度计划/" class="archive-article-date">
+  	<time datetime="2019-01-02T02:05:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-02</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>新年要立新的 flag，2018 过去就过去吧，2019重新开始吧。列一下 2019 年想要学习的东西吧。有些可能很零碎，先写出来，再去归类总结吧。</p>
+<h4 id="1、四大组件（总结记录）"><a href="#1、四大组件（总结记录）" class="headerlink" title="1、四大组件（总结记录）"></a>1、四大组件（总结记录）</h4><p>四大组件的使用、Activity启动模式、Service的start和bind</p>
+<p>学习资料：</p>
+<p>学习资料：<br> <a href="https://www.jianshu.com/p/51aaa65d5d25" target="_blank" rel="noopener">Android 四大组件 - 简书</a><br> <a href="https://blog.csdn.net/mynameishuangshuai/article/details/51491074" target="_blank" rel="noopener">彻底弄懂Activity四大启动模式 - Android研发专栏 - CSDN博客</a></p>
+<h4 id="2、自定义-view"><a href="#2、自定义-view" class="headerlink" title="2、自定义 view"></a>2、自定义 view</h4><p> <a href="https://juejin.im/entry/586e1f988d6d810058b67f3e" target="_blank" rel="noopener">Android 自定义 View 合集 - Android - 掘金</a> </p>
+<h4 id="3、网络"><a href="#3、网络" class="headerlink" title="3、网络"></a>3、网络</h4><p>了解HTTP/HTTPS、状态码、header，get和post等；掌握网络请求API和相关网络库；熟悉长连接。</p>
+<p> <a href="https://mp.weixin.qq.com/s/Fazx13maQfPJItfkOqk9FQ" target="_blank" rel="noopener">HTTP 必知必会的那些</a><br> <a href="https://www.jianshu.com/p/aa3f066263ed" target="_blank" rel="noopener">Android HttpURLConnection详解 - 简书</a><br> <a href="https://mp.weixin.qq.com/s/035SiIDhmbHzbtI1fF4h1g" target="_blank" rel="noopener">手把手教你写 Socket 长连接</a> </p>
+<h4 id="4、图片加载"><a href="#4、图片加载" class="headerlink" title="4、图片加载"></a>4、图片加载</h4><p>了解drawable加载规则以及图片缓存</p>
+<p> <a href="https://www.jianshu.com/p/3f6f6e4f1c88" target="_blank" rel="noopener">Android中Bitmap内存优化 - 简书</a><br><a href="https://blog.csdn.net/guolin_blog/article/details/50727753" target="_blank" rel="noopener">Android drawable微技巧，你所不知道的drawable的那些细节 - 郭霖的专栏 - …</a><br> <a href="https://blog.csdn.net/guolin_blog/article/details/34093441" target="_blank" rel="noopener">Android照片墙完整版，完美结合LruCache和DiskLruCache - 郭霖的专栏 - …</a><br> <a href="https://blog.csdn.net/guolin_blog/article/details/28863651" target="_blank" rel="noopener">Android DiskLruCache完全解析，硬盘缓存的最佳方案 - 郭霖的专栏 - CSDN博…</a> </p>
+<h4 id="5、文件和数据库"><a href="#5、文件和数据库" class="headerlink" title="5、文件和数据库"></a>5、文件和数据库</h4><p>了解文件流、sqlite</p>
+<p> <a href="https://www.jianshu.com/p/509c78602ed2" target="_blank" rel="noopener">Java 文件流总结 - 简书</a> 详细介绍了文件输入输出流<br> <a href="https://www.w3cschool.cn/java/java-io-random-access-files.html" target="_blank" rel="noopener">Java 随机访问文件_w3cschool</a>Java随机访问文件<br> <a href="https://www.ibm.com/developerworks/cn/java/j-lo-serial/index.html" target="_blank" rel="noopener">Java 序列化的高级认识</a> Java的序列化原理以及对象输入输出流<br> <a href="https://www.jianshu.com/p/5c33be6ce89d" target="_blank" rel="noopener">Android SQLite详解 - 简书</a>sqlite数据库如何使用<br> <a href="https://dmytrodanylyk.com/articles/concurrent-database/" target="_blank" rel="noopener">Concurrent database access - Dmytro Danylyk</a> sqlite到底是线程安全的吗？</p>
+<h4 id="6、Handler-机制"><a href="#6、Handler-机制" class="headerlink" title="6、Handler 机制"></a>6、Handler 机制</h4><p><a href="https://www.jianshu.com/p/69b550cb7d43" target="_blank" rel="noopener">Android Handler的基本使用 - 简书</a> 了解Handler最基本的使用方式，文章清晰易懂<br> <a href="https://www.jianshu.com/p/3855e0aa7900" target="_blank" rel="noopener">Android Handler详解 - 简书</a>简单理解Handler的内部原理</p>
+<h4 id="7、Binder、AIDL、多进程"><a href="#7、Binder、AIDL、多进程" class="headerlink" title="7、Binder、AIDL、多进程"></a>7、Binder、AIDL、多进程</h4><p>Binder原理、AIDL的使用、多进程的定义和特性</p>
+<p><a href="https://blog.csdn.net/universus/article/details/6211589" target="_blank" rel="noopener">https://blog.csdn.net/universus/article/details/6211589</a></p>
+<h4 id="8、View的绘制"><a href="#8、View的绘制" class="headerlink" title="8、View的绘制"></a>8、View的绘制</h4><p>View的measure、layout和draw，View的工作原理</p>
+<p> <a href="https://www.jianshu.com/p/3d2c49315d68" target="_blank" rel="noopener">图解View测量、布局及绘制原理 - 简书</a><br> <a href="https://juejin.im/entry/5819968bda2f60005dda6a2d" target="_blank" rel="noopener">android ListView 工作原理 - Android - 掘金</a></p>
+<h4 id="9、事件分发"><a href="#9、事件分发" class="headerlink" title="9、事件分发"></a>9、事件分发</h4><p>事件分发原理和规则</p>
+<p> <a href="https://www.jianshu.com/p/fc0590afb1bf" target="_blank" rel="noopener">Android事件分发机制，大表哥带你慢慢深入 - 简书</a><br> <a href="https://blog.csdn.net/lmj623565791/article/details/39102591" target="_blank" rel="noopener">Android ViewGroup事件分发机制 - Hongyang - CSDN博客</a></p>
+<h4 id="10、消息队列"><a href="#10、消息队列" class="headerlink" title="10、消息队列"></a>10、消息队列</h4><p>Handler、Looper、Thread三者之间的关系；得知道子线程创建Handler为什么会报错，如何才能不报错</p>
+<p> <a href="https://blog.csdn.net/dfskhgalshgkajghljgh/article/details/52601802" target="_blank" rel="noopener">源码角度讲解子线程创建Handler报错的原因 - 曹银飞的专栏 - CSDN博客</a></p>
+<h4 id="11、Activity难点"><a href="#11、Activity难点" class="headerlink" title="11、Activity难点"></a>11、Activity难点</h4><p>setResult和finish的顺序关系<br>onSaveInstanceState()和onRestoreInstanceState()<br>onNewIntent()和onConfigurationChanged()</p>
+<p> <a href="https://www.cnblogs.com/shaweng/p/3875825.html" target="_blank" rel="noopener">setResult()的调用时机 - 沙翁 - 博客园</a>【推荐理由】清晰易懂，直接了当。<br><a href="https://www.jianshu.com/p/27181e2e32d2" target="_blank" rel="noopener">onSaveInstanceState()和onRestoreInstanceState()使用详解…</a>【推荐理由】简单好懂。<br><a href="https://blog.csdn.net/qq_27570955/article/details/55046934" target="_blank" rel="noopener">关于onConfigurationChanged方法及常见问题解决 - 朱小姐。的博客 - CSDN…</a></p>
+<h4 id="12、Service难点"><a href="#12、Service难点" class="headerlink" title="12、Service难点"></a>12、Service难点</h4><p> 先start再bind，如何停止一个Service<br>Service onStartCommand的返回值<br>bindService后，ServiceConnection里面的回调方法运行在哪个线程？它们的调用时机分别是什么？<br>Service的onCreate运行在哪个线程？</p>
+<p><a href="https://www.jianshu.com/p/d870f99b675c" target="_blank" rel="noopener">Android中startService和bindService的区别 - 简书</a><br><a href="https://blog.csdn.net/veryitman/article/details/7600008" target="_blank" rel="noopener">Service: onStartCommand 诡异的返回值 - CodingMan - CSDN博…</a><br>Service的onCreate、onStartCommand、onDestory等全部生命周期方法都运行在UI线程，ServiceConnection里面的回调方法也是运行在UI线程，大家一定要记住。</p>
+<h4 id="13、ContentProvider难点"><a href="#13、ContentProvider难点" class="headerlink" title="13、ContentProvider难点"></a>13、ContentProvider难点</h4><p>ContentProvider的生命周期<br>ContentProvider的onCreate和CRUD运行在哪个线程？它们是线程安全的吗？<br>ContentProvider的内部存储只能是sqlite吗？</p>
+<p><a href="https://www.jianshu.com/p/0f1e36507b9d" target="_blank" rel="noopener">android ContentProvider onCreate()在 Application……</a><br><a href="https://www.jianshu.com/p/cfa46bea6d7b" target="_blank" rel="noopener">ContentProvider总结 - 简书</a><br>注意：ContentProvider的底层是Binder，当跨进程访问ContentProvider的时候，CRUD运行在Binder线程池中，不是线程安全的，而如果在同一个进程访问ContentProvider，根据Binder的原理，同进程的Binder调用就是直接的对象调用，这个时候CRUD运行在调用者的线程中。另外，ContentProvider的内部存储不一定是sqlite，它可以是任意数据。</p>
+<h4 id="14、AsyncTask原理"><a href="#14、AsyncTask原理" class="headerlink" title="14、AsyncTask原理"></a>14、AsyncTask原理</h4><p>知道AsyncTask的工作原理，知道其串行和并行随版本的变迁<br><a href="https://blog.csdn.net/singwhatiwanna/article/details/17596225" target="_blank" rel="noopener">Android源码分析—带你认识不一样的AsyncTask - 任玉刚 - CSDN博客</a> 【推荐理由】只看这一篇文章就够了<br><a href="https://android.googlesource.com/platform/frameworks/base/+/android-8.1.0_r46/core/java/android/os/AsyncTask.java" target="_blank" rel="noopener">https://android.googlesource.com/platform/frameworks/base/ /android-8.1.0_r46/core/java/android/os/AsyncTask.java</a> </p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/01/02/2019年度计划/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-探索RcyclerView各组成部分" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1552,170 +1854,6 @@
 
 
   
-    <article id="post-记一次偷看公司摄像头" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/07/记一次偷看公司摄像头/">记一次偷看公司摄像头</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/07/记一次偷看公司摄像头/" class="archive-article-date">
-  	<time datetime="2018-11-07T10:19:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h5 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h5><p>前几天听说老总在通过手机查看了公司的各个摄像头，结果是周末没人加班。好吧，其实这个不是重点，重点是看着头顶360度无死角的摄像头，我也想看一下，蠢蠢欲动。。。</p>
-<h5 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h5><ul>
-<li>jadx</li>
-<li>Charles</li>
-</ul>
-<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>一开始想着，既然公司专用 App 上是有这个功能的，应该是根据权限区分的，先找下入口，然后再顺其自然吧。。。</p>
-<h5 id="过程（无图无数据）"><a href="#过程（无图无数据）" class="headerlink" title="过程（无图无数据）"></a>过程（无图无数据）</h5><p>担心被查，图跟数据就不贴了。记录一下大概过程吧。</p>
-<p>在查看入口的时候，抓包看到每个功能的入口是通过后台数据返回的，有用的数据只有一个 appid，而 appid 的值从 1 到 10，但是缺少 8 跟 9，当机立断，利用 Charles 抓包替换返回的数据，手动添加了 appid 8 跟 9。你还别说，真的好使。入口就显示出来了。</p>
-<p>入口有了，点击就好了，看代码里面都做了处理了。进去之后，应该是办公区的列表了。然而，没有数据。。。好吧，感觉心凉了，猜想这里应该是拿用户的 token 在服务端做的判断吧。这样的话，没办法了。想着看眼代码，干别的去吧，这一看，发现了什么。</p>
-<p>原来数据是拿 token 去请求的，但是发现这个 token 并不是登录时返回的 token，而是后来操作又去请求的一个，而请求用的参数居然只有个 appkey 跟 username。那么变数就在这个 username 上了。根据登录时返回的 username 判断，试了下老总的名字。嗯，没错，好使。</p>
-<p>接下来，就用老总名字返回的 token 一步步的去获取数据，替换数据。其中用到的就是 Charles 的请求修改功能跟 MapLocal 功能，这个就不详细说了。最后，终于看到了摄像头的画面。哎，整日活在这些摄像头下面，不自在。</p>
-<h5 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h5><ul>
-<li>获取摄像头 token 的参数太好猜了</li>
-<li>既然这样能够走通，是不是能用 xposed 去实现这个功能，就不用不断去替换数据了。</li>
-<li>会不会被查，算了，上面那条不作数了。</li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">偷鸡摸狗</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/07/记一次偷看公司摄像头/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Android音视频开发进阶导图" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/05/Android音视频开发进阶导图/">Android音视频开发进阶导图</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/05/Android音视频开发进阶导图/" class="archive-article-date">
-  	<time datetime="2018-11-05T07:12:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><img src="/2018/11/05/Android音视频开发进阶导图/Android音视频.jpg" alt="Android音视频"></p>
-<p>原文地址：<a href="https://www.jianshu.com/u/a32db45d4859" target="_blank" rel="noopener">https://www.jianshu.com/u/a32db45d4859</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/05/Android音视频开发进阶导图/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -1834,11 +1972,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1850,11 +1988,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Python</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
               <li class="article-tag-list-item">
