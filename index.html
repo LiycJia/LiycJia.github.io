@@ -243,6 +243,380 @@
 
 
   
+    <article id="post-Kotlin使用技巧" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/03/Kotlin使用技巧/">Kotlin 使用技巧</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/03/Kotlin使用技巧/" class="archive-article-date">
+  	<time datetime="2019-04-03T02:23:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="1、无需-findViewById"><a href="#1、无需-findViewById" class="headerlink" title="1、无需 findViewById"></a>1、无需 findViewById</h4><p>在布局中定义</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/tv_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:text</span>=<span class="string">"Hello World!"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>直接设置 TextView 的文本</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv_content.text = <span class="string">"改变文本"</span></span><br></pre></td></tr></table></figure>
+<h4 id="2、Lambda"><a href="#2、Lambda" class="headerlink" title="2、Lambda"></a>2、Lambda</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tv_content.setOnClickListener(View.OnClickListener(</span><br><span class="line">    fun(v : View) &#123;</span><br><span class="line">        v.visibility = View.GONE</span><br><span class="line">    &#125;</span><br><span class="line">))</span><br></pre></td></tr></table></figure>
+<p>可以写成下面</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv_content.setOnClickListener &#123; v -&gt; v.visibility = View.GONE &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3、函数变量"><a href="#3、函数变量" class="headerlink" title="3、函数变量"></a>3、函数变量</h4><p>在 kotlin 语法中函数是可以作为变量进行传递的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="function"><span class="title">fun</span><span class="params">(number1 : <span class="type">Int</span>, number2 : <span class="type">Int</span>)</span></span> : <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> number1 + number2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用这个函数变量</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(result(<span class="number">1</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h4 id="4、空安全"><a href="#4、空安全" class="headerlink" title="4、空安全"></a>4、空安全</h4><p>在 Java 不用强制我们处理空对象，所以常常会导致 NullPointerException 空指针出现，现在 Kotlin 对空对象进行了限定，必须在编译时处理对象是否为空的情况，不然会编译不通过.</p>
+<p>在对象不可空的情况下，可以直接使用这个对象.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getText</span><span class="params">()</span></span> : String &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"text"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line">print(text.length)</span><br></pre></td></tr></table></figure>
+<p>在对象可空的情况下，必须要判断对象是否为空</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getText</span><span class="params">()</span></span> : String? &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line"><span class="keyword">if</span> (text != <span class="literal">null</span>) &#123;</span><br><span class="line">    print(text.length)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果不想判断是否为空，可以直接这样，如果 text 对象为空，则会报空指针异常，一般情况下不推荐这样使用</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line">print(text!!.length)</span><br></pre></td></tr></table></figure>
+<p>还有一种更好的处理方式，如果 text 对象为空则不会报错，但是 text.length 的结果会等于 null</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line">print(text?.length)</span><br></pre></td></tr></table></figure>
+<h4 id="5、方法支持添加默认函数"><a href="#5、方法支持添加默认函数" class="headerlink" title="5、方法支持添加默认函数"></a>5、方法支持添加默认函数</h4><p>在 Java 上，我们可能会为了扩展某个方法而进行多次重载</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toast</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">    toast(<span class="keyword">this</span>, text, Toast.LENGTH_SHORT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toast</span><span class="params">(Context context, String text)</span> </span>&#123;</span><br><span class="line">    toast(context, text, Toast.LENGTH_SHORT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toast</span><span class="params">(Context context, String text, <span class="keyword">int</span> time)</span> </span>&#123;</span><br><span class="line">    Toast.makeText(context, text, time).show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toast(<span class="string">"弹个吐司"</span>);</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>);</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>, Toast.LENGTH_LONG);</span><br></pre></td></tr></table></figure>
+<p>但是在 Kotlin 上面，我们无需进行重载，可以直接在方法上面直接定义参数的默认值</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">toast</span><span class="params">(context : <span class="type">Context</span> = this, text : <span class="type">String</span>, time : <span class="type">Int</span> = Toast.LENGTH_SHORT)</span></span> &#123;</span><br><span class="line">    Toast.makeText(context, text, time).show()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">toast(text = <span class="string">"弹个吐司"</span>)</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>)</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>, Toast.LENGTH_LONG)</span><br></pre></td></tr></table></figure>
+<h4 id="6、类方法扩展"><a href="#6、类方法扩展" class="headerlink" title="6、类方法扩展"></a>6、类方法扩展</h4><p>可以在不用继承的情况下对扩展原有类的方法，例如对 String 类进行扩展方法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> String.<span class="title">handle</span><span class="params">()</span></span> : String &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span> + <span class="string">"Android轮子哥"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 需要注意，handle 方法在哪个类中被定义，这种扩展只能在那个类里面才能使用</span></span><br><span class="line">print(<span class="string">"HJQ = "</span>.handle())</span><br><span class="line">HJQ = Android轮子哥</span><br></pre></td></tr></table></figure>
+<h4 id="7、运算重载符"><a href="#7、运算重载符" class="headerlink" title="7、运算重载符"></a>7、运算重载符</h4><p>在 Kotlin 中使用运算符最终也会调用对象对应的方法，我们可以通过重写这些方法使得这个对象支持运算符，这里不再演示代码</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">+a</td>
+<td style="text-align:left">a.unaryPlus()</td>
+</tr>
+<tr>
+<td style="text-align:left">-a</td>
+<td style="text-align:left">a.unaryMinus()</td>
+</tr>
+<tr>
+<td style="text-align:left">!a</td>
+<td style="text-align:left">a.not()</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a++</td>
+<td style="text-align:left">a.inc()</td>
+</tr>
+<tr>
+<td style="text-align:left">a–</td>
+<td style="text-align:left">a.dec()</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a + b</td>
+<td style="text-align:left">a.plus(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a - b</td>
+<td style="text-align:left">a.minus(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a * b</td>
+<td style="text-align:left">a.times(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a / b</td>
+<td style="text-align:left">a.div(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a % b</td>
+<td style="text-align:left">a.rem(b), a.mod(b) (deprecated)</td>
+</tr>
+<tr>
+<td style="text-align:left">a..b</td>
+<td style="text-align:left">a.rangeTo(b)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a in b</td>
+<td style="text-align:left">b.contains(a)</td>
+</tr>
+<tr>
+<td style="text-align:left">a !in b</td>
+<td style="text-align:left">!b.contains(a)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a[i]</td>
+<td style="text-align:left">a.get(i)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i, j]</td>
+<td style="text-align:left">a.get(i, j)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i_1, …, i_n]</td>
+<td style="text-align:left">a.get(i_1, …, i_n)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i] = b</td>
+<td style="text-align:left">a.set(i, b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i, j] = b</td>
+<td style="text-align:left">a.set(i, j, b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i_1, …, i_n] = b</td>
+<td style="text-align:left">a.set(i_1, …, i_n, b)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a()</td>
+<td style="text-align:left">a.invoke()</td>
+</tr>
+<tr>
+<td style="text-align:left">a(i)</td>
+<td style="text-align:left">a.invoke(i)</td>
+</tr>
+<tr>
+<td style="text-align:left">a(i, j)</td>
+<td style="text-align:left">a.invoke(i, j)</td>
+</tr>
+<tr>
+<td style="text-align:left">a(i_1, …, i_n)</td>
+<td style="text-align:left">a.invoke(i_1, …, i_n)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a += b</td>
+<td style="text-align:left">a.plusAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a -= b</td>
+<td style="text-align:left">a.minusAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a *= b</td>
+<td style="text-align:left">a.timesAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a /= b</td>
+<td style="text-align:left">a.divAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a %= b</td>
+<td style="text-align:left">a.remAssign(b), a.modAssign(b) (deprecated)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a == b</td>
+<td style="text-align:left">a?.equals(b) ?: (b === null)</td>
+</tr>
+<tr>
+<td style="text-align:left">a != b</td>
+<td style="text-align:left">!(a?.equals(b) ?: (b === null))</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a &gt; b</td>
+<td style="text-align:left">a.compareTo(b) &gt; 0</td>
+</tr>
+<tr>
+<td style="text-align:left">a &lt; b</td>
+<td style="text-align:left">a.compareTo(b) &lt; 0</td>
+</tr>
+<tr>
+<td style="text-align:left">a &gt;= b</td>
+<td style="text-align:left">a.compareTo(b) &gt;= 0</td>
+</tr>
+<tr>
+<td style="text-align:left">a &lt;= b</td>
+<td style="text-align:left">a.compareTo(b) &lt;= 0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="8、扩展函数"><a href="#8、扩展函数" class="headerlink" title="8、扩展函数"></a>8、扩展函数</h4><p>扩展函数是 kotlin 用于简化一些代码的书写产生的，其中有 let、with、run、apply、also 五个函数。</p>
+<h5 id="let-函数"><a href="#let-函数" class="headerlink" title="let 函数"></a>let 函数</h5><p>在函数块内可以通过 it 指代该对象。返回值为函数块的最后一行或指定return表达式。</p>
+<p>一般写法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fun <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val text = <span class="string">"Android轮子哥"</span></span><br><span class="line">    println(text.length)</span><br><span class="line">    val result = <span class="number">1000</span></span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>let 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="string">"Android轮子哥"</span>.let &#123;</span><br><span class="line">        println(it.length)</span><br><span class="line">        <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最常用的场景就是使用let函数处理需要针对一个可null的对象统一做判空处理</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mVideoPlayer?.setVideoView(activity.course_video_view)</span><br><span class="line">mVideoPlayer?.setControllerView(activity.course_video_controller_view)</span><br><span class="line">mVideoPlayer?.setCurtainView(activity.course_video_curtain_view)</span><br><span class="line">mVideoPlayer?.let &#123;</span><br><span class="line">   it.setVideoView(activity.course_video_view)</span><br><span class="line">   it.setControllerView(activity.course_video_controller_view)</span><br><span class="line">   it.setCurtainView(activity.course_video_curtain_view)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>又或者是需要去明确一个变量所处特定的作用域范围内可以使用。</p>
+<h5 id="with-函数"><a href="#with-函数" class="headerlink" title="with 函数"></a>with 函数</h5><p>前面的几个函数使用方式略有不同，因为它不是以扩展的形式存在的。它是将某对象作为函数的参数，在函数块内可以通过 this 指代该对象。返回值为函数块的最后一行或指定return表达式</p>
+<p>定义 Person 类</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">var</span> name : String, <span class="keyword">var</span> age : <span class="built_in">Int</span>)</span><br></pre></td></tr></table></figure>
+<p>一般写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line">    println(person.name + person.age)</span><br><span class="line">    <span class="keyword">var</span> result = <span class="number">1000</span></span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>with 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result = with(Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)) &#123;</span><br><span class="line">        println(name + age)</span><br><span class="line">        <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>适用于调用同一个类的多个方法时，可以省去类名重复，直接调用类的方法即可，经常用于Android中RecyclerView中onBinderViewHolder中，数据model的属性映射到UI上</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    holder.nameView.text = <span class="string">"姓名：<span class="subst">$&#123;item.name&#125;</span>"</span></span><br><span class="line">    holder.ageView.text = <span class="string">"年龄：<span class="subst">$&#123;item.age&#125;</span>"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    with(item)&#123;</span><br><span class="line">        holder.nameView.text = <span class="string">"姓名：<span class="variable">$name</span>"</span></span><br><span class="line">        holder.ageView.text = <span class="string">"年龄：<span class="variable">$age</span>"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="run-函数"><a href="#run-函数" class="headerlink" title="run 函数"></a>run 函数</h5><p>实际上可以说是let和with两个函数的结合体，run函数只接收一个lambda函数为参数，以闭包形式返回，返回值为最后一行的值或者指定的return的表达式</p>
+<p>一般写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line">println(person.name + <span class="string">"+"</span> + person.age)</span><br><span class="line"><span class="keyword">var</span> result = <span class="number">1000</span></span><br><span class="line">println(result)</span><br></pre></td></tr></table></figure>
+<p>run 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line"><span class="keyword">var</span> result = person.run &#123;</span><br><span class="line">    println(<span class="string">"<span class="variable">$name</span> + <span class="variable">$age</span>"</span>)</span><br><span class="line">    <span class="number">1000</span></span><br><span class="line">&#125;</span><br><span class="line">println(result)</span><br></pre></td></tr></table></figure>
+<p>适用于let,with函数任何场景。因为run函数是let,with两个函数结合体，准确来说它弥补了let函数在函数体内必须使用it参数替代对象，在run函数中可以像with函数一样可以省略，直接访问实例的公有属性和方法，另一方面它弥补了with函数传入对象判空问题，在run函数中可以像let函数一样做判空处理，这里还是借助 onBindViewHolder 案例进行简化。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    holder.nameView.text = <span class="string">"姓名：<span class="subst">$&#123;item.name&#125;</span>"</span></span><br><span class="line">    holder.ageView.text = <span class="string">"年龄：<span class="subst">$&#123;item.age&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    item?.run &#123;</span><br><span class="line">        holder.nameView.text = <span class="string">"姓名：<span class="variable">$name</span>"</span></span><br><span class="line">        holder.ageView.text = <span class="string">"年龄：<span class="variable">$age</span>"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="apply-函数"><a href="#apply-函数" class="headerlink" title="apply 函数"></a><strong>apply 函数</strong></h5><p>从结构上来看apply函数和run函数很像，唯一不同点就是它们各自返回的值不一样，run函数是以闭包形式返回最后一行代码的值，而apply函数的返回的是传入对象的本身</p>
+<p>一般写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line">person.name = <span class="string">"HJQ"</span></span><br><span class="line">person.age = <span class="number">50</span></span><br></pre></td></tr></table></figure>
+<p>apply 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>).apply &#123;</span><br><span class="line">    name = <span class="string">"HJQ"</span></span><br><span class="line">    age = <span class="number">50</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整体作用功能和run函数很像，唯一不同点就是它返回的值是对象本身，而run函数是一个闭包形式返回，返回的是最后一行的值。正是基于这一点差异它的适用场景稍微与run函数有点不一样。apply一般用于一个对象实例初始化的时候，需要对对象中的属性进行赋值。</p>
+<p>或者动态inflate出一个XML的View的时候需要给View绑定数据也会用到，这种情景非常常见。特别是在我们开发中会有一些数据model向View model转化实例化的过程中需要用到。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mRootView = View.inflate(activity, R.layout.example_view, <span class="literal">null</span>)</span><br><span class="line">mRootView.tv_cancel.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">mRootView.tv_confirm.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">mRootView.seek_bar.max = <span class="number">10</span></span><br><span class="line">mRootView.seek_bar.progress = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>使用 apply 函数后的代码是这样的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mRootView = View.inflate(activity, R.layout.example_view, <span class="literal">null</span>).apply &#123;</span><br><span class="line">   tv_cancel.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">   tv_confirm.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">   seek_bar.max = <span class="number">10</span></span><br><span class="line">   seek_bar.progress = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多层级判空问题</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mSectionMetaData == <span class="literal">null</span> || mSectionMetaData.questionnaire == <span class="literal">null</span> || mSectionMetaData.section == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mSectionMetaData.questionnaire.userProject != <span class="literal">null</span>) &#123;</span><br><span class="line">    renderAnalysis();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mSectionMetaData.section != <span class="literal">null</span> &amp;&amp; !mSectionMetaData.section.sectionArticles.isEmpty()) &#123;</span><br><span class="line">    fetchQuestionData();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>kotlin的apply函数优化</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mSectionMetaData?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//mSectionMetaData不为空的时候操作mSectionMetaData</span></span><br><span class="line"></span><br><span class="line">&#125;?.questionnaire?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//questionnaire不为空的时候操作questionnaire</span></span><br><span class="line"></span><br><span class="line">&#125;?.section?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//section不为空的时候操作section</span></span><br><span class="line"></span><br><span class="line">&#125;?.sectionArticle?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//sectionArticle不为空的时候操作sectionArticle</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="also-函数"><a href="#also-函数" class="headerlink" title="also 函数"></a>also 函数</h5><p>also函数的结构实际上和let很像唯一的区别就是返回值的不一样，let是以闭包的形式返回，返回函数体内最后一行的值，如果最后一行为空就返回一个Unit类型的默认值。而also函数返回的则是传入对象的本身</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="string">"Android轮子哥"</span>.let &#123;</span><br><span class="line">        println(it.length)</span><br><span class="line">        <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(result) <span class="comment">// 打印：1000</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="string">"Android轮子哥"</span>.also &#123;</span><br><span class="line">        println(it.length)</span><br><span class="line">    &#125;</span><br><span class="line">    println(result) <span class="comment">// 打印：Android轮子哥</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>适用于let函数的任何场景，also函数和let很像，只是唯一的不同点就是let函数最后的返回值是最后一行的返回值而also函数的返回值是返回当前的这个对象。一般可用于多个扩展函数链式调用</p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>通过以上几种函数的介绍，可以很方便优化kotlin中代码编写，整体看起来几个函数的作用很相似，但是各自又存在着不同。使用的场景有相同的地方比如run函数就是let和with的结合体</p>
+<h4 id="9、协程"><a href="#9、协程" class="headerlink" title="9、协程"></a>9、协程</h4><p>子任务协作运行，优雅的处理异步问题解决方案。</p>
+<p>协程实际上就是极大程度的复用线程，通过让线程满载运行，达到最大程度的利用CPU，进而提升应用性能。</p>
+<p><a href="https://www.kotlincn.net/docs/reference/coroutines/coroutines-guide.html" target="_blank" rel="noopener">https://www.kotlincn.net/docs/reference/coroutines/coroutines-guide.html</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Kotlin</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/03/Kotlin使用技巧/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Okhttp3" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1091,389 +1465,6 @@
 
 
   
-    <article id="post-Python-爬虫的工具列表" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/04/Python-爬虫的工具列表/">Python 爬虫的工具列表</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/04/Python-爬虫的工具列表/" class="archive-article-date">
-  	<time datetime="2019-01-04T06:24:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这个列表包含与网页抓取和数据处理的Python库</p>
-<h4 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h4><p><a href="https://pypi.org/project/fake-useragent/" target="_blank" rel="noopener">fake_useragent</a> - 实现随机请求头的设置。</p>
-<p><a href="http://pandas.pydata.org/" target="_blank" rel="noopener">pandas</a> - 为了解决数据分析任务而创建的，可用来创建数据表。</p>
-<h4 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h4><ul>
-<li><h5 id="通用"><a href="#通用" class="headerlink" title="通用"></a>通用</h5><ul>
-<li><a href="https://docs.python.org/3.4/library/urllib.html?highlight=urllib#module-urllib" target="_blank" rel="noopener">urllib</a> -网络库(stdlib)。</li>
-<li><a href="https://github.com/kennethreitz/requests" target="_blank" rel="noopener">requests</a> -网络库。</li>
-<li><a href="https://github.com/lorien/grab" target="_blank" rel="noopener">grab</a> – 网络库（基于pycurl）。</li>
-<li><a href="https://github.com/pycurl/pycurl" target="_blank" rel="noopener">pycurl</a> – 网络库（绑定<a href="http://curl.haxx.se/libcurl/" target="_blank" rel="noopener">libcurl</a>）。</li>
-<li><a href="https://github.com/shazow/urllib3" target="_blank" rel="noopener">urllib3</a> – Python HTTP库，安全连接池、支持文件post、可用性高。</li>
-<li><a href="https://github.com/jcgregorio/httplib2" target="_blank" rel="noopener">httplib2</a> – 网络库。</li>
-<li><a href="https://github.com/jmcarp/robobrowser" target="_blank" rel="noopener">RoboBrowser</a> – 一个简单的、极具Python风格的Python库，无需独立的浏览器即可浏览网页。</li>
-<li><a href="https://github.com/hickford/MechanicalSoup" target="_blank" rel="noopener">MechanicalSoup</a> -一个与网站自动交互Python库。</li>
-<li><a href="https://github.com/jjlee/mechanize" target="_blank" rel="noopener">mechanize</a> -有状态、可编程的Web浏览库。</li>
-<li><a href="https://docs.python.org/3/library/socket.html" target="_blank" rel="noopener">socket</a> – 底层网络接口(stdlib)。</li>
-<li><a href="https://github.com/Mashape/unirest-python" target="_blank" rel="noopener">Unirest for Python</a> – Unirest是一套可用于多种语言的轻量级的HTTP库。</li>
-<li><a href="https://github.com/Lukasa/hyper" target="_blank" rel="noopener">hyper</a> – Python的HTTP/2客户端。</li>
-<li><a href="https://github.com/Anorov/PySocks" target="_blank" rel="noopener">PySocks</a> – SocksiPy更新并积极维护的版本，包括错误修复和一些其他的特征。作为socket模块的直接替换。</li>
-</ul>
-</li>
-<li><h5 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h5><ul>
-<li><a href="https://github.com/dreid/treq" target="_blank" rel="noopener">treq</a> – 类似于requests的API（基于twisted）。</li>
-<li><a href="https://github.com/KeepSafe/aiohttp" target="_blank" rel="noopener">aiohttp</a> – asyncio的HTTP客户端/服务器(PEP-3156)。</li>
-</ul>
-</li>
-</ul>
-<h4 id="网络爬虫框架"><a href="#网络爬虫框架" class="headerlink" title="网络爬虫框架"></a>网络爬虫框架</h4><ul>
-<li><h5 id="功能齐全的爬虫"><a href="#功能齐全的爬虫" class="headerlink" title="功能齐全的爬虫"></a>功能齐全的爬虫</h5><ul>
-<li><a href="http://docs.grablib.org/en/latest/#grab-spider-user-manual" target="_blank" rel="noopener">grab</a> – 网络爬虫框架（基于pycurl/multicur）。</li>
-<li><a href="http://scrapy.org/" target="_blank" rel="noopener">scrapy</a> – 网络爬虫框架（基于twisted），不支持Python3。</li>
-<li><a href="https://github.com/binux/pyspider" target="_blank" rel="noopener">pyspider</a> – 一个强大的爬虫系统。</li>
-<li><a href="https://github.com/chineking/cola" target="_blank" rel="noopener">cola</a> – 一个分布式爬虫框架。</li>
-</ul>
-</li>
-<li><h5 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h5><ul>
-<li><a href="https://github.com/scrapinghub/portia" target="_blank" rel="noopener">portia</a> – 基于Scrapy的可视化爬虫。</li>
-<li><a href="https://github.com/benoitc/restkit" target="_blank" rel="noopener">restkit</a> – Python的HTTP资源工具包。它可以让你轻松地访问HTTP资源，并围绕它建立的对象。</li>
-<li><a href="https://github.com/matiasb/demiurge" target="_blank" rel="noopener">demiurge</a> – 基于PyQuery的爬虫微框架。</li>
-</ul>
-</li>
-</ul>
-<h4 id="HTML-XML解析器"><a href="#HTML-XML解析器" class="headerlink" title="HTML/XML解析器"></a>HTML/XML解析器</h4><ul>
-<li><h5 id="通用-1"><a href="#通用-1" class="headerlink" title="通用"></a>通用</h5><ul>
-<li><a href="http://lxml.de/" target="_blank" rel="noopener">lxml</a> – C语言编写高效HTML/ XML处理库。支持XPath。</li>
-<li><a href="https://pythonhosted.org/cssselect" target="_blank" rel="noopener">cssselect</a> – 解析DOM树和CSS选择器。</li>
-<li><a href="http://pythonhosted.org/pyquery/" target="_blank" rel="noopener">pyquery</a> – 解析DOM树和jQuery选择器。</li>
-<li><a href="http://www.crummy.com/software/BeautifulSoup/bs4/doc/" target="_blank" rel="noopener">BeautifulSoup</a> – 低效HTML/ XML处理库，纯Python实现。</li>
-<li><a href="http://html5lib.readthedocs.org/en/latest/" target="_blank" rel="noopener">html5lib</a> – 根据WHATWG规范生成HTML/ XML文档的DOM。该规范被用在现在所有的浏览器上。</li>
-<li><a href="http://pythonhosted.org/feedparser/" target="_blank" rel="noopener">feedparser</a> – 解析RSS/ATOM feeds。</li>
-<li><a href="https://github.com/mitsuhiko/markupsafe" target="_blank" rel="noopener">MarkupSafe</a> – 为XML/HTML/XHTML提供了安全转义的字符串。</li>
-<li><a href="https://github.com/martinblech/xmltodict" target="_blank" rel="noopener">xmltodict</a> – 一个可以让你在处理XML时感觉像在处理JSON一样的Python模块。</li>
-<li><a href="https://github.com/chrisglass/xhtml2pdf" target="_blank" rel="noopener">xhtml2pdf</a> – 将HTML/CSS转换为PDF。</li>
-<li><a href="https://github.com/stchris/untangle" target="_blank" rel="noopener">untangle</a> – 轻松实现将XML文件转换为Python对象。</li>
-</ul>
-</li>
-<li><h5 id="清理"><a href="#清理" class="headerlink" title="清理"></a>清理</h5><ul>
-<li><a href="http://bleach.readthedocs.org/en/latest/" target="_blank" rel="noopener">Bleach</a> – 清理HTML（需要html5lib）。</li>
-<li><a href="https://github.com/Alir3z4/sanitize" target="_blank" rel="noopener">sanitize</a> – 为混乱的数据世界带来清明。</li>
-</ul>
-</li>
-</ul>
-<h4 id="文本处理"><a href="#文本处理" class="headerlink" title="文本处理"></a>文本处理</h4><p>用于解析和操作简单文本的库。</p>
-<ul>
-<li><h5 id="通用-2"><a href="#通用-2" class="headerlink" title="通用"></a>通用</h5></li>
-<li><ul>
-<li><a href="https://docs.python.org/2/library/difflib.html" target="_blank" rel="noopener">difflib</a> – （Python标准库）帮助进行差异化比较。</li>
-<li><a href="https://github.com/ztane/python-Levenshtein/" target="_blank" rel="noopener">Levenshtein</a> – 快速计算Levenshtein距离和字符串相似度。</li>
-<li><a href="https://github.com/seatgeek/fuzzywuzzy" target="_blank" rel="noopener">fuzzywuzzy</a> – 模糊字符串匹配。</li>
-<li><a href="https://code.google.com/p/esmre/" target="_blank" rel="noopener">esmre</a> – 正则表达式加速器。</li>
-<li><a href="https://github.com/LuminosoInsight/python-ftfy" target="_blank" rel="noopener">ftfy</a> – 自动整理Unicode文本，减少碎片化。</li>
-</ul>
-</li>
-<li><h5 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h5></li>
-<li><ul>
-<li><a href="https://pypi.python.org/pypi/Unidecode" target="_blank" rel="noopener">unidecode</a> – 将Unicode文本转为ASCII。</li>
-</ul>
-</li>
-<li><h5 id="字符编码"><a href="#字符编码" class="headerlink" title="字符编码"></a>字符编码</h5></li>
-<li><ul>
-<li><a href="https://github.com/moskytw/uniout" target="_blank" rel="noopener">uniout</a> – 打印可读字符，而不是被转义的字符串。</li>
-<li><a href="https://github.com/chardet/chardet" target="_blank" rel="noopener">chardet</a> – 兼容 Python的2/3的字符编码器。</li>
-<li><a href="https://github.com/lxneng/xpinyin" target="_blank" rel="noopener">xpinyin</a> – 一个将中国汉字转为拼音的库。</li>
-<li><a href="https://github.com/vinta/pangu.py" target="_blank" rel="noopener">pangu.py</a> – 格式化文本中CJK和字母数字的间距。</li>
-</ul>
-</li>
-<li><h5 id="Slug化"><a href="#Slug化" class="headerlink" title="Slug化"></a>Slug化</h5></li>
-<li><ul>
-<li><a href="https://github.com/dimka665/awesome-slugify" target="_blank" rel="noopener">awesome-slugify</a> – 一个可以保留unicode的Python slugify库。</li>
-<li><a href="https://github.com/un33k/python-slugify" target="_blank" rel="noopener">python-slugify</a> – 一个可以将Unicode转为ASCII的Python slugify库。</li>
-<li><a href="https://github.com/mozilla/unicode-slugify" target="_blank" rel="noopener">unicode-slugify</a> – 一个可以将生成Unicode slugs的工具。</li>
-<li><a href="https://github.com/j2a/pytils" target="_blank" rel="noopener">pytils</a> – 处理俄语字符串的简单工具（包括pytils.translit.slugify）。</li>
-</ul>
-</li>
-<li><h5 id="通用解析器"><a href="#通用解析器" class="headerlink" title="通用解析器"></a>通用解析器</h5></li>
-<li><ul>
-<li><a href="http://www.dabeaz.com/ply/" target="_blank" rel="noopener">PLY</a> – lex和yacc解析工具的Python实现。</li>
-<li><a href="http://pyparsing.wikispaces.com/" target="_blank" rel="noopener">pyparsing</a> – 一个通用框架的生成语法分析器。</li>
-</ul>
-</li>
-<li><h5 id="人的名字"><a href="#人的名字" class="headerlink" title="人的名字"></a>人的名字</h5></li>
-<li><ul>
-<li><a href="https://github.com/derek73/python-nameparser" target="_blank" rel="noopener">python-nameparser</a> -解析人的名字的组件。</li>
-</ul>
-</li>
-<li><h5 id="电话号码"><a href="#电话号码" class="headerlink" title="电话号码"></a>电话号码</h5></li>
-<li><ul>
-<li><a href="https://github.com/daviddrysdale/python-phonenumbers" target="_blank" rel="noopener">phonenumbers</a> -解析，格式化，存储和验证国际电话号码。</li>
-</ul>
-</li>
-<li><h5 id="用户代理字符串"><a href="#用户代理字符串" class="headerlink" title="用户代理字符串"></a>用户代理字符串</h5></li>
-<li><ul>
-<li><a href="https://github.com/selwin/python-user-agents" target="_blank" rel="noopener">python-user-agents</a> – 浏览器用户代理的解析器。</li>
-<li><a href="https://github.com/shon/httpagentparser" target="_blank" rel="noopener">HTTP Agent Parser</a> – Python的HTTP代理分析器。</li>
-</ul>
-</li>
-</ul>
-<h4 id="特定格式文件处理"><a href="#特定格式文件处理" class="headerlink" title="特定格式文件处理"></a>特定格式文件处理</h4><p>解析和处理特定文本格式的库。</p>
-<ul>
-<li><h5 id="通用-3"><a href="#通用-3" class="headerlink" title="通用"></a>通用</h5></li>
-<li><ul>
-<li><a href="https://github.com/kennethreitz/tablib" target="_blank" rel="noopener">tablib</a> – 一个把数据导出为XLS、CSV、JSON、YAML等格式的模块。</li>
-<li><a href="https://github.com/deanmalmgren/textract" target="_blank" rel="noopener">textract</a> – 从各种文件中提取文本，比如 Word、PowerPoint、PDF等。</li>
-<li><a href="https://github.com/okfn/messytables" target="_blank" rel="noopener">messytables</a> – 解析混乱的表格数据的工具。</li>
-<li><a href="https://github.com/turicas/rows" target="_blank" rel="noopener">rows</a> – 一个常用数据接口，支持的格式很多（目前支持CSV，HTML，XLS，TXT – 将来还会提供更多！）。</li>
-</ul>
-</li>
-<li><h5 id="Office"><a href="#Office" class="headerlink" title="Office"></a>Office</h5></li>
-<li><ul>
-<li><a href="https://github.com/python-openxml/python-docx" target="_blank" rel="noopener">python-docx</a> – 读取，查询和修改的Microsoft Word2007/2008的docx文件。</li>
-<li><a href="https://github.com/python-excel/xlwt" target="_blank" rel="noopener">xlwt</a> / <a href="https://github.com/python-excel/xlrd" target="_blank" rel="noopener">xlrd</a> – 从Excel文件读取写入数据和格式信息。</li>
-<li><a href="https://xlsxwriter.readthedocs.org/" target="_blank" rel="noopener">XlsxWriter</a> – 一个创建Excel.xlsx文件的Python模块。</li>
-<li><a href="http://xlwings.org/" target="_blank" rel="noopener">xlwings</a> – 一个BSD许可的库，可以很容易地在Excel中调用Python，反之亦然。</li>
-<li><a href="https://openpyxl.readthedocs.org/en/latest/" target="_blank" rel="noopener">openpyxl</a> – 一个用于读取和写入的Excel2010 XLSX/ XLSM/ xltx/ XLTM文件的库。</li>
-<li><a href="https://github.com/brianray/mm" target="_blank" rel="noopener">Marmir</a> – 提取Python数据结构并将其转换为电子表格。</li>
-</ul>
-</li>
-<li><h5 id="PDF"><a href="#PDF" class="headerlink" title="PDF"></a>PDF</h5></li>
-<li><ul>
-<li><a href="https://github.com/euske/pdfminer" target="_blank" rel="noopener">PDFMiner</a> – 一个从PDF文档中提取信息的工具。</li>
-<li><a href="https://github.com/mstamy2/PyPDF2" target="_blank" rel="noopener">PyPDF2</a> – 一个能够分割、合并和转换PDF页面的库。</li>
-<li><a href="http://www.reportlab.com/opensource/" target="_blank" rel="noopener">ReportLab</a> – 允许快速创建丰富的PDF文档。</li>
-<li><a href="https://pypi.python.org/pypi/pdftables" target="_blank" rel="noopener">pdftables</a> – 直接从PDF文件中提取表格。</li>
-</ul>
-</li>
-<li><h5 id="Markdown"><a href="#Markdown" class="headerlink" title="Markdown"></a>Markdown</h5></li>
-<li><ul>
-<li><a href="https://github.com/waylan/Python-Markdown" target="_blank" rel="noopener">Python-Markdown</a> – 一个用Python实现的John Gruber的Markdown。</li>
-<li><a href="https://github.com/lepture/mistune" target="_blank" rel="noopener">Mistune</a> – 速度最快，功能全面的Markdown纯Python解析器。</li>
-<li><a href="https://pypi.python.org/pypi/markdown2" target="_blank" rel="noopener">markdown2</a> – 一个完全用Python实现的快速的Markdown。</li>
-</ul>
-</li>
-<li><h5 id="YAML"><a href="#YAML" class="headerlink" title="YAML"></a>YAML</h5></li>
-<li><ul>
-<li><a href="http://pyyaml.org/" target="_blank" rel="noopener">PyYAML</a> – 一个Python的YAML解析器。</li>
-</ul>
-</li>
-<li><h5 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h5></li>
-<li><ul>
-<li><a href="https://pypi.python.org/pypi/cssutils/" target="_blank" rel="noopener">cssutils</a> – 一个Python的CSS库。</li>
-</ul>
-</li>
-<li><h5 id="ATOM-RSS"><a href="#ATOM-RSS" class="headerlink" title="ATOM/RSS"></a>ATOM/RSS</h5></li>
-<li><ul>
-<li><a href="http://pythonhosted.org/feedparser/" target="_blank" rel="noopener">feedparser</a> – 通用的feed解析器。</li>
-</ul>
-</li>
-<li><h5 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h5></li>
-<li><ul>
-<li><a href="https://sqlparse.readthedocs.org/" target="_blank" rel="noopener">sqlparse</a> – 一个非验证的SQL语句分析器。</li>
-</ul>
-</li>
-<li><h5 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h5></li>
-<li><ul>
-<li><a href="https://github.com/benoitc/http-parser" target="_blank" rel="noopener">http-parser</a> – C语言实现的HTTP请求/响应消息解析器。</li>
-</ul>
-</li>
-<li><h5 id="微格式"><a href="#微格式" class="headerlink" title="微格式"></a>微格式</h5></li>
-<li><ul>
-<li><a href="https://github.com/erikriver/opengraph" target="_blank" rel="noopener">opengraph</a> – 一个用来解析Open Graph协议标签的Python模块。</li>
-</ul>
-</li>
-<li><h5 id="可移植的执行体"><a href="#可移植的执行体" class="headerlink" title="可移植的执行体"></a>可移植的执行体</h5></li>
-<li><ul>
-<li><a href="https://github.com/erocarrera/pefile" target="_blank" rel="noopener">pefile</a> – 一个多平台的用于解析和处理可移植执行体（即PE）文件的模块。</li>
-</ul>
-</li>
-<li><h5 id="PSD"><a href="#PSD" class="headerlink" title="PSD"></a>PSD</h5></li>
-<li><ul>
-<li><a href="https://github.com/kmike/psd-tools" target="_blank" rel="noopener">psd-tools</a> – 将Adobe Photoshop PSD（即PE）文件读取到Python数据结构。</li>
-</ul>
-</li>
-</ul>
-<h4 id="自然语言处理"><a href="#自然语言处理" class="headerlink" title="自然语言处理"></a>自然语言处理</h4><p>处理人类语言问题的库。</p>
-<ul>
-<li><a href="http://www.nltk.org/" target="_blank" rel="noopener">NLTK</a> -编写Python程序来处理人类语言数据的最好平台。</li>
-<li><a href="http://www.clips.ua.ac.be/pattern" target="_blank" rel="noopener">Pattern</a> – Python的网络挖掘模块。他有自然语言处理工具，机器学习以及其它。</li>
-<li><a href="http://textblob.readthedocs.org/" target="_blank" rel="noopener">TextBlob</a> – 为深入自然语言处理任务提供了一致的API。是基于NLTK以及Pattern的巨人之肩上发展的。</li>
-<li><a href="https://github.com/fxsjy/jieba" target="_blank" rel="noopener">jieba</a> – 中文分词工具。</li>
-<li><a href="https://github.com/isnowfy/snownlp" target="_blank" rel="noopener">SnowNLP</a> – 中文文本处理库。</li>
-<li><a href="https://github.com/victorlin/loso" target="_blank" rel="noopener">loso</a> – 另一个中文分词库。</li>
-<li><a href="https://github.com/duanhongyi/genius" target="_blank" rel="noopener">genius</a> – 基于条件随机域的中文分词。</li>
-<li><a href="https://github.com/saffsd/langid.py" target="_blank" rel="noopener">langid.py</a> – 独立的语言识别系统。</li>
-<li><a href="https://korean.readthedocs.org/" target="_blank" rel="noopener">Korean</a> – 一个韩文形态库。</li>
-<li><a href="https://github.com/kmike/pymorphy2" target="_blank" rel="noopener">pymorphy2</a> – 俄语形态分析器（词性标注+词形变化引擎）。</li>
-<li><a href="https://github.com/NAMD/pypln.backend" target="_blank" rel="noopener">PyPLN</a>  – 用Python编写的分布式自然语言处理通道。这个项目的目标是创建一种简单的方法使用NLTK通过网络接口处理大语言库。</li>
-</ul>
-<h4 id="浏览器自动化与仿真"><a href="#浏览器自动化与仿真" class="headerlink" title="浏览器自动化与仿真"></a>浏览器自动化与仿真</h4><ul>
-<li><a href="http://selenium.googlecode.com/git/docs/api/py/api.html" target="_blank" rel="noopener">selenium</a> – 自动化真正的浏览器（Chrome浏览器，火狐浏览器，Opera浏览器，IE浏览器）。</li>
-<li><a href="http://carrerasrodrigo.github.io/Ghost.py/" target="_blank" rel="noopener">Ghost.py</a> – 对PyQt的webkit的封装（需要PyQT）。</li>
-<li><a href="https://github.com/makinacorpus/spynner" target="_blank" rel="noopener">Spynner</a> – 对PyQt的webkit的封装（需要PyQT）。</li>
-<li><a href="https://github.com/cobrateam/splinter" target="_blank" rel="noopener">Splinter</a> – 通用API浏览器模拟器（selenium web驱动，Django客户端，Zope）。</li>
-</ul>
-<h4 id="多重处理"><a href="#多重处理" class="headerlink" title="多重处理"></a>多重处理</h4><ul>
-<li><a href="http://docs.python.org/2.7/library/threading.html" target="_blank" rel="noopener">threading</a> – Python标准库的线程运行。对于I/O密集型任务很有效。对于CPU绑定的任务没用，因为python GIL。</li>
-<li><a href="http://docs.python.org/2.7/library/multiprocessing.html" target="_blank" rel="noopener">multiprocessing</a> – 标准的Python库运行多进程。</li>
-<li><a href="http://www.celeryproject.org/" target="_blank" rel="noopener">celery</a> – 基于分布式消息传递的异步任务队列/作业队列。</li>
-<li><a href="https://docs.python.org/3/library/concurrent.futures.html" target="_blank" rel="noopener">concurrent-futures</a> – concurrent-futures 模块为调用异步执行提供了一个高层次的接口。</li>
-</ul>
-<h4 id="异步-1"><a href="#异步-1" class="headerlink" title="异步"></a>异步</h4><p>异步网络编程库</p>
-<ul>
-<li><a href="https://docs.python.org/3/library/asyncio.html" target="_blank" rel="noopener">asyncio</a> – （在Python 3.4 +版本以上的 Python标准库）异步I/O，时间循环，协同程序和任务。</li>
-<li><a href="https://twistedmatrix.com/trac/" target="_blank" rel="noopener">Twisted</a> – 基于事件驱动的网络引擎框架。</li>
-<li><a href="http://www.tornadoweb.org/" target="_blank" rel="noopener">Tornado</a> – 一个网络框架和异步网络库。</li>
-<li><a href="https://github.com/quantmind/pulsar" target="_blank" rel="noopener">pulsar</a> – Python事件驱动的并发框架。</li>
-<li><a href="https://github.com/jamwt/diesel" target="_blank" rel="noopener">diesel</a> – Python的基于绿色事件的I/O框架。</li>
-<li><a href="http://www.gevent.org/" target="_blank" rel="noopener">gevent</a> – 一个使用<a href="https://github.com/python-greenlet/greenlet" target="_blank" rel="noopener">greenlet</a> 的基于协程的Python网络库。</li>
-<li><a href="http://eventlet.net/" target="_blank" rel="noopener">eventlet</a> – 有WSGI支持的异步框架。</li>
-<li><a href="https://github.com/madisonmay/Tomorrow" target="_blank" rel="noopener">Tomorrow</a> – 异步代码的奇妙的修饰语法。</li>
-</ul>
-<h4 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h4><ul>
-<li><a href="http://www.celeryproject.org/" target="_blank" rel="noopener">celery</a> – 基于分布式消息传递的异步任务队列/作业队列。</li>
-<li><a href="https://github.com/coleifer/huey" target="_blank" rel="noopener">huey</a> – 小型多线程任务队列。</li>
-<li><a href="https://github.com/pricingassistant/mrq" target="_blank" rel="noopener">mrq</a> – Mr. Queue – 使用redis &amp; Gevent 的Python分布式工作任务队列。</li>
-<li><a href="http://python-rq.org/docs/" target="_blank" rel="noopener">RQ</a> – 基于Redis的轻量级任务队列管理器。</li>
-<li><a href="https://github.com/rdegges/simpleq" target="_blank" rel="noopener">simpleq</a> – 一个简单的，可无限扩展，基于Amazon SQS的队列。</li>
-<li><a href="https://github.com/Yelp/python-gearman" target="_blank" rel="noopener">python-gearman</a> – Gearman的Python API。</li>
-</ul>
-<h4 id="云计算"><a href="#云计算" class="headerlink" title="云计算"></a>云计算</h4><ul>
-<li><a href="http://docs.picloud.com/" target="_blank" rel="noopener">picloud</a> – 云端执行Python代码。</li>
-<li><a href="http://www.dominoup.com/" target="_blank" rel="noopener">dominoup.com</a> – 云端执行R，Python和matlab代码。</li>
-</ul>
-<h4 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h4><p><em>电子邮件解析库</em></p>
-<ul>
-<li><a href="https://github.com/mailgun/flanker" target="_blank" rel="noopener">flanker</a> – 电子邮件地址和Mime解析库。</li>
-<li><a href="https://github.com/mailgun/talon" target="_blank" rel="noopener">Talon</a> – Mailgun库用于提取消息的报价和签名。</li>
-</ul>
-<h4 id="网址和网络地址操作"><a href="#网址和网络地址操作" class="headerlink" title="网址和网络地址操作"></a>网址和网络地址操作</h4><p><em>解析/修改网址和网络地址库。</em></p>
-<ul>
-<li><h5 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h5><ul>
-<li><a href="https://github.com/gruns/furl" target="_blank" rel="noopener">furl</a> – 一个小的Python库，使得操纵URL简单化。</li>
-<li><a href="https://github.com/codeinthehole/purl" target="_blank" rel="noopener">purl</a> – 一个简单的不可改变的URL以及一个干净的用于调试和操作的API。</li>
-<li><a href="https://docs.python.org/3/library/urllib.parse.html" target="_blank" rel="noopener">urllib.parse</a> – 用于打破统一资源定位器（URL）的字符串在组件（寻址方案，网络位置，路径等）之间的隔断，为了结合组件到一个URL字符串，并将“相对URL”转化为一个绝对URL，称之为“基本URL”。</li>
-<li><a href="https://github.com/john-kurkowski/tldextract" target="_blank" rel="noopener">tldextract</a> – 从URL的注册域和子域中准确分离TLD，使用公共后缀列表。</li>
-</ul>
-</li>
-<li><h5 id="网络地址"><a href="#网络地址" class="headerlink" title="网络地址"></a>网络地址</h5><ul>
-<li><a href="https://github.com/drkjam/netaddr" target="_blank" rel="noopener">netaddr</a> – 用于显示和操纵网络地址的Python库。</li>
-</ul>
-</li>
-</ul>
-<h4 id="网页内容提取"><a href="#网页内容提取" class="headerlink" title="网页内容提取"></a>网页内容提取</h4><p>提取网页内容的库。</p>
-<ul>
-<li><h5 id="HTML页面的文本和元数据"><a href="#HTML页面的文本和元数据" class="headerlink" title="HTML页面的文本和元数据"></a>HTML页面的文本和元数据</h5><ul>
-<li><a href="https://github.com/codelucas/newspaper" target="_blank" rel="noopener">newspaper</a> – 用Python进行新闻提取、文章提取和内容策展。</li>
-<li><a href="https://github.com/Alir3z4/html2text" target="_blank" rel="noopener">html2text</a> – 将HTML转为Markdown格式文本。</li>
-<li><a href="https://github.com/grangier/python-goose" target="_blank" rel="noopener">python-goose</a> – HTML内容/文章提取器。</li>
-<li><a href="https://github.com/michaelhelmick/lassie" target="_blank" rel="noopener">lassie</a> – 人性化的网页内容检索工具</li>
-<li><a href="https://github.com/coleifer/micawber" target="_blank" rel="noopener">micawber</a> – 一个从网址中提取丰富内容的小库。</li>
-<li><a href="https://github.com/miso-belica/sumy" target="_blank" rel="noopener">sumy</a> -一个自动汇总文本文件和HTML网页的模块</li>
-<li><a href="https://github.com/vinta/Haul" target="_blank" rel="noopener">Haul</a> – 一个可扩展的图像爬虫。</li>
-<li><a href="https://github.com/buriy/python-readability" target="_blank" rel="noopener">python-readability</a> – arc90 readability工具的快速Python接口。</li>
-<li><a href="https://github.com/scrapy/scrapely" target="_blank" rel="noopener">scrapely</a> – 从HTML网页中提取结构化数据的库。给出了一些Web页面和数据提取的示例，scrapely为所有类似的网页构建一个分析器。</li>
-</ul>
-</li>
-<li><h5 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h5><ul>
-<li><a href="http://rg3.github.io/youtube-dl/" target="_blank" rel="noopener">youtube-dl</a> – 一个从YouTube下载视频的小命令行程序。</li>
-<li><a href="http://www.soimort.org/you-get/" target="_blank" rel="noopener">you-get</a> – Python3的YouTube、优酷/ Niconico视频下载器。</li>
-</ul>
-</li>
-<li><h5 id="维基"><a href="#维基" class="headerlink" title="维基"></a>维基</h5><ul>
-<li><a href="https://github.com/WikiTeam/wikiteam" target="_blank" rel="noopener">WikiTeam</a> – 下载和保存wikis的工具。</li>
-</ul>
-</li>
-</ul>
-<h4 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h4><p><em>用于WebSocket的库。</em></p>
-<ul>
-<li><a href="https://github.com/crossbario/crossbar/" target="_blank" rel="noopener">Crossbar</a> – 开源的应用消息传递路由器（Python实现的用于Autobahn的WebSocket和WAMP）。</li>
-<li><a href="https://github.com/tavendo/AutobahnPython" target="_blank" rel="noopener">AutobahnPython</a> – 提供了WebSocket协议和WAMP协议的Python实现并且开源。</li>
-<li><a href="https://github.com/Lawouach/WebSocket-for-Python" target="_blank" rel="noopener">WebSocket-for-Python</a> – Python 2和3以及PyPy的WebSocket客户端和服务器库。</li>
-</ul>
-<h4 id="DNS解析"><a href="#DNS解析" class="headerlink" title="DNS解析"></a>DNS解析</h4><ul>
-<li><a href="https://github.com/samarudge/dnsyo" target="_blank" rel="noopener">dnsyo</a> – 在全球超过1500个的DNS服务器上检查你的DNS。</li>
-<li><a href="https://github.com/saghul/pycares" target="_blank" rel="noopener">pycares</a> – c-ares的接口。c-ares是进行DNS请求和异步名称决议的C语言库。</li>
-</ul>
-<h4 id="计算机视觉"><a href="#计算机视觉" class="headerlink" title="计算机视觉"></a>计算机视觉</h4><ul>
-<li><a href="https://github.com/Itseez/opencv" target="_blank" rel="noopener">OpenCV</a> – 开源计算机视觉库。</li>
-<li><a href="https://github.com/sightmachine/SimpleCV" target="_blank" rel="noopener">SimpleCV</a> – 用于照相机、图像处理、特征提取、格式转换的简介，可读性强的接口（基于OpenCV）。</li>
-<li><a href="https://github.com/luispedro/mahotas" target="_blank" rel="noopener">mahotas</a> – 快速计算机图像处理算法（完全使用 C++ 实现），完全基于 numpy 的数组作为它的数据类型。</li>
-</ul>
-<h4 id="代理服务器"><a href="#代理服务器" class="headerlink" title="代理服务器"></a>代理服务器</h4><ul>
-<li><a href="https://github.com/benoitc/tproxy" target="_blank" rel="noopener">tproxy</a> – tproxy是一个简单的TCP路由代理（第7层），基于Gevent，用Python进行配置。</li>
-</ul>
-<h4 id="其他Python工具列表"><a href="#其他Python工具列表" class="headerlink" title="其他Python工具列表"></a>其他Python工具列表</h4><ul>
-<li><a href="https://github.com/vinta/awesome-python" target="_blank" rel="noopener">awesome-python</a></li>
-<li><a href="https://github.com/kirang89/pycrumbs/blob/master/pycrumbs.md" target="_blank" rel="noopener">pycrumbs</a></li>
-<li><a href="https://github.com/checkcheckzz/python-github-projects" target="_blank" rel="noopener">python-github-projects</a></li>
-<li><a href="https://github.com/rasbt/python_reference" target="_blank" rel="noopener">python_reference</a></li>
-<li><a href="https://github.com/svaksha/pythonidae" target="_blank" rel="noopener">pythonidae</a></li>
-</ul>
-<p>本文转自伯乐在线<a href="http://python.jobbole.com/82633/" target="_blank" rel="noopener">http://python.jobbole.com/82633/</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/04/Python-爬虫的工具列表/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
@@ -1592,11 +1583,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1604,15 +1595,19 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Kotlin</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
+                <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Python</a>
+                <a href="javascript:void(0)" class="js-tag color4">小程序</a>
               </li>
              
               <li class="article-tag-list-item">

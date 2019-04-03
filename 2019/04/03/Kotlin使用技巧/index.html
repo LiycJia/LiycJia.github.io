@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Android总结之图片相关 | 吃着火锅唱着歌</title>
+  <title>Kotlin 使用技巧 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。 优缺点对比优点Glide   多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video) 生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求) 高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力) 高效的缓存策略，灵活 (Picass">
-<meta name="keywords" content="Android">
+  <meta name="description" content="1、无需 findViewById在布局中定义 12345&amp;lt;TextView    android:id=&quot;@+id/tv_content&quot;    android:layout_width=&quot;wrap_content&quot;    android:layout_height=&quot;wrap_content&quot;    android:text=&quot;Hello World!&quot; /&amp;gt; 直接设置 TextV">
+<meta name="keywords" content="Kotlin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android总结之图片相关">
-<meta property="og:url" content="http://www.programan.top/2019/03/24/Android总结之图片相关/index.html">
+<meta property="og:title" content="Kotlin 使用技巧">
+<meta property="og:url" content="http://www.programan.top/2019/04/03/Kotlin使用技巧/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。 优缺点对比优点Glide   多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video) 生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求) 高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力) 高效的缓存策略，灵活 (Picass">
+<meta property="og:description" content="1、无需 findViewById在布局中定义 12345&amp;lt;TextView    android:id=&quot;@+id/tv_content&quot;    android:layout_width=&quot;wrap_content&quot;    android:layout_height=&quot;wrap_content&quot;    android:text=&quot;Hello World!&quot; /&amp;gt; 直接设置 TextV">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-25T04:43:28.731Z">
+<meta property="og:updated_time" content="2019-04-03T05:54:30.017Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android总结之图片相关">
-<meta name="twitter:description" content="图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。 优缺点对比优点Glide   多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video) 生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求) 高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力) 高效的缓存策略，灵活 (Picass">
+<meta name="twitter:title" content="Kotlin 使用技巧">
+<meta name="twitter:description" content="1、无需 findViewById在布局中定义 12345&amp;lt;TextView    android:id=&quot;@+id/tv_content&quot;    android:layout_width=&quot;wrap_content&quot;    android:layout_height=&quot;wrap_content&quot;    android:text=&quot;Hello World!&quot; /&amp;gt; 直接设置 TextV">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -155,65 +155,327 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Android总结之图片相关" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Kotlin使用技巧" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Android总结之图片相关
+      Kotlin 使用技巧
     </h1>
   
 
         
-        <a href="/2019/03/24/Android总结之图片相关/" class="archive-article-date">
-  	<time datetime="2019-03-24T12:17:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
+        <a href="/2019/04/03/Kotlin使用技巧/" class="archive-article-date">
+  	<time datetime="2019-04-03T02:23:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-03</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。</p>
-<h4 id="优缺点对比"><a href="#优缺点对比" class="headerlink" title="优缺点对比"></a>优缺点对比</h4><h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><p>Glide</p>
-<blockquote>
-<ul>
-<li>多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video)</li>
-<li>生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求)</li>
-<li>高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力)</li>
-<li>高效的缓存策略，灵活 (Picasso 只会缓存原始尺寸的图片，Glide 缓存的事多种规格)，加载速度快且内存开销小 (默认 Bitmap 格式的不同，是的内存开销是 Picasso 的一般)</li>
-</ul>
-</blockquote>
-<p>Fresco</p>
-<blockquote>
-<ul>
-<li>最大的优势在于5.0以下(最低2.3)的bitmap加载。在5.0以下系统，Fresco将图片放到一个特别的内存区域(Ashmem区)</li>
-<li>大大减少OOM（在更底层的Native层对OOM进行处理，图片将不再占用App的内存）</li>
-<li>适用于需要高性能加载大量图片的场景</li>
-</ul>
-</blockquote>
-<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>Glide</p>
-<blockquote>
-<ul>
-<li>没有文件缓存</li>
-<li>Java heap 比 Fresco 高</li>
-</ul>
-</blockquote>
-<p>Fresco</p>
-<blockquote>
-<ul>
-<li>包较大（2~3M）</li>
-<li>用法复杂</li>
-<li>底层涉及c++领域，阅读源码深入学习难度大</li>
-</ul>
-</blockquote>
-<h4 id="Glide源码解析"><a href="#Glide源码解析" class="headerlink" title="Glide源码解析"></a>Glide源码解析</h4><p>Glide 源码基本用法分为三步：with()、load()、into()。</p>
-<h5 id="with"><a href="#with" class="headerlink" title="with()"></a>with()</h5><p>在 with 中传入一个 Application 类型的对象或者非 Application 类型的参数，会向当前的 Activity 添加一个隐藏的 Fragment，用来监听当前的生命周期。</p>
-<p>如果在非主线程中使用 Glide，不管传入的是 Activity 还是 Fragment，都会被强制当成 Application 来处理。</p>
-<p>with 方法主要作用是得到一个 RequestManager 对象，监听生命周期。</p>
-<h5 id="load"><a href="#load" class="headerlink" title="load()"></a>load()</h5><p>最后会返回一个 RequestBuilder 对象。RequestBuilder 中包含了 Glide 绝大多数的 API。</p>
-<h5 id="into"><a href="#into" class="headerlink" title="into()"></a>into()</h5><p>资料<a href="https://blog.csdn.net/guolin_blog/article/details/53939176" target="_blank" rel="noopener">https://blog.csdn.net/guolin_blog/article/details/53939176</a></p>
+        <h4 id="1、无需-findViewById"><a href="#1、无需-findViewById" class="headerlink" title="1、无需 findViewById"></a>1、无需 findViewById</h4><p>在布局中定义</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">"@+id/tv_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:text</span>=<span class="string">"Hello World!"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>直接设置 TextView 的文本</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv_content.text = <span class="string">"改变文本"</span></span><br></pre></td></tr></table></figure>
+<h4 id="2、Lambda"><a href="#2、Lambda" class="headerlink" title="2、Lambda"></a>2、Lambda</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tv_content.setOnClickListener(View.OnClickListener(</span><br><span class="line">    fun(v : View) &#123;</span><br><span class="line">        v.visibility = View.GONE</span><br><span class="line">    &#125;</span><br><span class="line">))</span><br></pre></td></tr></table></figure>
+<p>可以写成下面</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv_content.setOnClickListener &#123; v -&gt; v.visibility = View.GONE &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3、函数变量"><a href="#3、函数变量" class="headerlink" title="3、函数变量"></a>3、函数变量</h4><p>在 kotlin 语法中函数是可以作为变量进行传递的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> result = <span class="function"><span class="title">fun</span><span class="params">(number1 : <span class="type">Int</span>, number2 : <span class="type">Int</span>)</span></span> : <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> number1 + number2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用这个函数变量</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">println(result(<span class="number">1</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+<h4 id="4、空安全"><a href="#4、空安全" class="headerlink" title="4、空安全"></a>4、空安全</h4><p>在 Java 不用强制我们处理空对象，所以常常会导致 NullPointerException 空指针出现，现在 Kotlin 对空对象进行了限定，必须在编译时处理对象是否为空的情况，不然会编译不通过.</p>
+<p>在对象不可空的情况下，可以直接使用这个对象.</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getText</span><span class="params">()</span></span> : String &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"text"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line">print(text.length)</span><br></pre></td></tr></table></figure>
+<p>在对象可空的情况下，必须要判断对象是否为空</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">getText</span><span class="params">()</span></span> : String? &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line"><span class="keyword">if</span> (text != <span class="literal">null</span>) &#123;</span><br><span class="line">    print(text.length)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果不想判断是否为空，可以直接这样，如果 text 对象为空，则会报空指针异常，一般情况下不推荐这样使用</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line">print(text!!.length)</span><br></pre></td></tr></table></figure>
+<p>还有一种更好的处理方式，如果 text 对象为空则不会报错，但是 text.length 的结果会等于 null</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> text = getText()</span><br><span class="line">print(text?.length)</span><br></pre></td></tr></table></figure>
+<h4 id="5、方法支持添加默认函数"><a href="#5、方法支持添加默认函数" class="headerlink" title="5、方法支持添加默认函数"></a>5、方法支持添加默认函数</h4><p>在 Java 上，我们可能会为了扩展某个方法而进行多次重载</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toast</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">    toast(<span class="keyword">this</span>, text, Toast.LENGTH_SHORT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toast</span><span class="params">(Context context, String text)</span> </span>&#123;</span><br><span class="line">    toast(context, text, Toast.LENGTH_SHORT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">toast</span><span class="params">(Context context, String text, <span class="keyword">int</span> time)</span> </span>&#123;</span><br><span class="line">    Toast.makeText(context, text, time).show();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">toast(<span class="string">"弹个吐司"</span>);</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>);</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>, Toast.LENGTH_LONG);</span><br></pre></td></tr></table></figure>
+<p>但是在 Kotlin 上面，我们无需进行重载，可以直接在方法上面直接定义参数的默认值</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">toast</span><span class="params">(context : <span class="type">Context</span> = this, text : <span class="type">String</span>, time : <span class="type">Int</span> = Toast.LENGTH_SHORT)</span></span> &#123;</span><br><span class="line">    Toast.makeText(context, text, time).show()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">toast(text = <span class="string">"弹个吐司"</span>)</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>)</span><br><span class="line">toast(<span class="keyword">this</span>, <span class="string">"弹个吐司"</span>, Toast.LENGTH_LONG)</span><br></pre></td></tr></table></figure>
+<h4 id="6、类方法扩展"><a href="#6、类方法扩展" class="headerlink" title="6、类方法扩展"></a>6、类方法扩展</h4><p>可以在不用继承的情况下对扩展原有类的方法，例如对 String 类进行扩展方法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> String.<span class="title">handle</span><span class="params">()</span></span> : String &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span> + <span class="string">"Android轮子哥"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 需要注意，handle 方法在哪个类中被定义，这种扩展只能在那个类里面才能使用</span></span><br><span class="line">print(<span class="string">"HJQ = "</span>.handle())</span><br><span class="line">HJQ = Android轮子哥</span><br></pre></td></tr></table></figure>
+<h4 id="7、运算重载符"><a href="#7、运算重载符" class="headerlink" title="7、运算重载符"></a>7、运算重载符</h4><p>在 Kotlin 中使用运算符最终也会调用对象对应的方法，我们可以通过重写这些方法使得这个对象支持运算符，这里不再演示代码</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">+a</td>
+<td style="text-align:left">a.unaryPlus()</td>
+</tr>
+<tr>
+<td style="text-align:left">-a</td>
+<td style="text-align:left">a.unaryMinus()</td>
+</tr>
+<tr>
+<td style="text-align:left">!a</td>
+<td style="text-align:left">a.not()</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a++</td>
+<td style="text-align:left">a.inc()</td>
+</tr>
+<tr>
+<td style="text-align:left">a–</td>
+<td style="text-align:left">a.dec()</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a + b</td>
+<td style="text-align:left">a.plus(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a - b</td>
+<td style="text-align:left">a.minus(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a * b</td>
+<td style="text-align:left">a.times(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a / b</td>
+<td style="text-align:left">a.div(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a % b</td>
+<td style="text-align:left">a.rem(b), a.mod(b) (deprecated)</td>
+</tr>
+<tr>
+<td style="text-align:left">a..b</td>
+<td style="text-align:left">a.rangeTo(b)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a in b</td>
+<td style="text-align:left">b.contains(a)</td>
+</tr>
+<tr>
+<td style="text-align:left">a !in b</td>
+<td style="text-align:left">!b.contains(a)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a[i]</td>
+<td style="text-align:left">a.get(i)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i, j]</td>
+<td style="text-align:left">a.get(i, j)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i_1, …, i_n]</td>
+<td style="text-align:left">a.get(i_1, …, i_n)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i] = b</td>
+<td style="text-align:left">a.set(i, b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i, j] = b</td>
+<td style="text-align:left">a.set(i, j, b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a[i_1, …, i_n] = b</td>
+<td style="text-align:left">a.set(i_1, …, i_n, b)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a()</td>
+<td style="text-align:left">a.invoke()</td>
+</tr>
+<tr>
+<td style="text-align:left">a(i)</td>
+<td style="text-align:left">a.invoke(i)</td>
+</tr>
+<tr>
+<td style="text-align:left">a(i, j)</td>
+<td style="text-align:left">a.invoke(i, j)</td>
+</tr>
+<tr>
+<td style="text-align:left">a(i_1, …, i_n)</td>
+<td style="text-align:left">a.invoke(i_1, …, i_n)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a += b</td>
+<td style="text-align:left">a.plusAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a -= b</td>
+<td style="text-align:left">a.minusAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a *= b</td>
+<td style="text-align:left">a.timesAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a /= b</td>
+<td style="text-align:left">a.divAssign(b)</td>
+</tr>
+<tr>
+<td style="text-align:left">a %= b</td>
+<td style="text-align:left">a.remAssign(b), a.modAssign(b) (deprecated)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a == b</td>
+<td style="text-align:left">a?.equals(b) ?: (b === null)</td>
+</tr>
+<tr>
+<td style="text-align:left">a != b</td>
+<td style="text-align:left">!(a?.equals(b) ?: (b === null))</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">运算符</th>
+<th style="text-align:left">调用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">a &gt; b</td>
+<td style="text-align:left">a.compareTo(b) &gt; 0</td>
+</tr>
+<tr>
+<td style="text-align:left">a &lt; b</td>
+<td style="text-align:left">a.compareTo(b) &lt; 0</td>
+</tr>
+<tr>
+<td style="text-align:left">a &gt;= b</td>
+<td style="text-align:left">a.compareTo(b) &gt;= 0</td>
+</tr>
+<tr>
+<td style="text-align:left">a &lt;= b</td>
+<td style="text-align:left">a.compareTo(b) &lt;= 0</td>
+</tr>
+</tbody>
+</table>
+<h4 id="8、扩展函数"><a href="#8、扩展函数" class="headerlink" title="8、扩展函数"></a>8、扩展函数</h4><p>扩展函数是 kotlin 用于简化一些代码的书写产生的，其中有 let、with、run、apply、also 五个函数。</p>
+<h5 id="let-函数"><a href="#let-函数" class="headerlink" title="let 函数"></a>let 函数</h5><p>在函数块内可以通过 it 指代该对象。返回值为函数块的最后一行或指定return表达式。</p>
+<p>一般写法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">fun <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    val text = <span class="string">"Android轮子哥"</span></span><br><span class="line">    println(text.length)</span><br><span class="line">    val result = <span class="number">1000</span></span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>let 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="string">"Android轮子哥"</span>.let &#123;</span><br><span class="line">        println(it.length)</span><br><span class="line">        <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最常用的场景就是使用let函数处理需要针对一个可null的对象统一做判空处理</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mVideoPlayer?.setVideoView(activity.course_video_view)</span><br><span class="line">mVideoPlayer?.setControllerView(activity.course_video_controller_view)</span><br><span class="line">mVideoPlayer?.setCurtainView(activity.course_video_curtain_view)</span><br><span class="line">mVideoPlayer?.let &#123;</span><br><span class="line">   it.setVideoView(activity.course_video_view)</span><br><span class="line">   it.setControllerView(activity.course_video_controller_view)</span><br><span class="line">   it.setCurtainView(activity.course_video_curtain_view)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>又或者是需要去明确一个变量所处特定的作用域范围内可以使用。</p>
+<h5 id="with-函数"><a href="#with-函数" class="headerlink" title="with 函数"></a>with 函数</h5><p>前面的几个函数使用方式略有不同，因为它不是以扩展的形式存在的。它是将某对象作为函数的参数，在函数块内可以通过 this 指代该对象。返回值为函数块的最后一行或指定return表达式</p>
+<p>定义 Person 类</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>(<span class="keyword">var</span> name : String, <span class="keyword">var</span> age : <span class="built_in">Int</span>)</span><br></pre></td></tr></table></figure>
+<p>一般写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line">    println(person.name + person.age)</span><br><span class="line">    <span class="keyword">var</span> result = <span class="number">1000</span></span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>with 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> result = with(Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)) &#123;</span><br><span class="line">        println(name + age)</span><br><span class="line">        <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(result)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>适用于调用同一个类的多个方法时，可以省去类名重复，直接调用类的方法即可，经常用于Android中RecyclerView中onBinderViewHolder中，数据model的属性映射到UI上</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    holder.nameView.text = <span class="string">"姓名：<span class="subst">$&#123;item.name&#125;</span>"</span></span><br><span class="line">    holder.ageView.text = <span class="string">"年龄：<span class="subst">$&#123;item.age&#125;</span>"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    with(item)&#123;</span><br><span class="line">        holder.nameView.text = <span class="string">"姓名：<span class="variable">$name</span>"</span></span><br><span class="line">        holder.ageView.text = <span class="string">"年龄：<span class="variable">$age</span>"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="run-函数"><a href="#run-函数" class="headerlink" title="run 函数"></a>run 函数</h5><p>实际上可以说是let和with两个函数的结合体，run函数只接收一个lambda函数为参数，以闭包形式返回，返回值为最后一行的值或者指定的return的表达式</p>
+<p>一般写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line">println(person.name + <span class="string">"+"</span> + person.age)</span><br><span class="line"><span class="keyword">var</span> result = <span class="number">1000</span></span><br><span class="line">println(result)</span><br></pre></td></tr></table></figure>
+<p>run 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line"><span class="keyword">var</span> result = person.run &#123;</span><br><span class="line">    println(<span class="string">"<span class="variable">$name</span> + <span class="variable">$age</span>"</span>)</span><br><span class="line">    <span class="number">1000</span></span><br><span class="line">&#125;</span><br><span class="line">println(result)</span><br></pre></td></tr></table></figure>
+<p>适用于let,with函数任何场景。因为run函数是let,with两个函数结合体，准确来说它弥补了let函数在函数体内必须使用it参数替代对象，在run函数中可以像with函数一样可以省略，直接访问实例的公有属性和方法，另一方面它弥补了with函数传入对象判空问题，在run函数中可以像let函数一样做判空处理，这里还是借助 onBindViewHolder 案例进行简化。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    holder.nameView.text = <span class="string">"姓名：<span class="subst">$&#123;item.name&#125;</span>"</span></span><br><span class="line">    holder.ageView.text = <span class="string">"年龄：<span class="subst">$&#123;item.age&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span>&#123;</span><br><span class="line">    <span class="keyword">val</span> item = getItem(position)?: <span class="keyword">return</span></span><br><span class="line">    item?.run &#123;</span><br><span class="line">        holder.nameView.text = <span class="string">"姓名：<span class="variable">$name</span>"</span></span><br><span class="line">        holder.ageView.text = <span class="string">"年龄：<span class="variable">$age</span>"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="apply-函数"><a href="#apply-函数" class="headerlink" title="apply 函数"></a><strong>apply 函数</strong></h5><p>从结构上来看apply函数和run函数很像，唯一不同点就是它们各自返回的值不一样，run函数是以闭包形式返回最后一行代码的值，而apply函数的返回的是传入对象的本身</p>
+<p>一般写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>)</span><br><span class="line">person.name = <span class="string">"HJQ"</span></span><br><span class="line">person.age = <span class="number">50</span></span><br></pre></td></tr></table></figure>
+<p>apply 写法</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> person = Person(<span class="string">"Android轮子哥"</span>, <span class="number">100</span>).apply &#123;</span><br><span class="line">    name = <span class="string">"HJQ"</span></span><br><span class="line">    age = <span class="number">50</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整体作用功能和run函数很像，唯一不同点就是它返回的值是对象本身，而run函数是一个闭包形式返回，返回的是最后一行的值。正是基于这一点差异它的适用场景稍微与run函数有点不一样。apply一般用于一个对象实例初始化的时候，需要对对象中的属性进行赋值。</p>
+<p>或者动态inflate出一个XML的View的时候需要给View绑定数据也会用到，这种情景非常常见。特别是在我们开发中会有一些数据model向View model转化实例化的过程中需要用到。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mRootView = View.inflate(activity, R.layout.example_view, <span class="literal">null</span>)</span><br><span class="line">mRootView.tv_cancel.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">mRootView.tv_confirm.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">mRootView.seek_bar.max = <span class="number">10</span></span><br><span class="line">mRootView.seek_bar.progress = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>使用 apply 函数后的代码是这样的</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mRootView = View.inflate(activity, R.layout.example_view, <span class="literal">null</span>).apply &#123;</span><br><span class="line">   tv_cancel.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">   tv_confirm.paint.isFakeBoldText = <span class="literal">true</span></span><br><span class="line">   seek_bar.max = <span class="number">10</span></span><br><span class="line">   seek_bar.progress = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多层级判空问题</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mSectionMetaData == <span class="literal">null</span> || mSectionMetaData.questionnaire == <span class="literal">null</span> || mSectionMetaData.section == <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mSectionMetaData.questionnaire.userProject != <span class="literal">null</span>) &#123;</span><br><span class="line">    renderAnalysis();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (mSectionMetaData.section != <span class="literal">null</span> &amp;&amp; !mSectionMetaData.section.sectionArticles.isEmpty()) &#123;</span><br><span class="line">    fetchQuestionData();</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>kotlin的apply函数优化</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">mSectionMetaData?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//mSectionMetaData不为空的时候操作mSectionMetaData</span></span><br><span class="line"></span><br><span class="line">&#125;?.questionnaire?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//questionnaire不为空的时候操作questionnaire</span></span><br><span class="line"></span><br><span class="line">&#125;?.section?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//section不为空的时候操作section</span></span><br><span class="line"></span><br><span class="line">&#125;?.sectionArticle?.apply &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//sectionArticle不为空的时候操作sectionArticle</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="also-函数"><a href="#also-函数" class="headerlink" title="also 函数"></a>also 函数</h5><p>also函数的结构实际上和let很像唯一的区别就是返回值的不一样，let是以闭包的形式返回，返回函数体内最后一行的值，如果最后一行为空就返回一个Unit类型的默认值。而also函数返回的则是传入对象的本身</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="string">"Android轮子哥"</span>.let &#123;</span><br><span class="line">        println(it.length)</span><br><span class="line">        <span class="number">1000</span></span><br><span class="line">    &#125;</span><br><span class="line">    println(result) <span class="comment">// 打印：1000</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> result = <span class="string">"Android轮子哥"</span>.also &#123;</span><br><span class="line">        println(it.length)</span><br><span class="line">    &#125;</span><br><span class="line">    println(result) <span class="comment">// 打印：Android轮子哥</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>适用于let函数的任何场景，also函数和let很像，只是唯一的不同点就是let函数最后的返回值是最后一行的返回值而also函数的返回值是返回当前的这个对象。一般可用于多个扩展函数链式调用</p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>通过以上几种函数的介绍，可以很方便优化kotlin中代码编写，整体看起来几个函数的作用很相似，但是各自又存在着不同。使用的场景有相同的地方比如run函数就是let和with的结合体</p>
+<h4 id="9、协程"><a href="#9、协程" class="headerlink" title="9、协程"></a>9、协程</h4><p>子任务协作运行，优雅的处理异步问题解决方案。</p>
+<p>协程实际上就是极大程度的复用线程，通过让线程满载运行，达到最大程度的利用CPU，进而提升应用性能。</p>
+<p><a href="https://www.kotlincn.net/docs/reference/coroutines/coroutines-guide.html" target="_blank" rel="noopener">https://www.kotlincn.net/docs/reference/coroutines/coroutines-guide.html</a></p>
 
       
 
@@ -227,7 +489,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Kotlin</a>
         		</li>
       		
 		</ul>
@@ -283,7 +545,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/03/24/Android总结之图片相关/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/04/03/Kotlin使用技巧/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -297,18 +559,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2019/03/25/Okhttp3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/03/21/Android总结之Handler/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android总结之Handler</div>
+    <a href="/2019/03/25/Okhttp3/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title"></div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -339,8 +592,8 @@
   <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
 <script>
   var cloudTieConfig = {
-    url: "http://www.programan.top/2019/03/24/Android总结之图片相关/", 
-    sourceId: "Android总结之图片相关",
+    url: "http://www.programan.top/2019/04/03/Kotlin使用技巧/", 
+    sourceId: "Kotlin使用技巧",
     productKey: "true",
     target: "cloud-tie-wrapper"
   };

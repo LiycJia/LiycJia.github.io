@@ -6,20 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Android总结之图片相关 | 吃着火锅唱着歌</title>
+  <title>Tag: Kotlin | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。 优缺点对比优点Glide   多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video) 生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求) 高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力) 高效的缓存策略，灵活 (Picass">
-<meta name="keywords" content="Android">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Android总结之图片相关">
-<meta property="og:url" content="http://www.programan.top/2019/03/24/Android总结之图片相关/index.html">
+  <meta name="description" content="苦逼码农一枚">
+<meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
+<meta property="og:type" content="website">
+<meta property="og:title" content="吃着火锅唱着歌">
+<meta property="og:url" content="http://www.programan.top/tags/Kotlin/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。 优缺点对比优点Glide   多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video) 生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求) 高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力) 高效的缓存策略，灵活 (Picass">
+<meta property="og:description" content="苦逼码农一枚">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-03-25T04:43:28.731Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android总结之图片相关">
-<meta name="twitter:description" content="图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。 优缺点对比优点Glide   多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video) 生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求) 高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力) 高效的缓存策略，灵活 (Picass">
+<meta name="twitter:title" content="吃着火锅唱着歌">
+<meta name="twitter:description" content="苦逼码农一枚">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -155,204 +154,60 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Android总结之图片相关" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Android总结之图片相关
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2019" class="archive-year">2019</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2019/04/03/Kotlin使用技巧/" class="archive-article-date">
+  	<time datetime="2019-04-03T02:23:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-03</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2019/04/03/Kotlin使用技巧/">Kotlin 使用技巧</a>
     </h1>
   
 
-        
-        <a href="/2019/03/24/Android总结之图片相关/" class="archive-article-date">
-  	<time datetime="2019-03-24T12:17:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-24</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>图片相关，主要想记录一下 Fresco 跟Glide 相关的一些内容。</p>
-<h4 id="优缺点对比"><a href="#优缺点对比" class="headerlink" title="优缺点对比"></a>优缺点对比</h4><h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><p>Glide</p>
-<blockquote>
-<ul>
-<li>多种图片格式的缓存，适用于更多的内容表现形式 (如 Gif、WebP、缩略图、Video)</li>
-<li>生命周期集成 (根据 Activity 或者 Fragment 生命周期管理图片加载请求)</li>
-<li>高效处理 Bitmap (bitmap 的复用和主动回收，减少系统回收压力)</li>
-<li>高效的缓存策略，灵活 (Picasso 只会缓存原始尺寸的图片，Glide 缓存的事多种规格)，加载速度快且内存开销小 (默认 Bitmap 格式的不同，是的内存开销是 Picasso 的一般)</li>
-</ul>
-</blockquote>
-<p>Fresco</p>
-<blockquote>
-<ul>
-<li>最大的优势在于5.0以下(最低2.3)的bitmap加载。在5.0以下系统，Fresco将图片放到一个特别的内存区域(Ashmem区)</li>
-<li>大大减少OOM（在更底层的Native层对OOM进行处理，图片将不再占用App的内存）</li>
-<li>适用于需要高性能加载大量图片的场景</li>
-</ul>
-</blockquote>
-<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>Glide</p>
-<blockquote>
-<ul>
-<li>没有文件缓存</li>
-<li>Java heap 比 Fresco 高</li>
-</ul>
-</blockquote>
-<p>Fresco</p>
-<blockquote>
-<ul>
-<li>包较大（2~3M）</li>
-<li>用法复杂</li>
-<li>底层涉及c++领域，阅读源码深入学习难度大</li>
-</ul>
-</blockquote>
-<h4 id="Glide源码解析"><a href="#Glide源码解析" class="headerlink" title="Glide源码解析"></a>Glide源码解析</h4><p>Glide 源码基本用法分为三步：with()、load()、into()。</p>
-<h5 id="with"><a href="#with" class="headerlink" title="with()"></a>with()</h5><p>在 with 中传入一个 Application 类型的对象或者非 Application 类型的参数，会向当前的 Activity 添加一个隐藏的 Fragment，用来监听当前的生命周期。</p>
-<p>如果在非主线程中使用 Glide，不管传入的是 Activity 还是 Fragment，都会被强制当成 Application 来处理。</p>
-<p>with 方法主要作用是得到一个 RequestManager 对象，监听生命周期。</p>
-<h5 id="load"><a href="#load" class="headerlink" title="load()"></a>load()</h5><p>最后会返回一个 RequestBuilder 对象。RequestBuilder 中包含了 Glide 绝大多数的 API。</p>
-<h5 id="into"><a href="#into" class="headerlink" title="into()"></a>into()</h5><p>资料<a href="https://blog.csdn.net/guolin_blog/article/details/53939176" target="_blank" rel="noopener">https://blog.csdn.net/guolin_blog/article/details/53939176</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Kotlin</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/03/24/Android总结之图片相关/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2019/03/25/Okhttp3/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
   
-    <a href="/2019/03/21/Android总结之Handler/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Android总结之Handler</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
-  
-  <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
-<script>
-  var cloudTieConfig = {
-    url: "http://www.programan.top/2019/03/24/Android总结之图片相关/", 
-    sourceId: "Android总结之图片相关",
-    productKey: "true",
-    target: "cloud-tie-wrapper"
-  };
-</script>
-<script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -375,9 +230,9 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
