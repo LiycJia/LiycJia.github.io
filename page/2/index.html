@@ -156,6 +156,134 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Android总结之自定义view" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/01/11/Android总结之自定义view/">Android总结之自定义view</a>
+    </h1>
+  
+
+        
+        <a href="/2019/01/11/Android总结之自定义view/" class="archive-article-date">
+  	<time datetime="2019-01-11T11:03:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目中用到的自定义 view 还是有限的，所有有些知识点也是遗漏，这次做一个稍微全面点的总结，复习一下。</p>
+<p>自定义 view 需要至少重写两个构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyView</span><span class="params">(Context context)</span> </span>&#123;         </span><br><span class="line">	<span class="keyword">super</span>(context);     </span><br><span class="line">&#125;      </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">super</span>(context, attrs);     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而且大部分时候只需重写两个函数：onMeasure()、onDraw()。onMeasure() 方法负责对当前 view 的尺寸进行测量，onDraw（）方法负责把当前这个 view 绘制出来。</p>
+<h5 id="onMeasure"><a href="#onMeasure" class="headerlink" title="onMeasure"></a>onMeasure</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span></span></span><br></pre></td></tr></table></figure>
+<p>在 onMeasure 方法中，参数 widthMeasureSpec 与 heightMeasureSpec 包含了尺寸的测量模式和尺寸大小。我们知道 int 类型数据占用 32 个 bit，这个参数数值将 int 数据的前两个 bit 用于区分不同的布局模式，后面 30 个 bit 用于存放尺寸的数据。Android 内置类 MeasureSpec 可以帮助计算测量模式与尺寸：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> widthMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line"><span class="keyword">int</span> widthSize = MeasureSpec.getSize(widthMeasureSpec);</span><br></pre></td></tr></table></figure>
+<p>请注意，这里的尺寸大小并不是最终我们的 View 的尺寸大小，而是父 view 提供的参考大小。至于测量模式，表示了 view 与父 view 直接的关系，测量模式有三种：</p>
+<table>
+<thead>
+<tr>
+<th>测量模式</th>
+<th>表示意思</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UNSPECIFIED</td>
+<td>父容器没有对当前View有任何限制，当前View可以任意取尺寸</td>
+</tr>
+<tr>
+<td>EXACTLY</td>
+<td>当前的尺寸就是当前View应该取的尺寸</td>
+</tr>
+<tr>
+<td>AT_MOST</td>
+<td>当前尺寸是当前View能取的最大尺寸</td>
+</tr>
+</tbody>
+</table>
+<p>测量模式与布局时 wrap_content、match_parent 以及写成固定尺寸对应关系：</p>
+<blockquote>
+<p>match_parent –&gt; EXACTLY。match_parent 要利用父 View 给子 View 提供的剩余空间，而父 View 的剩余空间是确定的，也就是这个测量模式对应的数值锁存放的尺寸。</p>
+</blockquote>
+<blockquote>
+<p>wrap_content –&gt; AT_MOST。就是我们想要将大小设置为包裹我们的 View 内容，那么尺寸就是父 View 给我们作为参考的尺寸，是要不超过这个尺寸就可以，具体尺寸可以根据我们的需求去设定。</p>
+</blockquote>
+<blockquote>
+<p>固定尺寸 –&gt;EXACTLY。用户自己制定尺寸的大小。</p>
+</blockquote>
+<h5 id="重新-onMeasure-方法"><a href="#重新-onMeasure-方法" class="headerlink" title="重新 onMeasure 方法"></a>重新 onMeasure 方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getMySize</span><span class="params">(<span class="keyword">int</span> defaultSize, <span class="keyword">int</span> measureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> mySize = defaultSize;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> mode = MeasureSpec.getMode(measureSpec);</span><br><span class="line">        <span class="keyword">int</span> size = MeasureSpec.getSize(measureSpec);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span> (mode) &#123;</span><br><span class="line">            <span class="keyword">case</span> MeasureSpec.UNSPECIFIED: &#123;<span class="comment">//如果没有指定大小，就设置为默认大小</span></span><br><span class="line">                mySize = defaultSize;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">case</span> MeasureSpec.AT_MOST: &#123;<span class="comment">//如果测量模式是最大取值为size</span></span><br><span class="line">                <span class="comment">//我们将大小取最大值,你也可以取其他值</span></span><br><span class="line">                mySize = size;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">case</span> MeasureSpec.EXACTLY: &#123;<span class="comment">//如果是固定的大小，那就不要去改变它</span></span><br><span class="line">                mySize = size;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mySize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onMeasure(widthMeasureSpec, heightMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> width = getMySize(<span class="number">100</span>, widthMeasureSpec);</span><br><span class="line">        <span class="keyword">int</span> height = getMySize(<span class="number">100</span>, heightMeasureSpec);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (width &lt; height) &#123;</span><br><span class="line">            height = width;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            width = height;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        setMeasuredDimension(width, height);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="重写-onDraw-方法"><a href="#重写-onDraw-方法" class="headerlink" title="重写 onDraw 方法"></a>重写 onDraw 方法</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onDraw</span><span class="params">(Canvas canvas)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//调用父View的onDraw函数，因为View这个类帮我们实现了一些</span></span><br><span class="line">        <span class="comment">// 基本的而绘制功能，比如绘制背景颜色、背景图片等</span></span><br><span class="line">        <span class="keyword">super</span>.onDraw(canvas);</span><br><span class="line">        <span class="keyword">int</span> r = getMeasuredWidth() / <span class="number">2</span>;<span class="comment">//也可以是getMeasuredHeight()/2,本例中我们已经将宽高设置相等了</span></span><br><span class="line">        <span class="comment">//圆心的横坐标为当前的View的左边起始位置+半径</span></span><br><span class="line">        <span class="keyword">int</span> centerX = getLeft() + r;</span><br><span class="line">        <span class="comment">//圆心的纵坐标为当前的View的顶部起始位置+半径</span></span><br><span class="line">        <span class="keyword">int</span> centerY = getTop() + r;</span><br><span class="line"></span><br><span class="line">        Paint paint = <span class="keyword">new</span> Paint();</span><br><span class="line">        paint.setColor(Color.GREEN);</span><br><span class="line">        <span class="comment">//开始绘制</span></span><br><span class="line">        canvas.drawCircle(centerX, centerY, r, paint);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义布局属性"><a href="#自定义布局属性" class="headerlink" title="自定义布局属性"></a>自定义布局属性</h5><ul>
+<li>首先需要再 res/values/styles.xml 文件（如果没有需要自己创建）里面生命一个需要自定义的属性；</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;resources&gt;</span><br><span class="line">    &lt;!--name为声明的<span class="string">"属性集合"</span>名，可以随便取，但是最好是设置为跟我们的View一样的名称--&gt;</span><br><span class="line">    &lt;declare-styleable name=<span class="string">"MyView"</span>&gt;</span><br><span class="line">        &lt;!--声明我们的属性，名称为default_size,取值类型为尺寸类型（dp,px等）--&gt;</span><br><span class="line">        &lt;attr name=<span class="string">"default_size"</span> format=<span class="string">"dimension"</span> /&gt;</span><br><span class="line">    &lt;/declare-styleable&gt;</span><br><span class="line">&lt;/resources&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>在布局文件中使用自定义的属性；</p>
+<p>注意：需要再根标签中设定命名空间，命名空间的名称可以自己定义，命名空间的值为固定：“<a href="http://schemas.android.com/apk/res-auto”。" target="_blank" rel="noopener">http://schemas.android.com/apk/res-auto”。</a></p>
+</li>
+<li><p>在自定义 View 里面通过参数 AttributeSet 把定义的属性取出。</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> defalutSize;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyView</span><span class="params">(Context context, AttributeSet attrs)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">super</span>(context, attrs);</span><br><span class="line">      <span class="comment">//第二个参数就是我们在styles.xml文件中的&lt;declare-styleable&gt;标签</span></span><br><span class="line">        <span class="comment">//即属性集合的标签，在R文件中名称为R.styleable+name</span></span><br><span class="line">        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.MyView);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第一个参数为属性集合里面的属性，R文件名称：R.styleable+属性集合名称+下划线+属性名称</span></span><br><span class="line">        <span class="comment">//第二个参数为，如果没有设置这个属性，则设置的默认的值</span></span><br><span class="line">        defalutSize = a.getDimensionPixelSize(R.styleable.MyView_default_size, <span class="number">100</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//最后记得将TypedArray对象回收</span></span><br><span class="line">        a.recycle();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>sh</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/01/11/Android总结之自定义view/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Python-爬虫的工具列表" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -2064,105 +2192,6 @@
 
 
   
-    <article id="post-数据结构与算法之美-复杂度分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/11/13/数据结构与算法之美-复杂度分析/">数据结构与算法之美-复杂度分析</a>
-    </h1>
-  
-
-        
-        <a href="/2018/11/13/数据结构与算法之美-复杂度分析/" class="archive-article-date">
-  	<time datetime="2018-11-13T09:08:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-11-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="一、什么是复杂度分析？"><a href="#一、什么是复杂度分析？" class="headerlink" title="一、什么是复杂度分析？"></a>一、什么是复杂度分析？</h4><p>1.数据结构和算法解决的是“如何让计算机更快时间、更省空间的解决问题”。</p>
-<p>2.因此需从执行时间和占用空间两个维度来评估数据结构和算法的性能。</p>
-<p>3.分别用时间复杂度和空间复杂度两个概念来描述性能问题，二者统称为复杂度。</p>
-<p>4.复杂度描述的是算法执行时间（或占用空间）与数据规模的增长关系。</p>
-<h4 id="二、为什么要进行复杂度分析？"><a href="#二、为什么要进行复杂度分析？" class="headerlink" title="二、为什么要进行复杂度分析？"></a>二、为什么要进行复杂度分析？</h4><p>1.和性能测试相比，复杂度分析有不依赖执行环境、成本低、效率高、易操作、指导性强的特点。</p>
-<p>2.掌握复杂度分析，将能编写出性能更优的代码，有利于降低系统开发和维护成本。</p>
-<h4 id="三、如何进行复杂度分析？"><a href="#三、如何进行复杂度分析？" class="headerlink" title="三、如何进行复杂度分析？"></a>三、如何进行复杂度分析？</h4><h5 id="1-大O表示法"><a href="#1-大O表示法" class="headerlink" title="1.大O表示法"></a>1.大O表示法</h5><ul>
-<li>来源<br>算法的执行时间与每行代码的执行次数成正比，用T(n) = O(f(n))表示，其中T(n)表示算法执行总时间，f(n)表示每行代码执行总次数，而n往往表示数据的规模。</li>
-<li>特点<br>以时间复杂度为例，由于时间复杂度描述的是算法执行时间与数据规模的增长变化趋势，所以<strong>常量阶、低阶以及系数</strong>实际上对这种增长趋势不产决定性影响，所以在做时间复杂度分析时忽略这些项。</li>
-</ul>
-<h5 id="2-复杂度分析法则"><a href="#2-复杂度分析法则" class="headerlink" title="2.复杂度分析法则"></a>2.复杂度分析法则</h5><ul>
-<li>单段代码看高频：比如循环。</li>
-<li>多段代码取最大：比如一段代码中有单循环和多重循环，那么取多重循环的复杂度</li>
-<li>嵌套代码求乘积：比如递归、多重循环等</li>
-<li>多个规模求加法：比如方法有两个参数控制两个循环的次数，那么这时就取二者复杂度相加。</li>
-</ul>
-<h4 id="四、常用的复杂度级别？"><a href="#四、常用的复杂度级别？" class="headerlink" title="四、常用的复杂度级别？"></a>四、常用的复杂度级别？</h4><ul>
-<li>多项式阶：随着数据规模的增长，算法的执行时间和空间占用，按照多项式的比例增长。包括，<br>O(1)（常数阶）、O(logn)（对数阶）、O(n)（线性阶）、O(nlogn)（线性对数阶）、O(n^2)（平方阶）、O(n^3)（立方阶）</li>
-<li>非多项式阶：随着数据规模的增长，算法的执行时间和空间占用暴增，这类算法性能极差。包括，<br>O(2^n)（指数阶）、O(n!)（阶乘阶）</li>
-</ul>
-<h4 id="五、如何掌握好复杂度分析方法？"><a href="#五、如何掌握好复杂度分析方法？" class="headerlink" title="五、如何掌握好复杂度分析方法？"></a>五、如何掌握好复杂度分析方法？</h4><p>复杂度分析关键在于多练，所谓孰能生巧。</p>
-<h4 id="六、浅析最好、最坏、平均、均摊时间复杂度"><a href="#六、浅析最好、最坏、平均、均摊时间复杂度" class="headerlink" title="六、浅析最好、最坏、平均、均摊时间复杂度"></a>六、浅析最好、最坏、平均、均摊时间复杂度</h4><h5 id="最好时间复杂度"><a href="#最好时间复杂度" class="headerlink" title="最好时间复杂度"></a>最好时间复杂度</h5><p>代码在最理想情况下执行的时间复杂度。</p>
-<h5 id="最坏时间复杂度"><a href="#最坏时间复杂度" class="headerlink" title="最坏时间复杂度"></a>最坏时间复杂度</h5><p>代码在最坏的情况下执行的时间复杂度。</p>
-<h5 id="平均时间复杂度"><a href="#平均时间复杂度" class="headerlink" title="平均时间复杂度"></a>平均时间复杂度</h5><p>全称是加权平均时间复杂度或者加权期望时间复杂度；</p>
-<p>代码所有情况及相应发生概率，计算加权平均值。</p>
-<h5 id="均摊时间复杂度"><a href="#均摊时间复杂度" class="headerlink" title="均摊时间复杂度"></a>均摊时间复杂度</h5><p>均摊时间复杂度就是一种特殊的平均时间复杂度。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">数据结构与算法</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/11/13/数据结构与算法之美-复杂度分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
@@ -2281,11 +2310,11 @@ MathJax.Hub.Queue(function() {
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Android</a>
+                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">随笔</a>
+                <a href="javascript:void(0)" class="js-tag color3">Android</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -2293,11 +2322,11 @@ MathJax.Hub.Queue(function() {
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Kotlin</a>
+                <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">偷鸡摸狗</a>
+                <a href="javascript:void(0)" class="js-tag color2">Kotlin</a>
               </li>
              
               <li class="article-tag-list-item">
