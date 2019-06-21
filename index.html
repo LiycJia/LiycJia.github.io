@@ -243,6 +243,337 @@
 
 
   
+    <article id="post-Android-技能点" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/06/11/Android-技能点/">Android-技能点</a>
+    </h1>
+  
+
+        
+        <a href="/2019/06/11/Android-技能点/" class="archive-article-date">
+  	<time datetime="2019-06-11T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-11</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><h4 id="Dalvik-和-ART"><a href="#Dalvik-和-ART" class="headerlink" title="Dalvik 和 ART"></a>Dalvik 和 ART</h4><h5 id="发展史"><a href="#发展史" class="headerlink" title="发展史"></a>发展史</h5><p><strong>Android 2.2</strong></p>
+<ul>
+<li>Android 首次在 Dalvik 上使用 JIT (Just In Time Compiler)，在运行时对 dex/odex 进行编译与优化，将 Dalvik Code 编译为精简的 Native Code，JIT 的引入，将 Dalvik 的运行性能提升了 3~6倍</li>
+<li>缺点：每次运行时都需要进行编译，会造成额外的电量消耗</li>
+</ul>
+<p><strong>Android 4.4</strong></p>
+<ul>
+<li>Android 带来了全新的运行环境 ART(Android Run Time) 和全新的编译策略 AOT(Ahead Of Time)</li>
+<li>AOT 是静态编译，在安装时，会启动 dex2oat 过程，将 dex 文件预编译为 ELF 文件，每次运行时不需要重新编译</li>
+</ul>
+<p><strong>Android 5.0</strong></p>
+<ul>
+<li>全面替换为 ART 运行环境，编译策略也改为 AOT</li>
+<li>缺点：首次安装的时间会变长，会额外增加文件大小，一个 100M 的 App，预编译后可能达到 200M</li>
+</ul>
+<p><strong>Android 7.0</strong></p>
+<ul>
+<li>运行环境仍是 ART，编译策略改为 AOT 和 JIT 混合编译</li>
+<li>特点：在首次安装时，不会进行预编译，直接运行，使用运行时编译，在手机处于空闲或者充电状态的时候，在进行预编译</li>
+<li>优点：集合了 AOT 和 JIT 的优点，使得安装速度加快，运行速度、存储空间和耗电量等指标都得到了优化</li>
+</ul>
+<h5 id="ART-相对于-Dalvik-的提升"><a href="#ART-相对于-Dalvik-的提升" class="headerlink" title="ART 相对于 Dalvik 的提升"></a>ART 相对于 Dalvik 的提升</h5><ol>
+<li>ART 在标记所有对象的时候不需要挂起所有的线程，ART 的 GC 要求对象在创建的时候，标记自身的堆栈，由于时间非常的短，不需要挂起线程</li>
+<li>提供了 LOS (Large Object Space)，专门为 Bitmap 的分配提供了空间，提高了内存的管理效率和整体性能</li>
+<li>ART 中有 moving collector 来压缩对象，使内存变得更加紧凑</li>
+</ol>
+<h4 id="Bitmap"><a href="#Bitmap" class="headerlink" title="Bitmap"></a>Bitmap</h4><h5 id="占用内存"><a href="#占用内存" class="headerlink" title="占用内存"></a>占用内存</h5><p>Bitmap 的发小氛围 Bitmap 对象大小和像素大小</p>
+<h5 id="版本区别"><a href="#版本区别" class="headerlink" title="版本区别"></a>版本区别</h5><ol>
+<li>Android 3.0 之前 Bitmap 对象放在 Java 堆，而像素数据放在 Native 内存中，如果不手动调用 recycle() 方法，Bitmap Native 内存回收完全依赖 finilize() 函数回调</li>
+<li>Android 3.0 ~ Android 7.0 Bitmap 对象和像素数据都放在了Java 堆中，就算不手动调用 recycle() 方法，像素数据也会被 gc 回收，不过 Bitmap 是内存占用大户，Bitmap 频繁的销毁创建，会导致大量的 GC</li>
+<li>Android 8.0 将像素数据放入了 Native 的内存中，并且使用了 NativeAllocationRegistry 来确保，Bitmap 对象和数据一起被回收</li>
+</ol>
+<h5 id="BitmapFactory-Optins"><a href="#BitmapFactory-Optins" class="headerlink" title="BitmapFactory.Optins"></a>BitmapFactory.Optins</h5><ol>
+<li>inBitmap &amp; inMutable，告诉编译器，尝试使用已经存在的内存区域，新解码器的 Bitmap 尝试使用之前 Bitmap 在 head 中分配的 pixel data 内存区域，在 Android 3.0 ~ 4.4，只能是相同大小的 Bitmap 才能使用，Android 4.4 以后，只要比现在 bitmap 大，就可以用</li>
+<li>injustDecodeBounds，true 时只返回图片的宽高，不返回 Bitmap</li>
+<li>inSampleSize 压缩比</li>
+</ol>
+<h5 id="图片加载库对比"><a href="#图片加载库对比" class="headerlink" title="图片加载库对比"></a>图片加载库对比</h5><p><strong>Fresco</strong></p>
+<ul>
+<li>加载图片的流程<ol>
+<li>缓存中是否有数据，有则返回</li>
+<li>如果缓存中没有，则开启后台线程进行后续工作</li>
+<li>检查未解码的缓存，如果有，则进行解码，放入内存缓存中</li>
+<li>未解码的缓存中没有，则查找为解码的文件是否有，有的话，则读取文件，解码，放入各个缓存中</li>
+<li>为解码的文件缓存中没有，则直接从网上下载或者文件中加载</li>
+</ol>
+</li>
+<li>关键概念<ul>
+<li>DraweeView，继承自 View，用于展示 UI，一般使用 SimpleDraweeView 即可</li>
+<li>DraweeHierarchy，用于组织和维护最终绘制和展现的 Drawable 对象，相当于 MVC 中的 M</li>
+<li>DraweeController，负责和 Image Loader 交互</li>
+<li>DraweeControllerBuilder，通过 Builder 模式创建</li>
+</ul>
+</li>
+<li>三级缓存<ol>
+<li>内存缓存，直接是 Bitmap 缓存，使用 LRUCache</li>
+<li>内存未解码缓存，没有解码的图片缓存</li>
+<li>文件未解码缓存</li>
+</ol>
+</li>
+<li>三个线程池<ul>
+<li>IO 线程池，默认两个线程</li>
+<li>网络下载线程池，与手机的 CPU 核数一样</li>
+<li>用于解码的线程池，与手机的 CPU 核数一样</li>
+</ul>
+</li>
+<li>优点<ol>
+<li>Android 5.0 以下，Bitmap 的像素数据放在 Native 内存中，5.0 ~ 7.0 放在 Java 堆中，7.0 以后 Android 系统将 Bitmap 的像素数据放入到 Native 内存中</li>
+<li>支持渐进式展现</li>
+<li>支持 Gif 和 WebP 动画</li>
+</ol>
+</li>
+<li>缺点<ul>
+<li>框架体积比较大，大概 2M~3M</li>
+</ul>
+</li>
+</ul>
+<p><strong>Glide</strong></p>
+<ul>
+<li>使用二级缓存，Java 的像素内存跟随这 Android</li>
+</ul>
+<h4 id="线程并发"><a href="#线程并发" class="headerlink" title="线程并发"></a>线程并发</h4><h5 id="AsyncTask"><a href="#AsyncTask" class="headerlink" title="AsyncTask"></a>AsyncTask</h5><p>AsyncTask 内部由两个线程和一个 Handler 实现的，Handler 用于将信息切换到主线程，两个线程池一个用于排队，一个用于执行。AsyncTask.execute()，传入一个 FutureTask 的对象。Android 3.0 之前是并行，3.0以后是串行</p>
+<h5 id="HandlerThread"><a href="#HandlerThread" class="headerlink" title="HandlerThread"></a>HandlerThread</h5><p>继承于 Thread，在 run 函数中，创建了 Looper 对象</p>
+<h5 id="IntentService"><a href="#IntentService" class="headerlink" title="IntentService"></a>IntentService</h5><p>内部实现了 HandlerThread 和 Handler，可以执行性耗时操作，因为它是一个 Service，所以它的优先级比其他 Thread 要高很多</p>
+<h4 id="四大组件"><a href="#四大组件" class="headerlink" title="四大组件"></a>四大组件</h4><h5 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h5><ul>
+<li>启动模式<ul>
+<li>Standard 模式，不论栈中是否已经有该 Activity，都会创建一个新的 Activity</li>
+<li>SingleTop 模式，如果该 Activity 在栈顶，则不会创建新的 Activity</li>
+<li>SingleTask 模式，一个栈中只有一个 Activity 的实例，如果该 Activity 不在栈顶，则将其上面的 Activity 推出栈</li>
+<li>SingleInstance 模式，一个栈中有且只有该 Activity 一个实例对象</li>
+</ul>
+</li>
+<li>onRestart 的调用场景<ul>
+<li>点击 home 后，然后切换回来</li>
+<li>切换到其他的 Activity，然后点击 back 键，返回去</li>
+<li>从本应用切换到其他应用，然后再切换回来</li>
+</ul>
+</li>
+<li>Activity 跳转生命周期<ul>
+<li>启动 A：onCreate、onStart、onResume</li>
+<li>A 启动 B：(A)onPause、(B)onCrete、(B)onStart、(B)onResume、(A)onStop</li>
+<li>B 返回 A：(B)onPause、(A)onRestart、(A)onStart、(A)onResume、(B)onStop、(B)onDestroy</li>
+</ul>
+</li>
+<li>Activity 启动流程<ol>
+<li>Launcher 点击 App，Launcher 也是一个桌面应用，通过 ActivityManager 向 ActivityManagerService 发送启动应用的请求</li>
+<li>AMS 通过 ServiceManager 查找相应的进程，如果没有进程，则通过 Binder 向 Zygote 进程发送创建进程的请求</li>
+<li>Zygote fork 出子进程，也就是 App 进程，执行 ActivityThread 中的 main 函数</li>
+<li>App 进程通过 IActivityManager 向 AMS 发送 attachApplication 的请求</li>
+<li>AMS 接到请求后，通过 IApplicationThread 向用户进程发送 bindApplication 的请求</li>
+<li>用户进程接到 bindApplication 的消息后，通过 Instrumentation 创建 Application，onAttachApplication() -&gt; contentProvider -&gt; onCreate()</li>
+<li>创建完 Application 后，AMS 向 App 进程发送启动 Activity 的请求</li>
+</ol>
+</li>
+</ul>
+<h5 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h5><ul>
+<li>启动服务的两种方式<ul>
+<li>startService：onCreate、onStartCommand、onDestroy</li>
+<li>bindService：onCreate、onBind、unBind、onDestroy</li>
+</ul>
+</li>
+<li>如何保证 Service 不被杀死<ul>
+<li>onStartCommand 中返回 START_STICK</li>
+<li>提升 service 优先级，在 service 中创建一个 Notification，这样 service 就是前台的进程了</li>
+<li>onDestroy 中发送广播，重新开启</li>
+</ul>
+</li>
+<li>IntentService，内部使用 HandlerThread 和 Handler 来异步处理消息，只需要重写 onHandlerIntent 函数即可</li>
+</ul>
+<h5 id="BroadCast"><a href="#BroadCast" class="headerlink" title="BroadCast"></a>BroadCast</h5><h5 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h5><h4 id="View"><a href="#View" class="headerlink" title="View"></a>View</h4><h5 id="View-的绘制流程"><a href="#View-的绘制流程" class="headerlink" title="View 的绘制流程"></a>View 的绘制流程</h5><ol>
+<li><h5 id="View-的事件分发机制"><a href="#View-的事件分发机制" class="headerlink" title="View 的事件分发机制"></a>View 的事件分发机制</h5></li>
+</ol>
+<h4 id="JetPack"><a href="#JetPack" class="headerlink" title="JetPack"></a>JetPack</h4><h5 id="LifeCycle"><a href="#LifeCycle" class="headerlink" title="LifeCycle"></a>LifeCycle</h5><h5 id="LiveData"><a href="#LiveData" class="headerlink" title="LiveData"></a>LiveData</h5><h5 id="ViewModel"><a href="#ViewModel" class="headerlink" title="ViewModel"></a>ViewModel</h5><h5 id="paging"><a href="#paging" class="headerlink" title="paging"></a>paging</h5><h4 id="进程保活"><a href="#进程保活" class="headerlink" title="进程保活"></a>进程保活</h4><h5 id="防止被杀死"><a href="#防止被杀死" class="headerlink" title="防止被杀死"></a>防止被杀死</h5><ol>
+<li>使用 service 或者 foreground service 提高进程的优先级</li>
+<li>监听锁屏的广播，启动一个透明或者 1 像素的 activity</li>
+</ol>
+<h5 id="被杀死后重启"><a href="#被杀死后重启" class="headerlink" title="被杀死后重启"></a>被杀死后重启</h5><ol>
+<li>监听静态广播</li>
+<li>多进程互相拉起</li>
+<li>链式调用 应用间相互启动</li>
+<li>service 的 onStartCommand 函数中，返回START_STICK，在杀死后，适当的时候会重新启动 service</li>
+<li>文件死锁，一般在 Native 中进行</li>
+</ol>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><h4 id="TCP-IP-四层模型和-OSI-七层模型"><a href="#TCP-IP-四层模型和-OSI-七层模型" class="headerlink" title="TCP/IP 四层模型和 OSI 七层模型"></a>TCP/IP 四层模型和 OSI 七层模型</h4><h4 id="HTTP-协议"><a href="#HTTP-协议" class="headerlink" title="HTTP 协议"></a>HTTP 协议</h4><h4 id="HTTP-请求和响应格式"><a href="#HTTP-请求和响应格式" class="headerlink" title="HTTP 请求和响应格式"></a>HTTP 请求和响应格式</h4><h4 id="建立连接和断开连接"><a href="#建立连接和断开连接" class="headerlink" title="建立连接和断开连接"></a>建立连接和断开连接</h4><h4 id="HTTPS-SSL-Secure-Socket-Layer"><a href="#HTTPS-SSL-Secure-Socket-Layer" class="headerlink" title="HTTPS/SSL(Secure Socket Layer)"></a>HTTPS/SSL(Secure Socket Layer)</h4><h4 id="HTTP-与-HTTPS-区别"><a href="#HTTP-与-HTTPS-区别" class="headerlink" title="HTTP 与 HTTPS 区别"></a>HTTP 与 HTTPS 区别</h4><h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><h4 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h4><h5 id="Java-内存结构以及分区"><a href="#Java-内存结构以及分区" class="headerlink" title="Java 内存结构以及分区"></a>Java 内存结构以及分区</h5><h5 id="Java-判断对象是否存活，以及常见的垃圾回收算法"><a href="#Java-判断对象是否存活，以及常见的垃圾回收算法" class="headerlink" title="Java 判断对象是否存活，以及常见的垃圾回收算法"></a>Java 判断对象是否存活，以及常见的垃圾回收算法</h5><h5 id="Java-常见的垃圾回收器"><a href="#Java-常见的垃圾回收器" class="headerlink" title="Java 常见的垃圾回收器"></a>Java 常见的垃圾回收器</h5><h5 id="Java-类加载的步骤"><a href="#Java-类加载的步骤" class="headerlink" title="Java 类加载的步骤"></a>Java 类加载的步骤</h5><h5 id="Java-类加载器"><a href="#Java-类加载器" class="headerlink" title="Java 类加载器"></a>Java 类加载器</h5><h4 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h4><h5 id="六大原则"><a href="#六大原则" class="headerlink" title="六大原则"></a>六大原则</h5><ol>
+<li>Single Responsibility 单一职责</li>
+<li>Open Close 开闭原则，对增加开发，对修改关闭</li>
+<li>Liscov Substitution 里氏替换原则，可以将父类替换为子类而不报错</li>
+<li>Least Knowledge，最小知道原则，高内聚，低耦合</li>
+<li>Interface Segregation 接口隔离原则，类和类之间的依赖，应该依赖最小的接口</li>
+<li>Dependence Inversion，依赖倒置原则，面向接口编程</li>
+</ol>
+<h5 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h5><ol>
+<li>责任链模式</li>
+<li>建造者模式</li>
+<li>观察者模式</li>
+<li>单例模式</li>
+<li>代理模式</li>
+<li>策略模式</li>
+<li>工厂模式</li>
+</ol>
+<h4 id="数据集合"><a href="#数据集合" class="headerlink" title="数据集合"></a>数据集合</h4><h5 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h5><h5 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h5><h5 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h5><h5 id="LinkedHashMap"><a href="#LinkedHashMap" class="headerlink" title="LinkedHashMap"></a>LinkedHashMap</h5><h5 id="HashSet"><a href="#HashSet" class="headerlink" title="HashSet"></a>HashSet</h5><h5 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h5><h5 id="SparseArrayList"><a href="#SparseArrayList" class="headerlink" title="SparseArrayList"></a>SparseArrayList</h5><h4 id="线程与并发"><a href="#线程与并发" class="headerlink" title="线程与并发"></a>线程与并发</h4><h5 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h5><h5 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h5><h5 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h5><h4 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h4><h5 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h5><h5 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h5><h5 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h5><h5 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h5><h5 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h5><h5 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h5><h4 id="树"><a href="#树" class="headerlink" title="树"></a>树</h4><h5 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h5><h5 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h5><h5 id="二叉平衡树"><a href="#二叉平衡树" class="headerlink" title="二叉平衡树"></a>二叉平衡树</h5><h5 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h5><h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><h4 id="常见的性能问题"><a href="#常见的性能问题" class="headerlink" title="常见的性能问题"></a>常见的性能问题</h4><h5 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h5><h5 id="OOM"><a href="#OOM" class="headerlink" title="OOM"></a>OOM</h5><h5 id="耗电量问题"><a href="#耗电量问题" class="headerlink" title="耗电量问题"></a>耗电量问题</h5><h5 id="内存抖动"><a href="#内存抖动" class="headerlink" title="内存抖动"></a>内存抖动</h5><h4 id="造成性能问题常见的原因"><a href="#造成性能问题常见的原因" class="headerlink" title="造成性能问题常见的原因"></a>造成性能问题常见的原因</h4><ul>
+<li>在 ui 线程中进行了好使的操作，导致 ui 线程卡顿</li>
+</ul>
+<h4 id="如何解决这些问题"><a href="#如何解决这些问题" class="headerlink" title="如何解决这些问题"></a>如何解决这些问题</h4><h4 id="专项优化"><a href="#专项优化" class="headerlink" title="专项优化"></a>专项优化</h4><h5 id="RecyclerView-优化"><a href="#RecyclerView-优化" class="headerlink" title="RecyclerView 优化"></a>RecyclerView 优化</h5><h5 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h5><h5 id="包体积优化"><a href="#包体积优化" class="headerlink" title="包体积优化"></a>包体积优化</h5><h5 id="启动优化"><a href="#启动优化" class="headerlink" title="启动优化"></a>启动优化</h5><h5 id="Crash-优化"><a href="#Crash-优化" class="headerlink" title="Crash 优化"></a>Crash 优化</h5><h5 id="UI-优化"><a href="#UI-优化" class="headerlink" title="UI 优化"></a>UI 优化</h5><h5 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h5><h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><h4 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h4><h5 id="什么是组件化"><a href="#什么是组件化" class="headerlink" title="什么是组件化"></a>什么是组件化</h5><h5 id="为什么要组件化"><a href="#为什么要组件化" class="headerlink" title="为什么要组件化"></a>为什么要组件化</h5><h5 id="隔离"><a href="#隔离" class="headerlink" title="隔离"></a>隔离</h5><h5 id="应用架构"><a href="#应用架构" class="headerlink" title="应用架构"></a>应用架构</h5><h5 id="实现技术"><a href="#实现技术" class="headerlink" title="实现技术"></a>实现技术</h5><h4 id="插件化"><a href="#插件化" class="headerlink" title="插件化"></a>插件化</h4><h5 id="什么是插件化"><a href="#什么是插件化" class="headerlink" title="什么是插件化"></a>什么是插件化</h5><h5 id="为什么要用插件化"><a href="#为什么要用插件化" class="headerlink" title="为什么要用插件化"></a>为什么要用插件化</h5><h5 id="实现技术-1"><a href="#实现技术-1" class="headerlink" title="实现技术"></a>实现技术</h5><h4 id="热修复"><a href="#热修复" class="headerlink" title="热修复"></a>热修复</h4><h5 id="主流修复框架的原理"><a href="#主流修复框架的原理" class="headerlink" title="主流修复框架的原理"></a>主流修复框架的原理</h5><h5 id="Robust"><a href="#Robust" class="headerlink" title="Robust"></a>Robust</h5><h4 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h4><h5 id="AOP-概念"><a href="#AOP-概念" class="headerlink" title="AOP 概念"></a>AOP 概念</h5><h5 id="AOP-的使用场景"><a href="#AOP-的使用场景" class="headerlink" title="AOP 的使用场景"></a>AOP 的使用场景</h5><h5 id="AOP-的实现"><a href="#AOP-的实现" class="headerlink" title="AOP 的实现"></a>AOP 的实现</h5><ul>
+<li>静态植入(编译期)</li>
+<li>动态植入(运行期)</li>
+</ul>
+<h5 id="AOP-实战"><a href="#AOP-实战" class="headerlink" title="AOP 实战"></a>AOP 实战</h5><ul>
+<li>Android 的打包过程</li>
+<li>Transform</li>
+<li>ASM code</li>
+</ul>
+<h4 id="shell-脚本"><a href="#shell-脚本" class="headerlink" title="shell 脚本"></a>shell 脚本</h4><h4 id="OpenGL"><a href="#OpenGL" class="headerlink" title="OpenGL"></a>OpenGL</h4><h4 id="音视频"><a href="#音视频" class="headerlink" title="音视频"></a>音视频</h4>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/06/11/Android-技能点/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-okdownloader 源码浅析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/22/okdownloader 源码浅析/">okdownloader 源码浅析</a>
+    </h1>
+  
+
+        
+        <a href="/2019/04/22/okdownloader 源码浅析/" class="archive-article-date">
+  	<time datetime="2019-04-22T06:56:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目需要添加文件下载的功能，一开始想要用 <a href="https://github.com/lingochamp/FileDownloader" target="_blank" rel="noopener">FileDownLoader</a>，后来再 github 上看到作者基于 FileDownloader 改版了一个 FileDownloader2，即 <a href="https://github.com/lingochamp/okdownload" target="_blank" rel="noopener">OkDownload</a> 。看作者的意思 OKDownLoad 的存在是因为 FileDownloader 不方便进行单元测试，另一个原因是核心代码过于臃肿复杂，基于这些原因，才有了 OKDownload。OkDownload是一款多线程断点续传下载引擎，它的功能完整，性能高，可配置性高，可以注入自定义组件来修改下载策略、替换网络请求框架等等。</p>
+<h5 id="相对于FileDownloader的优势"><a href="#相对于FileDownloader的优势" class="headerlink" title="相对于FileDownloader的优势"></a>相对于FileDownloader的优势</h5><ul>
+<li>单元测试覆盖度非常高</li>
+<li>更简单的接口</li>
+<li>支持任务优先级</li>
+<li>使用Uri标识文件来存储output-stream</li>
+<li>核心代码更加轻量及纯净</li>
+<li>更灵活的回调、监听机制</li>
+<li>更容易扩展</li>
+<li>保持性能的基础上减少线程数量</li>
+<li>文件IO线程池独立于网络IO线程池</li>
+<li>response header中不包含文件名时，自动从URL中获取（使用正则表达式实现）</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/04/22/okdownloader 源码浅析/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Android-常用开源库总结" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1718,261 +2049,9 @@
 
 
   
-    <article id="post-Android总结之Bitmap与缓存Cache" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/21/Android总结之Bitmap与缓存Cache/">Android总结之Bitmap与缓存Cache</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/21/Android总结之Bitmap与缓存Cache/" class="archive-article-date">
-  	<time datetime="2019-01-21T08:56:56.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p> <a href="https://juejin.im/post/5a4a454f518825258b745c42" target="_blank" rel="noopener">https://juejin.im/post/5a4a454f518825258b745c42</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/21/Android总结之Bitmap与缓存Cache/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Android总结之网络那些事儿" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/01/15/Android总结之网络那些事儿/">Android总结之网络那些事儿</a>
-    </h1>
-  
-
-        
-        <a href="/2019/01/15/Android总结之网络那些事儿/" class="archive-article-date">
-  	<time datetime="2019-01-15T11:08:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Http 方面的知识平常也会遇到，但是一般了解的也不深，今天记录几个常遇到的知识点。</p>
-<h4 id="Http-报文"><a href="#Http-报文" class="headerlink" title="Http 报文"></a>Http 报文</h4><p>http 报文可以分为请求报文和响应报文，格式大同小异，主要分为三个部分：</p>
-<ol>
-<li>起始行</li>
-<li>首部</li>
-<li>主体</li>
-</ol>
-<p>请求报文格式：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">method</span>&gt;</span> <span class="tag">&lt;<span class="name">request-url</span>&gt;</span> <span class="tag">&lt;<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">headers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">entity-body</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>响应报文格式：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span> <span class="tag">&lt;<span class="name">status</span>&gt;</span> <span class="tag">&lt;<span class="name">reason-phrase</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">headers</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">entity-body</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<p>各个标签的解释：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">method</span>&gt;</span> 指请求方法，常用的主要是Get、 Post、Head 还有其他一些我们这里就不说了，有兴趣的可以自己查阅一下</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span> 指协议版本，现在通常都是Http/1.1了</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">request-url</span>&gt;</span> 请求地址</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">status</span>&gt;</span> 指响应状态码， 我们熟悉的200、404等等</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">reason-phrase</span>&gt;</span> 原因短语，200 OK 、404 Not Found 这种后面的描述就是原因短语，通常不必太关注。</span><br></pre></td></tr></table></figure>
-<h5 id="method"><a href="#method" class="headerlink" title="method"></a>method</h5><h5 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h5><p>常见的状态码主要有<br>200 OK  请求成功，实体包含请求的资源<br>301 Moved Permanent 请求的URL被移除了，通常会在Location首部中包含新的URL用于重定向。<br>304 Not Modified    条件请求进行再验证，资源未改变。<br>404 Not Found       资源不存在<br>206 Partial Content 成功执行一个部分请求。这个在用于断点续传时会涉及到。</p>
-<h5 id="header"><a href="#header" class="headerlink" title="header"></a>header</h5><p>在请求报文和响应报文中都可以携带一些信息，通过与其他部分配合，能够实现各种强大的功能。这些信息位于起始行之下与请求实体之间，以键值对的形式，称之为首部。每条首部以回车换行符结尾，最后一个首部额外多一个换行，与实体分隔开。</p>
-<p>这里我们重点关注一下<br>Date<br>Cache-Control<br>Last-Modified<br>Etag<br>Expires<br>If-Modified-Since<br>If-None-Match<br>If-Unmodified-Since<br>If-Range<br>If-Match</p>
-<h5 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h5><h4 id="Http-缓存"><a href="#Http-缓存" class="headerlink" title="Http 缓存"></a>Http 缓存</h4><p>当我们发起一个http请求后，服务器返回所请求的资源，这时我们可以将该资源的副本存储在本地，这样当再次对该url资源发起请求时，我们能快速的从本地存储设备中获取到该url资源，这就是所谓的缓存。缓存既可以节约不必要的网络带宽，又能迅速对http请求做出响应。</p>
-<blockquote>
-<p>先摆出几个概念：</p>
-<ol>
-<li>新鲜度检测</li>
-<li>再验证</li>
-<li>再验证命中</li>
-</ol>
-</blockquote>
-<blockquote>
-<ol>
-<li>新鲜度检测<br>我们需要通过检测资源是否超过一定的时间，来判断缓存资源是否新鲜可用。那么这个一定的时间怎么决定呢？其实是由服务器通过在响应报文中增加 <code>Cache-Control:max-age</code>，或是 <code>Expire</code> 这两个首部来实现的。值得注意的是 Cache-Control 是 http1.1 的协议规范，通常是接相对的时间，即多少秒以后，需要结合 <code>last-modified</code> 这个首部计算出绝对时间。而 Expire 是 http1.0 的规范，后面接一个绝对时间。</li>
-<li>再验证<br>如果通过新鲜度检测发现需要请求服务器进行再验证，那么我们至少需要告诉服务器，我们已经缓存了一个什么样的资源了，然后服务器来判断这个缓存资源到底是不是与当前的资源一致。逻辑是这样没错。那怎么告诉服务器我当前已经有一个备用的缓存资源了呢？我们可以采用一种称之为<code>条件请求</code>的方式实现再验证。</li>
-<li>Http定义了5个首部用于条件请求:<br>If-Modified-Since<br>If-None-Match<br>If-Unmodified-Since<br>If-Range<br>If-Match</li>
-</ol>
-</blockquote>
-<h4 id="Https"><a href="#Https" class="headerlink" title="Https"></a>Https</h4><blockquote>
-<p>简单的说 Http + 加密 + 认证 + 完整性保护 = Https</p>
-</blockquote>
-<p>传统的 Http 协议是一种应用层的传输协议，Http 直接与 TCP 协议通信，其本身存在一些缺点：</p>
-<ol>
-<li>Http协议使用明文传输，容易遭到窃听。</li>
-<li>Http 对于通信双方都没有进行身份验证，通信双方无法确认对方是否是伪装的客户端或者服务端。</li>
-<li>Http 对于传输内容的完整性没有确认的办法，往往容易在传输的过程中遭到劫持篡改。</li>
-</ol>
-<p>因此，在一些需要保证安全性的场景下，Http 无法抵御这些攻击。</p>
-<p>Https 则可以听过增加的 SSL\TLS，支持对于通信内容的加密，以及通信双飞的身份验证。</p>
-<h5 id="Https-加密"><a href="#Https-加密" class="headerlink" title="Https 加密"></a>Https 加密</h5><p>近代密码学中加密的方式主要有两类：</p>
-<ol>
-<li>对称秘钥加密</li>
-<li>非对称秘钥加密</li>
-</ol>
-<p>对称秘钥加密是指加密与解密过程使用同一把秘钥。这种方式的优点是处理速度快，但是如何安全的从一方将秘钥传递到通信的另一方是一个问题。</p>
-<p>非对称秘钥加密是指加密与解密使用两把不同的秘钥。这两把秘钥，一把叫公开秘钥，可以随意对外公开。一把叫私有秘钥，只用于本身持有。得到公开秘钥的客户端可以使用公开秘钥对传输内容进行加密，而只有私有秘钥持有者本身可以对公开秘钥加密的内容进行解密。这种方式克服了秘钥交换的问题，但是相对于对称秘钥加密的方式，处理速度较慢。</p>
-<p>SSL\TLS的加密方式则是结合了两种加密方式的优点。首先采用非对称秘钥加密，将一个对称秘钥使用公开秘钥加密后传输到对方。对方使用私有秘钥解密，得到传输的对称秘钥。之后双方再使用对称秘钥进行通信。这样即解决了对称秘钥加密的秘钥传输问题，又利用了对称秘钥的高效率来进行通信内容的加密与解密。</p>
-<h5 id="Https-的认证"><a href="#Https-的认证" class="headerlink" title="Https 的认证"></a>Https 的认证</h5><p>SSL\TLS采用的混合加密的方式还是存在一个问题，即怎么样确保用于加密的公开秘钥确实是所期望的服务器所分发的呢？也许在收到公开秘钥时，这个公开秘钥已经被别人篡改了。因此，我们还需要对这个秘钥进行认证的能力，以确保我们通信的对方是我们所期望的对象。</p>
-<p>目前的做法是使用由数字证书认证机构颁发的公开秘钥证书。服务器的运营人员可以向认证机构提出公开秘钥申请。认证机构在审核之后，会将公开秘钥与共钥证书绑定。服务器就可以将这个共钥证书下发给客户端，客户端在收到证书后，使用认证机构的公开秘钥进行验证。一旦验证成功，即可知道这个秘钥是可以信任的秘钥。</p>
-<h5 id="Https的通信流程："><a href="#Https的通信流程：" class="headerlink" title="Https的通信流程："></a>Https的通信流程：</h5><ol>
-<li>Client发起请求</li>
-<li>Server端响应请求，并在之后将证书发送至Client</li>
-<li>Client使用认证机构的共钥认证证书，并从证书中取出Server端共钥。</li>
-<li>Client使用共钥加密一个随机秘钥，并传到Server</li>
-<li>Server使用私钥解密出随机秘钥</li>
-<li>通信双方使用随机秘钥最为对称秘钥进行加密解密。</li>
-</ol>
-<h4 id="TCP-IP-协议简介"><a href="#TCP-IP-协议简介" class="headerlink" title="TCP/IP 协议简介"></a>TCP/IP 协议简介</h4><h5 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h5><p>IP（Internet Protocol）协议提供了主机和主机间的通信。</p>
-<p>为了完成不同主机的通信，我们需要某种方式来唯一标识一台主机，这个标识就是著名的 IP 地址。通过 IP 地址，IP 协议就能帮我们把一个数据包发送给对方。</p>
-<h5 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h5><p>上面说到，IP 协议提供了主机与主机间的通信。TCP 协议在 IP 协议提供的主机间通信功能的基础上，完成了两个主机上进程对进程的通信。</p>
-<p>有了 IP，不同主机可以进行通信。但是计算机收到数据后，并不知道数据属于哪个进程（简单讲，进程就是一个正在运行的应用程序）。TCP的作用就在于，让我们知道这个数据属于哪个进程，从而完成进程间的通信。</p>
-<p>为了标识数据属于哪个进程，我们给需要进行 TCP 通信的进程分配一个唯一的数字来标识它。这个数字就是我们常说的端口号。</p>
-<p>TCP 的全称是 Transmission Control Protocol，大家对它说的最多的，大概是面向连接的特性了。之所以说它是有连接的，是说进行通信前，通信双方需要先经过一个三次握手的过程。三次握手完成后，连接便建立了。这时候我们才可以接受/发送数据。（与之对应的 UDP，不需要经过握手，就可以直接发送数据）。</p>
-<p>三次握手过程：</p>
-<ol>
-<li>首先，客户向服务端发送一个 <code>SYN</code>，假设此时 sequence number 为 <code>x</code>。这个 <code>x</code> 是由操作系统根据一定的规则生成的，不妨认为它是一个随机数。</li>
-<li>服务端收到 <code>SYN</code> 后，会向客户端再发送一个 <code>SYN</code>，此时服务器的 <code>seq number = y</code>。与此同时，会 <code>ACK x+1</code>，告诉客户端“已经收到了 <code>SYN</code>，可以发送数据了”。</li>
-<li>客户端收到服务器的 <code>SYN</code> 后，回复一个 <code>ACK y+1</code>，这个 <code>ACK</code> 则是告诉服务器，<code>SYN</code> 已经收到，服务器可以发送数据了。</li>
-</ol>
-<p>经过这 3 步，TCP 连接就建立了。这里需要注意的有三点：</p>
-<ol>
-<li>连接是由客户端主动发起的</li>
-<li>在第 3 步客户端向服务器回复 <code>ACK</code> 的时候，TCP 协议是允许我们携带数据的。之所以做不到，是 API 的限制导致的。</li>
-<li>TCP 协议还允许 “四次握手” 的发生，同样的，由于 API 的限制，这个极端的情况并不会发生。</li>
-</ol>
-<h4 id="Socket-基本用法"><a href="#Socket-基本用法" class="headerlink" title="Socket 基本用法"></a>Socket 基本用法</h4><p>Socket 是 TCP 层的封装，通过 Socket，我们就能进程 TCP 通信。</p>
-<p>在 Java 的 SDK 中，socket 的共有两个接口：用于监听客户连接的 ServerSocket 和用于通信的 Socket。使用 socket 的步骤如下：</p>
-<ol>
-<li>创建 ServerSocket 并监听客户连接</li>
-<li>创建 Socket 连接服务端</li>
-<li>通过 Socket 获取输入输出流进行通信</li>
-</ol>
-<p>Socket Demo：</p>
-<p>​    1、创建 ServerSocket 并监听客户连接</p>
-<ol>
-<li><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServerSocket mServerSocket;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EchoServer</span><span class="params">(<span class="keyword">int</span> port)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 1. 创建一个 ServerSocket 并监听端口 port</span></span><br><span class="line">        mServerSocket = <span class="keyword">new</span> ServerSocket(port);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 2. 开始接受客户连接</span></span><br><span class="line">        Socket client = mServerSocket.accept();</span><br><span class="line">        handleClient(client);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleClient</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 3. 使用 socket 进行通信 ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            EchoServer server = <span class="keyword">new</span> EchoServer(<span class="number">9877</span>);</span><br><span class="line">            server.run();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>   2、使用 Socket 连接服务端</p>
-   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Socket mSocket;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EchoClient</span><span class="params">(String host, <span class="keyword">int</span> port)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 创建 socket 并连接服务器</span></span><br><span class="line">        mSocket = <span class="keyword">new</span> Socket(host, port);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 和服务端进行通信</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] argv)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 由于服务端运行在同一主机，这里我们使用 localhost</span></span><br><span class="line">            EchoClient client = <span class="keyword">new</span> EchoClient(<span class="string">"localhost"</span>, <span class="number">9877</span>);</span><br><span class="line">            client.run();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>   3、通过 Socket 获取输入/输出流进行通信</p>
-<p>   首先，我们来实现服务端（服务端就是不停的输入数据，然后写会给客户端）：</p>
-   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoServer</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleClient</span><span class="params">(Socket socket)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        InputStream in = socket.getInputStream();</span><br><span class="line">        OutputStream out = socket.getOutputStream();</span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> n;</span><br><span class="line">        <span class="keyword">while</span> ((n = in.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            out.write(buffer, <span class="number">0</span>, n);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>   接下来，是客户端的实现（客户端在读取用户输入的同时，又会读取服务器的响应，所以需要创建一个线程来读取服务器的响应）：</p>
-   <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EchoClient</span> </span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Thread readerThread = <span class="keyword">new</span> Thread(<span class="keyword">this</span>::readResponse);</span><br><span class="line">        readerThread.start();</span><br><span class="line"></span><br><span class="line">        OutputStream out = mSocket.getOutputStream();</span><br><span class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="keyword">int</span> n;</span><br><span class="line">        <span class="keyword">while</span> ((n = System.in.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            out.write(buffer, <span class="number">0</span>, n);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readResponse</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            InputStream in = mSocket.getInputStream();</span><br><span class="line">            <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="keyword">int</span> n;</span><br><span class="line">            <span class="keyword">while</span> ((n = in.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                System.out.write(buffer, <span class="number">0</span>, n);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>   注意：</p>
-<ol>
-<li>在上面代码中没有处理异常，实际中在发生异常时需要关闭 socket，并根据实际业务做一些错误处理工作。</li>
-<li>在客户端，没有停止 readThread。实际中，可以通过关闭 socket 来让线程从阻塞中返回。</li>
-<li>demo 中服务端只处理了一个客户连接，如果需要同时处理多个客户端，可以创建线程来处理请求。</li>
-</ol>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2019/01/15/Android总结之网络那些事儿/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
     </nav>
   
 

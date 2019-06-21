@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Archives: 2019 | 吃着火锅唱着歌</title>
+  <title>Android-技能点 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
-<meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
-<meta property="og:type" content="website">
-<meta property="og:title" content="吃着火锅唱着歌">
-<meta property="og:url" content="http://www.programan.top/archives/2019/page/2/index.html">
+  <meta name="description" content="AndroidDalvik 和 ART发展史Android 2.2  Android 首次在 Dalvik 上使用 JIT (Just In Time Compiler)，在运行时对 dex/odex 进行编译与优化，将 Dalvik Code 编译为精简的 Native Code，JIT 的引入，将 Dalvik 的运行性能提升了 3~6倍 缺点：每次运行时都需要进行编译，会造成额外的电量消耗">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android-技能点">
+<meta property="og:url" content="http://www.programan.top/2019/06/11/Android-技能点/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="AndroidDalvik 和 ART发展史Android 2.2  Android 首次在 Dalvik 上使用 JIT (Just In Time Compiler)，在运行时对 dex/odex 进行编译与优化，将 Dalvik Code 编译为精简的 Native Code，JIT 的引入，将 Dalvik 的运行性能提升了 3~6倍 缺点：每次运行时都需要进行编译，会造成额外的电量消耗">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-21T03:48:30.304Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="吃着火锅唱着歌">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:title" content="Android-技能点">
+<meta name="twitter:description" content="AndroidDalvik 和 ART发展史Android 2.2  Android 首次在 Dalvik 上使用 JIT (Just In Time Compiler)，在运行时对 dex/odex 进行编译与优化，将 Dalvik Code 编译为精简的 Native Code，JIT 的引入，将 Dalvik 的运行性能提升了 3~6倍 缺点：每次运行时都需要进行编译，会造成额外的电量消耗">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -154,36 +155,206 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Android-技能点" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android-技能点
+    </h1>
+  
+
+        
+        <a href="/2019/06/11/Android-技能点/" class="archive-article-date">
+  	<time datetime="2019-06-11T06:23:46.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-06-11</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><h4 id="Dalvik-和-ART"><a href="#Dalvik-和-ART" class="headerlink" title="Dalvik 和 ART"></a>Dalvik 和 ART</h4><h5 id="发展史"><a href="#发展史" class="headerlink" title="发展史"></a>发展史</h5><p><strong>Android 2.2</strong></p>
+<ul>
+<li>Android 首次在 Dalvik 上使用 JIT (Just In Time Compiler)，在运行时对 dex/odex 进行编译与优化，将 Dalvik Code 编译为精简的 Native Code，JIT 的引入，将 Dalvik 的运行性能提升了 3~6倍</li>
+<li>缺点：每次运行时都需要进行编译，会造成额外的电量消耗</li>
+</ul>
+<p><strong>Android 4.4</strong></p>
+<ul>
+<li>Android 带来了全新的运行环境 ART(Android Run Time) 和全新的编译策略 AOT(Ahead Of Time)</li>
+<li>AOT 是静态编译，在安装时，会启动 dex2oat 过程，将 dex 文件预编译为 ELF 文件，每次运行时不需要重新编译</li>
+</ul>
+<p><strong>Android 5.0</strong></p>
+<ul>
+<li>全面替换为 ART 运行环境，编译策略也改为 AOT</li>
+<li>缺点：首次安装的时间会变长，会额外增加文件大小，一个 100M 的 App，预编译后可能达到 200M</li>
+</ul>
+<p><strong>Android 7.0</strong></p>
+<ul>
+<li>运行环境仍是 ART，编译策略改为 AOT 和 JIT 混合编译</li>
+<li>特点：在首次安装时，不会进行预编译，直接运行，使用运行时编译，在手机处于空闲或者充电状态的时候，在进行预编译</li>
+<li>优点：集合了 AOT 和 JIT 的优点，使得安装速度加快，运行速度、存储空间和耗电量等指标都得到了优化</li>
+</ul>
+<h5 id="ART-相对于-Dalvik-的提升"><a href="#ART-相对于-Dalvik-的提升" class="headerlink" title="ART 相对于 Dalvik 的提升"></a>ART 相对于 Dalvik 的提升</h5><ol>
+<li>ART 在标记所有对象的时候不需要挂起所有的线程，ART 的 GC 要求对象在创建的时候，标记自身的堆栈，由于时间非常的短，不需要挂起线程</li>
+<li>提供了 LOS (Large Object Space)，专门为 Bitmap 的分配提供了空间，提高了内存的管理效率和整体性能</li>
+<li>ART 中有 moving collector 来压缩对象，使内存变得更加紧凑</li>
+</ol>
+<h4 id="Bitmap"><a href="#Bitmap" class="headerlink" title="Bitmap"></a>Bitmap</h4><h5 id="占用内存"><a href="#占用内存" class="headerlink" title="占用内存"></a>占用内存</h5><p>Bitmap 的发小氛围 Bitmap 对象大小和像素大小</p>
+<h5 id="版本区别"><a href="#版本区别" class="headerlink" title="版本区别"></a>版本区别</h5><ol>
+<li>Android 3.0 之前 Bitmap 对象放在 Java 堆，而像素数据放在 Native 内存中，如果不手动调用 recycle() 方法，Bitmap Native 内存回收完全依赖 finilize() 函数回调</li>
+<li>Android 3.0 ~ Android 7.0 Bitmap 对象和像素数据都放在了Java 堆中，就算不手动调用 recycle() 方法，像素数据也会被 gc 回收，不过 Bitmap 是内存占用大户，Bitmap 频繁的销毁创建，会导致大量的 GC</li>
+<li>Android 8.0 将像素数据放入了 Native 的内存中，并且使用了 NativeAllocationRegistry 来确保，Bitmap 对象和数据一起被回收</li>
+</ol>
+<h5 id="BitmapFactory-Optins"><a href="#BitmapFactory-Optins" class="headerlink" title="BitmapFactory.Optins"></a>BitmapFactory.Optins</h5><ol>
+<li>inBitmap &amp; inMutable，告诉编译器，尝试使用已经存在的内存区域，新解码器的 Bitmap 尝试使用之前 Bitmap 在 head 中分配的 pixel data 内存区域，在 Android 3.0 ~ 4.4，只能是相同大小的 Bitmap 才能使用，Android 4.4 以后，只要比现在 bitmap 大，就可以用</li>
+<li>injustDecodeBounds，true 时只返回图片的宽高，不返回 Bitmap</li>
+<li>inSampleSize 压缩比</li>
+</ol>
+<h5 id="图片加载库对比"><a href="#图片加载库对比" class="headerlink" title="图片加载库对比"></a>图片加载库对比</h5><p><strong>Fresco</strong></p>
+<ul>
+<li>加载图片的流程<ol>
+<li>缓存中是否有数据，有则返回</li>
+<li>如果缓存中没有，则开启后台线程进行后续工作</li>
+<li>检查未解码的缓存，如果有，则进行解码，放入内存缓存中</li>
+<li>未解码的缓存中没有，则查找为解码的文件是否有，有的话，则读取文件，解码，放入各个缓存中</li>
+<li>为解码的文件缓存中没有，则直接从网上下载或者文件中加载</li>
+</ol>
+</li>
+<li>关键概念<ul>
+<li>DraweeView，继承自 View，用于展示 UI，一般使用 SimpleDraweeView 即可</li>
+<li>DraweeHierarchy，用于组织和维护最终绘制和展现的 Drawable 对象，相当于 MVC 中的 M</li>
+<li>DraweeController，负责和 Image Loader 交互</li>
+<li>DraweeControllerBuilder，通过 Builder 模式创建</li>
+</ul>
+</li>
+<li>三级缓存<ol>
+<li>内存缓存，直接是 Bitmap 缓存，使用 LRUCache</li>
+<li>内存未解码缓存，没有解码的图片缓存</li>
+<li>文件未解码缓存</li>
+</ol>
+</li>
+<li>三个线程池<ul>
+<li>IO 线程池，默认两个线程</li>
+<li>网络下载线程池，与手机的 CPU 核数一样</li>
+<li>用于解码的线程池，与手机的 CPU 核数一样</li>
+</ul>
+</li>
+<li>优点<ol>
+<li>Android 5.0 以下，Bitmap 的像素数据放在 Native 内存中，5.0 ~ 7.0 放在 Java 堆中，7.0 以后 Android 系统将 Bitmap 的像素数据放入到 Native 内存中</li>
+<li>支持渐进式展现</li>
+<li>支持 Gif 和 WebP 动画</li>
+</ol>
+</li>
+<li>缺点<ul>
+<li>框架体积比较大，大概 2M~3M</li>
+</ul>
+</li>
+</ul>
+<p><strong>Glide</strong></p>
+<ul>
+<li>使用二级缓存，Java 的像素内存跟随这 Android</li>
+</ul>
+<h4 id="线程并发"><a href="#线程并发" class="headerlink" title="线程并发"></a>线程并发</h4><h5 id="AsyncTask"><a href="#AsyncTask" class="headerlink" title="AsyncTask"></a>AsyncTask</h5><p>AsyncTask 内部由两个线程和一个 Handler 实现的，Handler 用于将信息切换到主线程，两个线程池一个用于排队，一个用于执行。AsyncTask.execute()，传入一个 FutureTask 的对象。Android 3.0 之前是并行，3.0以后是串行</p>
+<h5 id="HandlerThread"><a href="#HandlerThread" class="headerlink" title="HandlerThread"></a>HandlerThread</h5><p>继承于 Thread，在 run 函数中，创建了 Looper 对象</p>
+<h5 id="IntentService"><a href="#IntentService" class="headerlink" title="IntentService"></a>IntentService</h5><p>内部实现了 HandlerThread 和 Handler，可以执行性耗时操作，因为它是一个 Service，所以它的优先级比其他 Thread 要高很多</p>
+<h4 id="四大组件"><a href="#四大组件" class="headerlink" title="四大组件"></a>四大组件</h4><h5 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h5><ul>
+<li>启动模式<ul>
+<li>Standard 模式，不论栈中是否已经有该 Activity，都会创建一个新的 Activity</li>
+<li>SingleTop 模式，如果该 Activity 在栈顶，则不会创建新的 Activity</li>
+<li>SingleTask 模式，一个栈中只有一个 Activity 的实例，如果该 Activity 不在栈顶，则将其上面的 Activity 推出栈</li>
+<li>SingleInstance 模式，一个栈中有且只有该 Activity 一个实例对象</li>
+</ul>
+</li>
+<li>onRestart 的调用场景<ul>
+<li>点击 home 后，然后切换回来</li>
+<li>切换到其他的 Activity，然后点击 back 键，返回去</li>
+<li>从本应用切换到其他应用，然后再切换回来</li>
+</ul>
+</li>
+<li>Activity 跳转生命周期<ul>
+<li>启动 A：onCreate、onStart、onResume</li>
+<li>A 启动 B：(A)onPause、(B)onCrete、(B)onStart、(B)onResume、(A)onStop</li>
+<li>B 返回 A：(B)onPause、(A)onRestart、(A)onStart、(A)onResume、(B)onStop、(B)onDestroy</li>
+</ul>
+</li>
+<li>Activity 启动流程<ol>
+<li>Launcher 点击 App，Launcher 也是一个桌面应用，通过 ActivityManager 向 ActivityManagerService 发送启动应用的请求</li>
+<li>AMS 通过 ServiceManager 查找相应的进程，如果没有进程，则通过 Binder 向 Zygote 进程发送创建进程的请求</li>
+<li>Zygote fork 出子进程，也就是 App 进程，执行 ActivityThread 中的 main 函数</li>
+<li>App 进程通过 IActivityManager 向 AMS 发送 attachApplication 的请求</li>
+<li>AMS 接到请求后，通过 IApplicationThread 向用户进程发送 bindApplication 的请求</li>
+<li>用户进程接到 bindApplication 的消息后，通过 Instrumentation 创建 Application，onAttachApplication() -&gt; contentProvider -&gt; onCreate()</li>
+<li>创建完 Application 后，AMS 向 App 进程发送启动 Activity 的请求</li>
+</ol>
+</li>
+</ul>
+<h5 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h5><ul>
+<li>启动服务的两种方式<ul>
+<li>startService：onCreate、onStartCommand、onDestroy</li>
+<li>bindService：onCreate、onBind、unBind、onDestroy</li>
+</ul>
+</li>
+<li>如何保证 Service 不被杀死<ul>
+<li>onStartCommand 中返回 START_STICK</li>
+<li>提升 service 优先级，在 service 中创建一个 Notification，这样 service 就是前台的进程了</li>
+<li>onDestroy 中发送广播，重新开启</li>
+</ul>
+</li>
+<li>IntentService，内部使用 HandlerThread 和 Handler 来异步处理消息，只需要重写 onHandlerIntent 函数即可</li>
+</ul>
+<h5 id="BroadCast"><a href="#BroadCast" class="headerlink" title="BroadCast"></a>BroadCast</h5><h5 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h5><h4 id="View"><a href="#View" class="headerlink" title="View"></a>View</h4><h5 id="View-的绘制流程"><a href="#View-的绘制流程" class="headerlink" title="View 的绘制流程"></a>View 的绘制流程</h5><ol>
+<li><h5 id="View-的事件分发机制"><a href="#View-的事件分发机制" class="headerlink" title="View 的事件分发机制"></a>View 的事件分发机制</h5></li>
+</ol>
+<h4 id="JetPack"><a href="#JetPack" class="headerlink" title="JetPack"></a>JetPack</h4><h5 id="LifeCycle"><a href="#LifeCycle" class="headerlink" title="LifeCycle"></a>LifeCycle</h5><h5 id="LiveData"><a href="#LiveData" class="headerlink" title="LiveData"></a>LiveData</h5><h5 id="ViewModel"><a href="#ViewModel" class="headerlink" title="ViewModel"></a>ViewModel</h5><h5 id="paging"><a href="#paging" class="headerlink" title="paging"></a>paging</h5><h4 id="进程保活"><a href="#进程保活" class="headerlink" title="进程保活"></a>进程保活</h4><h5 id="防止被杀死"><a href="#防止被杀死" class="headerlink" title="防止被杀死"></a>防止被杀死</h5><ol>
+<li>使用 service 或者 foreground service 提高进程的优先级</li>
+<li>监听锁屏的广播，启动一个透明或者 1 像素的 activity</li>
+</ol>
+<h5 id="被杀死后重启"><a href="#被杀死后重启" class="headerlink" title="被杀死后重启"></a>被杀死后重启</h5><ol>
+<li>监听静态广播</li>
+<li>多进程互相拉起</li>
+<li>链式调用 应用间相互启动</li>
+<li>service 的 onStartCommand 函数中，返回START_STICK，在杀死后，适当的时候会重新启动 service</li>
+<li>文件死锁，一般在 Native 中进行</li>
+</ol>
+<h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><h4 id="TCP-IP-四层模型和-OSI-七层模型"><a href="#TCP-IP-四层模型和-OSI-七层模型" class="headerlink" title="TCP/IP 四层模型和 OSI 七层模型"></a>TCP/IP 四层模型和 OSI 七层模型</h4><h4 id="HTTP-协议"><a href="#HTTP-协议" class="headerlink" title="HTTP 协议"></a>HTTP 协议</h4><h4 id="HTTP-请求和响应格式"><a href="#HTTP-请求和响应格式" class="headerlink" title="HTTP 请求和响应格式"></a>HTTP 请求和响应格式</h4><h4 id="建立连接和断开连接"><a href="#建立连接和断开连接" class="headerlink" title="建立连接和断开连接"></a>建立连接和断开连接</h4><h4 id="HTTPS-SSL-Secure-Socket-Layer"><a href="#HTTPS-SSL-Secure-Socket-Layer" class="headerlink" title="HTTPS/SSL(Secure Socket Layer)"></a>HTTPS/SSL(Secure Socket Layer)</h4><h4 id="HTTP-与-HTTPS-区别"><a href="#HTTP-与-HTTPS-区别" class="headerlink" title="HTTP 与 HTTPS 区别"></a>HTTP 与 HTTPS 区别</h4><h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><h4 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h4><h5 id="Java-内存结构以及分区"><a href="#Java-内存结构以及分区" class="headerlink" title="Java 内存结构以及分区"></a>Java 内存结构以及分区</h5><h5 id="Java-判断对象是否存活，以及常见的垃圾回收算法"><a href="#Java-判断对象是否存活，以及常见的垃圾回收算法" class="headerlink" title="Java 判断对象是否存活，以及常见的垃圾回收算法"></a>Java 判断对象是否存活，以及常见的垃圾回收算法</h5><h5 id="Java-常见的垃圾回收器"><a href="#Java-常见的垃圾回收器" class="headerlink" title="Java 常见的垃圾回收器"></a>Java 常见的垃圾回收器</h5><h5 id="Java-类加载的步骤"><a href="#Java-类加载的步骤" class="headerlink" title="Java 类加载的步骤"></a>Java 类加载的步骤</h5><h5 id="Java-类加载器"><a href="#Java-类加载器" class="headerlink" title="Java 类加载器"></a>Java 类加载器</h5><h4 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h4><h5 id="六大原则"><a href="#六大原则" class="headerlink" title="六大原则"></a>六大原则</h5><ol>
+<li>Single Responsibility 单一职责</li>
+<li>Open Close 开闭原则，对增加开发，对修改关闭</li>
+<li>Liscov Substitution 里氏替换原则，可以将父类替换为子类而不报错</li>
+<li>Least Knowledge，最小知道原则，高内聚，低耦合</li>
+<li>Interface Segregation 接口隔离原则，类和类之间的依赖，应该依赖最小的接口</li>
+<li>Dependence Inversion，依赖倒置原则，面向接口编程</li>
+</ol>
+<h5 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h5><ol>
+<li>责任链模式</li>
+<li>建造者模式</li>
+<li>观察者模式</li>
+<li>单例模式</li>
+<li>代理模式</li>
+<li>策略模式</li>
+<li>工厂模式</li>
+</ol>
+<h4 id="数据集合"><a href="#数据集合" class="headerlink" title="数据集合"></a>数据集合</h4><h5 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h5><h5 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h5><h5 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h5><h5 id="LinkedHashMap"><a href="#LinkedHashMap" class="headerlink" title="LinkedHashMap"></a>LinkedHashMap</h5><h5 id="HashSet"><a href="#HashSet" class="headerlink" title="HashSet"></a>HashSet</h5><h5 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h5><h5 id="SparseArrayList"><a href="#SparseArrayList" class="headerlink" title="SparseArrayList"></a>SparseArrayList</h5><h4 id="线程与并发"><a href="#线程与并发" class="headerlink" title="线程与并发"></a>线程与并发</h4><h5 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h5><h5 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h5><h5 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h5><h4 id="排序算法"><a href="#排序算法" class="headerlink" title="排序算法"></a>排序算法</h4><h5 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h5><h5 id="选择排序"><a href="#选择排序" class="headerlink" title="选择排序"></a>选择排序</h5><h5 id="插入排序"><a href="#插入排序" class="headerlink" title="插入排序"></a>插入排序</h5><h5 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h5><h5 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h5><h5 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h5><h4 id="树"><a href="#树" class="headerlink" title="树"></a>树</h4><h5 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h5><h5 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h5><h5 id="二叉平衡树"><a href="#二叉平衡树" class="headerlink" title="二叉平衡树"></a>二叉平衡树</h5><h5 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h5><h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><h4 id="常见的性能问题"><a href="#常见的性能问题" class="headerlink" title="常见的性能问题"></a>常见的性能问题</h4><h5 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h5><h5 id="OOM"><a href="#OOM" class="headerlink" title="OOM"></a>OOM</h5><h5 id="耗电量问题"><a href="#耗电量问题" class="headerlink" title="耗电量问题"></a>耗电量问题</h5><h5 id="内存抖动"><a href="#内存抖动" class="headerlink" title="内存抖动"></a>内存抖动</h5><h4 id="造成性能问题常见的原因"><a href="#造成性能问题常见的原因" class="headerlink" title="造成性能问题常见的原因"></a>造成性能问题常见的原因</h4><ul>
+<li>在 ui 线程中进行了好使的操作，导致 ui 线程卡顿</li>
+</ul>
+<h4 id="如何解决这些问题"><a href="#如何解决这些问题" class="headerlink" title="如何解决这些问题"></a>如何解决这些问题</h4><h4 id="专项优化"><a href="#专项优化" class="headerlink" title="专项优化"></a>专项优化</h4><h5 id="RecyclerView-优化"><a href="#RecyclerView-优化" class="headerlink" title="RecyclerView 优化"></a>RecyclerView 优化</h5><h5 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h5><h5 id="包体积优化"><a href="#包体积优化" class="headerlink" title="包体积优化"></a>包体积优化</h5><h5 id="启动优化"><a href="#启动优化" class="headerlink" title="启动优化"></a>启动优化</h5><h5 id="Crash-优化"><a href="#Crash-优化" class="headerlink" title="Crash 优化"></a>Crash 优化</h5><h5 id="UI-优化"><a href="#UI-优化" class="headerlink" title="UI 优化"></a>UI 优化</h5><h5 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h5><h3 id="进阶"><a href="#进阶" class="headerlink" title="进阶"></a>进阶</h3><h4 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h4><h5 id="什么是组件化"><a href="#什么是组件化" class="headerlink" title="什么是组件化"></a>什么是组件化</h5><h5 id="为什么要组件化"><a href="#为什么要组件化" class="headerlink" title="为什么要组件化"></a>为什么要组件化</h5><h5 id="隔离"><a href="#隔离" class="headerlink" title="隔离"></a>隔离</h5><h5 id="应用架构"><a href="#应用架构" class="headerlink" title="应用架构"></a>应用架构</h5><h5 id="实现技术"><a href="#实现技术" class="headerlink" title="实现技术"></a>实现技术</h5><h4 id="插件化"><a href="#插件化" class="headerlink" title="插件化"></a>插件化</h4><h5 id="什么是插件化"><a href="#什么是插件化" class="headerlink" title="什么是插件化"></a>什么是插件化</h5><h5 id="为什么要用插件化"><a href="#为什么要用插件化" class="headerlink" title="为什么要用插件化"></a>为什么要用插件化</h5><h5 id="实现技术-1"><a href="#实现技术-1" class="headerlink" title="实现技术"></a>实现技术</h5><h4 id="热修复"><a href="#热修复" class="headerlink" title="热修复"></a>热修复</h4><h5 id="主流修复框架的原理"><a href="#主流修复框架的原理" class="headerlink" title="主流修复框架的原理"></a>主流修复框架的原理</h5><h5 id="Robust"><a href="#Robust" class="headerlink" title="Robust"></a>Robust</h5><h4 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h4><h5 id="AOP-概念"><a href="#AOP-概念" class="headerlink" title="AOP 概念"></a>AOP 概念</h5><h5 id="AOP-的使用场景"><a href="#AOP-的使用场景" class="headerlink" title="AOP 的使用场景"></a>AOP 的使用场景</h5><h5 id="AOP-的实现"><a href="#AOP-的实现" class="headerlink" title="AOP 的实现"></a>AOP 的实现</h5><ul>
+<li>静态植入(编译期)</li>
+<li>动态植入(运行期)</li>
+</ul>
+<h5 id="AOP-实战"><a href="#AOP-实战" class="headerlink" title="AOP 实战"></a>AOP 实战</h5><ul>
+<li>Android 的打包过程</li>
+<li>Transform</li>
+<li>ASM code</li>
+</ul>
+<h4 id="shell-脚本"><a href="#shell-脚本" class="headerlink" title="shell 脚本"></a>shell 脚本</h4><h4 id="OpenGL"><a href="#OpenGL" class="headerlink" title="OpenGL"></a>OpenGL</h4><h4 id="音视频"><a href="#音视频" class="headerlink" title="音视频"></a>音视频</h4>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/15/Android总结之网络那些事儿/" class="archive-article-date">
-  	<time datetime="2019-01-15T11:08:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/15/Android总结之网络那些事儿/">Android总结之网络那些事儿</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -195,174 +366,116 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/06/11/Android-技能点/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/11/Android总结之自定义view/" class="archive-article-date">
-  	<time datetime="2019-01-11T11:03:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-11</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/22/okdownloader 源码浅析/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">okdownloader 源码浅析</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/11/Android总结之自定义view/">Android总结之自定义view</a>
-    </h1>
+  
+  
+  <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+<script>
+  var cloudTieConfig = {
+    url: "http://www.programan.top/2019/06/11/Android-技能点/", 
+    sourceId: "Android-技能点",
+    productKey: "true",
+    target: "cloud-tie-wrapper"
+  };
+</script>
+<script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/04/Python-爬虫的工具列表/" class="archive-article-date">
-  	<time datetime="2019-01-04T06:24:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/04/Python-爬虫的工具列表/">Python 爬虫的工具列表</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/03/Android总结之四大组件/" class="archive-article-date">
-  	<time datetime="2019-01-03T09:18:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/03/Android总结之四大组件/">Android总结之四大组件</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/02/2019年度计划/" class="archive-article-date">
-  	<time datetime="2019-01-02T02:05:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/02/2019年度计划/">2019年度计划</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2019/">&laquo; Prev</a><a class="page-number" href="/archives/2019/">1</a><span class="page-number current">2</span>
-    </nav>
   
 
 
@@ -386,8 +499,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

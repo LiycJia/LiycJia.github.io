@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://www.programan.top">
-  <title>Archives: 2019 | 吃着火锅唱着歌</title>
+  <title>okdownloader 源码浅析 | 吃着火锅唱着歌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="苦逼码农一枚">
-<meta name="keywords" content="移动端，android,开发者,程序猿,极客,编程,代码,开源,IT网站,Developer,Programmer,Coder,Geek">
-<meta property="og:type" content="website">
-<meta property="og:title" content="吃着火锅唱着歌">
-<meta property="og:url" content="http://www.programan.top/archives/2019/page/2/index.html">
+  <meta name="description" content="项目需要添加文件下载的功能，一开始想要用 FileDownLoader，后来再 github 上看到作者基于 FileDownloader 改版了一个 FileDownloader2，即 OkDownload 。看作者的意思 OKDownLoad 的存在是因为 FileDownloader 不方便进行单元测试，另一个原因是核心代码过于臃肿复杂，基于这些原因，才有了 OKDownload。OkDow">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="okdownloader 源码浅析">
+<meta property="og:url" content="http://www.programan.top/2019/04/22/okdownloader 源码浅析/index.html">
 <meta property="og:site_name" content="吃着火锅唱着歌">
-<meta property="og:description" content="苦逼码农一枚">
+<meta property="og:description" content="项目需要添加文件下载的功能，一开始想要用 FileDownLoader，后来再 github 上看到作者基于 FileDownloader 改版了一个 FileDownloader2，即 OkDownload 。看作者的意思 OKDownLoad 的存在是因为 FileDownloader 不方便进行单元测试，另一个原因是核心代码过于臃肿复杂，基于这些原因，才有了 OKDownload。OkDow">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-04-24T09:29:38.552Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="吃着火锅唱着歌">
-<meta name="twitter:description" content="苦逼码农一枚">
+<meta name="twitter:title" content="okdownloader 源码浅析">
+<meta name="twitter:description" content="项目需要添加文件下载的功能，一开始想要用 FileDownLoader，后来再 github 上看到作者基于 FileDownloader 改版了一个 FileDownloader2，即 OkDownload 。看作者的意思 OKDownLoad 的存在是因为 FileDownloader 不方便进行单元测试，另一个原因是核心代码过于臃肿复杂，基于这些原因，才有了 OKDownload。OkDow">
   
     <link rel="alternative" href="/atom.xml" title="吃着火锅唱着歌" type="application/atom+xml">
   
@@ -154,36 +155,47 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-okdownloader 源码浅析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      okdownloader 源码浅析
+    </h1>
+  
+
+        
+        <a href="/2019/04/22/okdownloader 源码浅析/" class="archive-article-date">
+  	<time datetime="2019-04-22T06:56:43.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-22</time>
+</a>
+        
+      </header>
     
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>项目需要添加文件下载的功能，一开始想要用 <a href="https://github.com/lingochamp/FileDownloader" target="_blank" rel="noopener">FileDownLoader</a>，后来再 github 上看到作者基于 FileDownloader 改版了一个 FileDownloader2，即 <a href="https://github.com/lingochamp/okdownload" target="_blank" rel="noopener">OkDownload</a> 。看作者的意思 OKDownLoad 的存在是因为 FileDownloader 不方便进行单元测试，另一个原因是核心代码过于臃肿复杂，基于这些原因，才有了 OKDownload。OkDownload是一款多线程断点续传下载引擎，它的功能完整，性能高，可配置性高，可以注入自定义组件来修改下载策略、替换网络请求框架等等。</p>
+<h5 id="相对于FileDownloader的优势"><a href="#相对于FileDownloader的优势" class="headerlink" title="相对于FileDownloader的优势"></a>相对于FileDownloader的优势</h5><ul>
+<li>单元测试覆盖度非常高</li>
+<li>更简单的接口</li>
+<li>支持任务优先级</li>
+<li>使用Uri标识文件来存储output-stream</li>
+<li>核心代码更加轻量及纯净</li>
+<li>更灵活的回调、监听机制</li>
+<li>更容易扩展</li>
+<li>保持性能的基础上减少线程数量</li>
+<li>文件IO线程池独立于网络IO线程池</li>
+<li>response header中不包含文件名时，自动从URL中获取（使用正则表达式实现）</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/15/Android总结之网络那些事儿/" class="archive-article-date">
-  	<time datetime="2019-01-15T11:08:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/15/Android总结之网络那些事儿/">Android总结之网络那些事儿</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -195,174 +207,125 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://www.programan.top/2019/04/22/okdownloader 源码浅析/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/11/Android总结之自定义view/" class="archive-article-date">
-  	<time datetime="2019-01-11T11:03:30.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-11</time>
-</a>
+<nav id="article-nav">
+  
+    <a href="/2019/06/11/Android-技能点/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Android-技能点
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/04/08/Android-常用开源库总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Android 常用开源库总结</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/11/Android总结之自定义view/">Android总结之自定义view</a>
-    </h1>
+  
+  
+  <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+<script>
+  var cloudTieConfig = {
+    url: "http://www.programan.top/2019/04/22/okdownloader 源码浅析/", 
+    sourceId: "okdownloader 源码浅析",
+    productKey: "true",
+    target: "cloud-tie-wrapper"
+  };
+</script>
+<script src="//img1.cache.netease.com/f2e/tie/yun/sdk/loader.js"></script>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/04/Python-爬虫的工具列表/" class="archive-article-date">
-  	<time datetime="2019-01-04T06:24:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-04</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/04/Python-爬虫的工具列表/">Python 爬虫的工具列表</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/03/Android总结之四大组件/" class="archive-article-date">
-  	<time datetime="2019-01-03T09:18:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-03</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/03/Android总结之四大组件/">Android总结之四大组件</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Android</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/01/02/2019年度计划/" class="archive-article-date">
-  	<time datetime="2019-01-02T02:05:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-01-02</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/01/02/2019年度计划/">2019年度计划</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/2019/">&laquo; Prev</a><a class="page-number" href="/archives/2019/">1</a><span class="page-number current">2</span>
-    </nav>
   
 
 
@@ -386,8 +349,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
